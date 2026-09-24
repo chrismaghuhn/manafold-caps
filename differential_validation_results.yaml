@@ -1,58 +1,14 @@
+status: DIFFERENTIAL_VALIDATION_COMPLETE
+review_batch_id: phase-0.2c-2-differential-v1
 extractor_version: 0.2.1
 parent_extractor_version: 0.2.0
-review_batch_id: phase-0.2c-2-differential-v1
 validation_scope:
-  extractor_version: 0.2.1
   source_set:
     scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
     forge: cef86f363d7f7d5b3293248a75f550a7c3404066
     xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
   mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
-source_set:
-  scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
-  forge: cef86f363d7f7d5b3293248a75f550a7c3404066
-  xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
-mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
-parent_validation:
-  extractor_version: 0.2.0
-  review_batch_id: phase-0.2a-batch-1
-  primary_samples: 460
-  final_correct: 455
-  final_wrong: 5
-changed_population:
-  removed: 104
-  added: 0
-  sampling_fraction: 1.0
-removed_by_guard:
-  FORGE_SAME_ZONE: 98
-  XMAGE_IMPORT_ONLY: 6
-unchanged_identity:
-  match: true
-  digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
-  old_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
-  new_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
-review_status:
-  reviewer_a: COMPLETE
-  reviewer_b: COMPLETE
-  adjudication: NOT_REQUIRED
-  reviewer_a_required: 104
-  reviewer_b_required: 104
-  reviewer_a_reviewed: 104
-  reviewer_b_reviewed: 104
-  exact_agreement: 104
-  disagreements: 0
-validation_transfer:
-  unchanged_candidates_eligible: true
-  removed_candidates_require_review: false
-  new_candidates: 0
-  phase_0_2b_scope_inherited: false
-  precision_recalculated: false
-  removed_candidates_reviewed: 104
-  validation_transfer_complete: true
-  status: DIFFERENTIAL_VALIDATION_COMPLETE
-  removed_occurrences_validated: true
-status: DIFFERENTIAL_VALIDATION_COMPLETE
-review_input_provenance:
+reviewer_inputs:
   reviewer_a:
     file: differential_review_results_reviewer-a.yaml
     sha256: 42583c19b137a90fabb24c682d2c04c6624d3b30b1cfcef3d82afc62e222b0e8
@@ -67,6 +23,59 @@ review_input_provenance:
     unique_ids: 104
     labels:
       REMOVAL_CORRECT: 104
+reviewers:
+  reviewer_a:
+    reviewed: 104
+    unique_ids: 104
+    decisions:
+      REMOVAL_CORRECT: 104
+  reviewer_b:
+    reviewed: 104
+    unique_ids: 104
+    decisions:
+      REMOVAL_CORRECT: 104
+  shared_ids: 104
+agreement:
+  n: 104
+  exact_agreement: 104
+  disagreements: 0
+  raw_agreement: 1.0
+  cohen_kappa: NOT_INFORMATIVE_SINGLE_CATEGORY
+  gwet_ac1: NOT_INFORMATIVE_SINGLE_CATEGORY
+  categories_reviewer_a:
+  - REMOVAL_CORRECT
+  categories_reviewer_b:
+  - REMOVAL_CORRECT
+adjudication:
+  required: false
+  disagreements: 0
+  status: NOT_REQUIRED
+decisions:
+  AMBIGUOUS: 0
+  REMOVAL_CORRECT: 104
+  REMOVAL_WRONG: 0
+  SOURCE_EVIDENCE_INSUFFICIENT: 0
+differential_population:
+  removed_occurrences: 104
+  added_occurrences: 0
+  sampling_fraction: 1.0
+  by_guard:
+    FORGE_SAME_ZONE: 98
+    XMAGE_IMPORT_ONLY: 6
+unchanged_identity:
+  match: true
+  digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+  old_set_count: 29286
+  new_set_count: 29182
+  removed: 104
+  added: 0
+validation_transfer:
+  status: COMPLETE
+  unchanged_occurrences_transferred: true
+  removed_occurrences_validated: true
+  added_occurrences: 0
+  automatic_precision_reuse: false
+  intervals_over_census: null
 pattern_transfer:
 - pattern_id: forge.draw.v1
   parent_population: 2458
@@ -203,3 +212,4 @@ pattern_transfer:
   population_change: REMOVALS_ONLY
   historical_validation_scope: extractor 0.2.0; review measurements remain historical
   transfer: UNCHANGED_OCCURRENCES_ONLY; REMOVALS_HAVE_EXHAUSTIVE_DIFFERENTIAL_REVIEW
+blockers: []

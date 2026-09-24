@@ -1,0 +1,196 @@
+extractor_version: 0.2.1
+parent_extractor_version: 0.2.0
+status: DIFFERENTIAL_VALIDATION_COMPLETE
+source_set:
+  scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+  forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+  xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+parent_validation:
+  review_batch_id: phase-0.2a-batch-1
+  extractor_version: 0.2.0
+  primary_samples: 460
+  final_correct: 455
+  final_wrong: 5
+differential:
+  removed_occurrences: 104
+  added_occurrences: 0
+  reviewer_a:
+    reviewed: 104
+    removal_correct: 104
+  reviewer_b:
+    reviewed: 104
+    removal_correct: 104
+  agreement:
+    exact_agreement: 104
+    disagreements: 0
+unchanged_identity:
+  match: true
+  digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+  old_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+  new_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+  old_set_count: 29286
+  new_set_count: 29182
+transfer:
+  unchanged_occurrences_transferred: true
+  removed_occurrences_validated: true
+  added_occurrences: 0
+  pattern_transfer:
+  - pattern_id: forge.draw.v1
+    parent_population: 2458
+    extractor_0_2_1_population: 2458
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: forge.token.v1
+    parent_population: 2230
+    extractor_0_2_1_population: 2230
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: xmage.gain_life_effect.v1
+    parent_population: 684
+    extractor_0_2_1_population: 684
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: forge.deal_damage.v1
+    parent_population: 2070
+    extractor_0_2_1_population: 2070
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: forge.destroy.v1
+    parent_population: 1205
+    extractor_0_2_1_population: 1205
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: forge.put_counter.v1
+    parent_population: 1947
+    extractor_0_2_1_population: 1947
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: xmage.damage_target_effect.v1
+    parent_population: 921
+    extractor_0_2_1_population: 921
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: xmage.destroy_target_effect.v1
+    parent_population: 705
+    extractor_0_2_1_population: 704
+    removed_distinct_oracle_ids: 1
+    removed_evidence_occurrences: 1
+    added_distinct_oracle_ids: 0
+    population_change: REMOVALS_ONLY
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: UNCHANGED_OCCURRENCES_ONLY; REMOVALS_HAVE_EXHAUSTIVE_DIFFERENTIAL_REVIEW
+  - pattern_id: xmage.add_counters_source_effect.v1
+    parent_population: 832
+    extractor_0_2_1_population: 832
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: forge.change_zone.v1
+    parent_population: 4136
+    extractor_0_2_1_population: 4088
+    removed_distinct_oracle_ids: 48
+    removed_evidence_occurrences: 80
+    added_distinct_oracle_ids: 0
+    population_change: REMOVALS_ONLY
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: UNCHANGED_OCCURRENCES_ONLY; REMOVALS_HAVE_EXHAUSTIVE_DIFFERENTIAL_REVIEW
+  - pattern_id: forge.change_zone_all.v1
+    parent_population: 467
+    extractor_0_2_1_population: 457
+    removed_distinct_oracle_ids: 10
+    removed_evidence_occurrences: 18
+    added_distinct_oracle_ids: 0
+    population_change: REMOVALS_ONLY
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: UNCHANGED_OCCURRENCES_ONLY; REMOVALS_HAVE_EXHAUSTIVE_DIFFERENTIAL_REVIEW
+  - pattern_id: xmage.exile_target_effect.v1
+    parent_population: 243
+    extractor_0_2_1_population: 242
+    removed_distinct_oracle_ids: 1
+    removed_evidence_occurrences: 1
+    added_distinct_oracle_ids: 0
+    population_change: REMOVALS_ONLY
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: UNCHANGED_OCCURRENCES_ONLY; REMOVALS_HAVE_EXHAUSTIVE_DIFFERENTIAL_REVIEW
+  - pattern_id: xmage.return_to_hand_source_effect.v1
+    parent_population: 117
+    extractor_0_2_1_population: 116
+    removed_distinct_oracle_ids: 1
+    removed_evidence_occurrences: 1
+    added_distinct_oracle_ids: 0
+    population_change: REMOVALS_ONLY
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: UNCHANGED_OCCURRENCES_ONLY; REMOVALS_HAVE_EXHAUSTIVE_DIFFERENTIAL_REVIEW
+  - pattern_id: cross.damage.deal_damage__damage_target_effect.v1
+    parent_population: 869
+    extractor_0_2_1_population: 869
+    removed_distinct_oracle_ids: 0
+    removed_evidence_occurrences: 0
+    added_distinct_oracle_ids: 0
+    population_change: UNCHANGED
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: EXACT_UNCHANGED_OCCURRENCES_ONLY
+  - pattern_id: cross.create_token.token__create_token_effect.v1
+    parent_population: 1196
+    extractor_0_2_1_population: 1195
+    removed_distinct_oracle_ids: 1
+    removed_evidence_occurrences: 1
+    added_distinct_oracle_ids: 0
+    population_change: REMOVALS_ONLY
+    historical_validation_scope: extractor 0.2.0; review measurements remain historical
+    transfer: UNCHANGED_OCCURRENCES_ONLY; REMOVALS_HAVE_EXHAUSTIVE_DIFFERENTIAL_REVIEW
+review_input_provenance:
+  reviewer_a:
+    file: differential_review_results_reviewer-a.yaml
+    sha256: 42583c19b137a90fabb24c682d2c04c6624d3b30b1cfcef3d82afc62e222b0e8
+    rows: 104
+    unique_ids: 104
+    labels:
+      REMOVAL_CORRECT: 104
+  reviewer_b:
+    file: differential_review_results_reviewer-b.yaml
+    sha256: dc4f731364cf56f6a22598cf29163b7e3614f299cca67fd12a188b30025d060d
+    rows: 104
+    unique_ids: 104
+    labels:
+      REMOVAL_CORRECT: 104
+limitations:
+- no automatic CAP eligibility
+- no requirement-level combined precision
+- no Comprehensive Rules validation
+precision:
+  recalculated: false
+  intervals_over_full_removal_census: null
+  phase_0_2b_intervals_inherited: false
