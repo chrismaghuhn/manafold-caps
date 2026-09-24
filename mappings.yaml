@@ -1,18 +1,31 @@
 forge:
   ChangeZone: zone_transition
-  Damage: damage
+  ChangeZoneAll: zone_transition
+  DealDamage: damage
+  DamageAll: damage
   Destroy: destroy
+  DestroyAll: destroy
   Draw: draw
   Discard: discard
   Token: create_token
+  PutCounter: counter_change
+  Mana: mana_production
+  GainLife: gain_life
+  LoseLife: lose_life
   Tap: tap
   Untap: untap
   Shuffle: shuffle
 xmage:
   DamageTargetEffect: damage
+  DamageAllEffect: damage
   DestroyTargetEffect: destroy
+  DestroyAllEffect: destroy
   CreateTokenEffect: create_token
   DrawCardSourceControllerEffect: draw
   CounterTargetEffect: counter
+  AddCountersSourceEffect: counter_change
+  ExileTargetEffect: zone_transition
+  ReturnToHandSourceEffect: zone_transition
+  UntapLandsEffect: untap
   GainLifeEffect: gain_life
   LoseLifeTargetEffect: lose_life

@@ -4,12 +4,11 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
+import difflib
 import hashlib
 import json
 import os
 import re
-import subprocess
-import sys
 import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -21,6 +20,19 @@ SOURCES = {
     "scryfall": "nishtahir/scryfall-oracle-cards",
     "forge": "404NotF0und/MtG-json-to-ForgeScript",
     "xmage": "Frogski/xMageData",
+}
+PINNED_REVISIONS = {
+    "scryfall": "0ce026779dae1a9a6448ef7a85e606d662343f5e",
+    "forge": "cef86f363d7f7d5b3293248a75f550a7c3404066",
+    "xmage": "6212eb37907c1ce751d8a3fea8b3322056dc0264",
+}
+EXTRACTOR_VERSION = "0.1.1"
+GENERIC_XMAGE_CLASSES = {
+    "Ability", "Effect", "Cost", "Target", "Filter", "Condition",
+    "OneShotEffect", "ContinuousEffect", "SimpleActivatedAbility",
+    "SimpleStaticAbility", "EntersBattlefieldTriggeredAbility",
+    "DiesSourceTriggeredAbility", "TriggeredAbility", "TriggeredAbilityImpl",
+    "ReplacementEffectImpl", "ContinuousRuleModifyingEffectImpl",
 }
 
 
@@ -111,8 +123,9 @@ def oracle_text(record):
             obj=json.loads(value)
             if isinstance(obj,dict) and isinstance(obj.get("oracle_text"),str): return obj["oracle_text"]
         except Exception: pass
-        m=re.search(r"(?im)^\s*Oracle Text:\s*(.*?)(?=^\s*(?:Colors|Color Identity|Keywords|Rarity|Power|Toughness|Loyalty|Defense):|\Z)",value,re.S)
-        if m: return m.group(1).strip()
+        parts=re.findall(r"^\s*Oracle Text:\s*(.*?)(?=^\s*(?:Name|Mana Cost|CMC|Cmc|Type Line|Colors|Color Identity|Keywords|Rarity|Power|Toughness|Loyalty|Defense|Oracle Text):|\Z)",value,re.I|re.M|re.S)
+        parts=[part.strip() for part in parts if part.strip()]
+        if parts: return "\n".join(parts)
     return ""
 
 
@@ -122,6 +135,158 @@ def oracle_text_relation(source_record, scryfall_card):
     canonical=[scryfall_card.get("oracle_text") or ""]
     canonical.extend(face.get("oracle_text","") for face in (scryfall_card.get("card_faces") or []) if isinstance(face,dict))
     return "MATCH" if source in {norm(t) for t in canonical if t} else "MISMATCH"
+
+
+def scryfall_text_options(card):
+    faces=[f.get("oracle_text","") for f in (card.get("card_faces") or []) if isinstance(f,dict) and f.get("oracle_text")]
+    values=[card.get("oracle_text") or "",*faces]
+    if len(faces)>1: values.append("\n".join(faces))
+    return [norm(t) for t in values if t]
+
+
+def xmage_semantic_classes(classes):
+    """Exclude targeting/filter scaffolding and generic framework base classes."""
+    return sorted(c for c in set(classes) if c not in GENERIC_XMAGE_CLASSES and class_category(c) in {"Ability", "Effect", "Cost", "Condition", "ReplacementEffect"})
+
+
+def resolution_bucket(has_external, mapped_count, unmapped_count, completeness_proven=False):
+    if not has_external: return "NO_EXTERNAL_EVIDENCE"
+    if not mapped_count: return "FULLY_UNRESOLVED"
+    if unmapped_count: return "PARTIALLY_RESOLVED"
+    if completeness_proven: return "FULLY_RESOLVED"
+    return "COMPLETENESS_UNVERIFIED"
+
+
+def partition_tokens(source, tokens, mapping, match_method=None, record_index=None):
+    mapped=defaultdict(list); unmapped=[]
+    for token in tokens:
+        item={"source":source,"token":token}
+        if match_method is not None: item["match_method"]=match_method
+        if record_index is not None: item["source_record_index"]=record_index
+        if token in mapping: mapped[mapping[token]].append(item)
+        else: unmapped.append(item)
+    return mapped,unmapped
+
+
+def summarize_card_resolution(scryfall_total, forge_ids, xmage_ids, mapped_by_card, unmapped_by_card):
+    external=set(forge_ids)|set(xmage_ids); mapped=set(mapped_by_card); unmapped=set(unmapped_by_card)
+    buckets=Counter(resolution_bucket(True,1 if i in mapped else 0,1 if i in unmapped else 0,False) for i in external)
+    return {"scryfall_total":scryfall_total,"with_any_external_evidence":len(external),"with_forge_evidence":len(forge_ids),"with_xmage_evidence":len(xmage_ids),"with_both_evidence":len(set(forge_ids)&set(xmage_ids)),"with_any_mapped_requirement":len(mapped),"fully_unresolved":buckets["FULLY_UNRESOLVED"],"partially_resolved":buckets["PARTIALLY_RESOLVED"],"fully_resolved":buckets["FULLY_RESOLVED"],"resolution_completeness_unverified":buckets["COMPLETENESS_UNVERIFIED"]}
+
+
+def template_normalize(value, name, type_line=""):
+    text=unicodedata.normalize("NFKC",str(value or "")).casefold()
+    if name:
+        text=re.sub(rf"(?<!\w){re.escape(name.casefold())}(?!\w)"," <self> ",text)
+    self_terms={"this creature","this artifact","this enchantment","this planeswalker","this land","this permanent","this spell","this card","this vehicle"}
+    first=(type_line or "").split("—",1)[0].split("//",1)[0].casefold()
+    for term in self_terms:
+        text=re.sub(rf"(?<!\w){re.escape(term)}(?!\w)"," <self> ",text)
+    return norm(text)
+
+
+def mismatch_diagnostic(source, source_record, card):
+    """Return deterministic diagnostic category, text similarity and join status."""
+    source_text=oracle_text(source_record)
+    current=scryfall_text(card)
+    name=card.get("name") or card_name(source_record)
+    faces=[f.get("oracle_text","") for f in (card.get("card_faces") or []) if isinstance(f,dict) and f.get("oracle_text")]
+    if not norm(source_text): return {"category":"UNCLASSIFIED","join_status":"JOIN_TEXT_MISSING","similarity":None,"notes":"Source Oracle text was not extracted."}
+    # This function is used for mismatches only; direct normalized equality is a defensive check.
+    if norm(source_text)==norm(current) or any(norm(source_text)==norm(t) for t in faces):
+        return {"category":"EXACT_AFTER_FACE_TEXT_COMPARISON" if faces else "EXACT_AFTER_REMINDER_TEXT_REMOVAL","join_status":"JOIN_TEXT_MATCH","similarity":1.0,"notes":"Exact normalized text comparison."}
+    source_no_reminder=re.sub(r"\([^()]*\)"," ",source_text)
+    current_no_reminder=re.sub(r"\([^()]*\)"," ",current)
+    if norm(source_no_reminder)==norm(current_no_reminder):
+        category="EXACT_AFTER_REMINDER_TEXT_REMOVAL"
+        return {"category":category,"join_status":"JOIN_TEXT_VARIANT","similarity":1.0,"notes":"Texts agree after removing parenthetical text for diagnosis only."}
+    if template_normalize(source_text,name,card.get("type_line"))==template_normalize(current,name,card.get("type_line")):
+        return {"category":"EXACT_AFTER_CARDNAME_TEMPLATE_NORMALIZATION","join_status":"JOIN_TEXT_VARIANT","similarity":1.0,"notes":"Self-name and self-reference templates agree after normalization."}
+    if faces:
+        joined="\n".join(faces)
+        if norm(source_text)==norm(joined):
+            return {"category":"EXACT_AFTER_FACE_TEXT_COMPARISON","join_status":"JOIN_TEXT_VARIANT","similarity":1.0,"notes":"Source text equals the combined face text representation."}
+    similarity=difflib.SequenceMatcher(None,norm(source_text),norm(current)).ratio()
+    source_tokens=Counter(re.findall(r"\w+",norm(source_text)))
+    current_tokens=Counter(re.findall(r"\w+",norm(current)))
+    token_intersection=sum((source_tokens & current_tokens).values())
+    token_union=sum((source_tokens | current_tokens).values()) or 1
+    overlap=token_intersection/token_union
+    if source=="xmage" and any(marker in source_text for marker in ("Oracle Text:","Color Identity:","\nColors:","\nRarity:")):
+        category="LIKELY_PROMPT_EXTRACTION_ARTIFACT"
+        notes="Extracted Oracle text appears to include prompt labels or metadata."
+    elif faces and max([difflib.SequenceMatcher(None,norm(source_text),norm(t)).ratio() for t in faces]+[0])>=0.55:
+        category="MULTIFACE_REPRESENTATION_DIFFERENCE"
+        notes="Text overlaps a face representation but does not exactly match a single face."
+    elif Counter(re.findall(r"\w+",norm(source_text)))==Counter(re.findall(r"\w+",norm(current))):
+        category="LIKELY_FORMATTING_DIFFERENCE"
+        notes="Word multiset is equal but normalized sequence differs."
+    elif similarity>=0.55 or overlap>=0.40:
+        category="LIKELY_STALE_ORACLE_WORDING"
+        notes="Substantial lexical overlap suggests wording or version drift; this is diagnostic only."
+    elif similarity<0.20 and overlap<0.20:
+        category="POSSIBLE_BAD_JOIN"
+        notes="Very low lexical overlap under an exact-name join; manual identity review is recommended."
+    else:
+        category="UNCLASSIFIED"
+        notes="No deterministic diagnostic rule was decisive."
+    join="JOIN_TEXT_MISMATCH_REVIEW" if category in {"POSSIBLE_BAD_JOIN","UNCLASSIFIED","LIKELY_PROMPT_EXTRACTION_ARTIFACT"} else "JOIN_TEXT_VARIANT"
+    return {"category":category,"join_status":join,"similarity":round(similarity,4),"token_overlap":round(overlap,4),"notes":notes}
+
+
+def mismatch_sample(source, record, card, method, diagnostic):
+    return {"source":source,"card_name":card.get("name"),"oracle_id":card.get("oracle_id"),"match_method":method,
+            "current_scryfall_text":scryfall_text(card),"source_text":oracle_text(record),
+            "category":diagnostic["category"],"join_status":diagnostic["join_status"],"similarity":diagnostic.get("similarity"),
+            "token_overlap":diagnostic.get("token_overlap"),"notes":diagnostic["notes"]}
+
+
+def scryfall_text(card):
+    if card.get("oracle_text"): return card["oracle_text"]
+    return "\n".join(f"{face.get('name','')}: {face.get('oracle_text','')}".strip(": ") for face in (card.get("card_faces") or []) if isinstance(face,dict) and face.get("oracle_text"))
+
+
+def mapping_coverage(counts, mapping):
+    total=sum(counts.values()); covered=sum(count for token,count in counts.items() if token in mapping)
+    unique=len(counts); mapped_unique=sum(token in mapping for token in counts)
+    return {"unique_tokens":unique,"mapped_unique_tokens":mapped_unique,"unmapped_unique_tokens":unique-mapped_unique,
+            "mapped_tokens":sorted(token for token in counts if token in mapping),"unmapped_tokens":sorted(token for token in counts if token not in mapping),
+            "occurrences_total":total,"occurrences_mapped":covered,"occurrences_unmapped":total-covered,
+            "occurrence_coverage":covered/total if total else 0.0,"occurrence_coverage_percent":100*covered/total if total else 0.0,
+            "unique_token_coverage_percent":100*mapped_unique/unique if unique else 0.0}
+
+
+def unmapped_vocab_rows(counts, extracts, source):
+    examples=defaultdict(set)
+    for item in extracts:
+        if source=="forge":
+            record,tokens=item[0],item[1]
+        else:
+            record,tokens=item[0],item[3]
+        name=card_name(record)
+        if name:
+            for token in set(tokens): examples[token].add(name)
+    return [(token,count,"; ".join(sorted(examples[token],key=lambda n:(norm(n),n))[:5])) for token,count in counts.most_common()]
+
+
+def build_mismatch_audit(records, totals):
+    result={"method":"deterministic text diagnostics; identity remains exact-only","sources":{}}
+    for source in ("forge","xmage"):
+        rows=sorted(records[source],key=lambda r:(r["category"],norm(r["card_name"] or ""),r["oracle_id"] or "",r["source_text"]))
+        groups=defaultdict(list)
+        for row in rows: groups[row["category"]].append(row)
+        total=len(rows); classified=total-len(groups.get("UNCLASSIFIED",[]))
+        exact_categories={"EXACT_AFTER_REMINDER_TEXT_REMOVAL","EXACT_AFTER_CARDNAME_TEMPLATE_NORMALIZATION","EXACT_AFTER_FACE_TEXT_COMPARISON"}
+        exact_explained=sum(len(groups.get(category,[])) for category in exact_categories)
+        categories={}
+        for category,items in sorted(groups.items()):
+            categories[category]={"count":len(items),"percentage_of_mismatches":100*len(items)/total if total else 0.0,"examples":items[:20]}
+        review_count=sum(1 for row in rows if row["join_status"]=="JOIN_TEXT_MISMATCH_REVIEW")
+        result["sources"][source]={"matched_text_mismatches":total,"mismatch_records_with_text":totals[source].get("MISMATCH",0),"suspicious_joins":review_count,
+            "classified_count":classified,"classified_percentage":100*classified/total if total else 0.0,
+            "exactly_explained_count":exact_explained,"exactly_explained_percentage":100*exact_explained/total if total else 0.0,
+            "unclassified_count":len(groups.get("UNCLASSIFIED",[])),"categories":categories}
+    return result
 
 
 def all_strings(record): return "\n".join(flatten_text(record))
@@ -160,7 +325,7 @@ def load_sources():
     from datasets import load_dataset
     loaded = {}
     for key, repo in SOURCES.items():
-        loaded[key] = load_dataset(repo, cache_dir=str(RAW / "hf"))
+        loaded[key] = load_dataset(repo, revision=PINNED_REVISIONS[key], cache_dir=str(RAW / "hf"))
     return loaded
 
 
@@ -229,85 +394,131 @@ def mine(rows):
         if len(cand) > 1:
             txt = norm(oracle_text(record))
             if txt:
-                exact = [i for i in cand if norm(sf[i].get("oracle_text")) == txt or any(norm(f.get("oracle_text")) == txt for f in (sf[i].get("card_faces") or []) if isinstance(f, dict))]
+                exact = [i for i in cand if txt in scryfall_text_options(sf[i])]
                 unique=select_unambiguous(exact)
                 if unique is not None: return unique, "normalized_name_and_oracle_text"
             return None, "ambiguous_normalized_name"
         txt = norm(oracle_text(record))
         if txt:
-            exact = by_nt.get((name, txt), [])
+            exact = [i for i in by_nt.get((name, txt), []) if txt in scryfall_text_options(sf[i])]
             if len(exact) == 1: return exact[0], "normalized_name_and_oracle_text"
             if len(exact) > 1: return None, "ambiguous_normalized_name_and_oracle_text"
         return None, "unmatched"
 
-    forge_counts, xmage_counts, f_matches, x_matches = Counter(), Counter(), defaultdict(list), defaultdict(list)
-    unmatched_f, unmatched_x, ambiguous = [], [], []
-    text_audit={"forge":Counter(),"xmage":Counter()}
-    forge_extracts, x_extracts = [], []
-    for rec in forge:
-        idx, method = match(rec); acts, at, snips = forge_extract(rec.get("output", all_strings(rec)))
-        forge_counts.update(acts); forge_extracts.append((acts, at, snips))
+    mapping=read_mapping(); forge_map=mapping.get("forge",{}); xmage_map=mapping.get("xmage",{})
+    forge_counts=Counter(); xmage_counts=Counter(); xmage_all_counts=Counter()
+    forge_extracts=[]; xmage_extracts=[]
+    f_matches=defaultdict(list); x_matches=defaultdict(list)
+    unmatched_f=[]; unmatched_x=[]; ambiguous=[]
+    mismatch_records={"forge":[],"xmage":[]}; text_counts={"forge":Counter(),"xmage":Counter()}
+    suspicious=Counter()
+
+    for rec_index, rec in enumerate(forge):
+        idx,method=match(rec); actions,attrs,snips=forge_extract(rec.get("output",all_strings(rec)))
+        forge_counts.update(actions); forge_extracts.append((rec,actions,attrs,snips))
         if idx is not None:
-            f_matches[idx].append((rec, method, acts, at, snips))
-            text_audit["forge"][oracle_text_relation(rec,sf[idx])]+=1
+            relation=oracle_text_relation(rec,sf[idx]); text_counts["forge"][relation]+=1
+            diagnostic=mismatch_diagnostic("forge",rec,sf[idx]) if relation=="MISMATCH" else {"category":None,"join_status":"JOIN_TEXT_MATCH" if relation=="MATCH" else "JOIN_TEXT_MISSING","similarity":1.0 if relation=="MATCH" else None,"notes":"Exact normalized match." if relation=="MATCH" else "Source Oracle text missing."}
+            if relation=="MISMATCH": mismatch_records["forge"].append(mismatch_sample("forge",rec,sf[idx],method,diagnostic))
+            suspicious["forge"]+=diagnostic["join_status"]=="JOIN_TEXT_MISMATCH_REVIEW"
+            f_matches[idx].append((rec,method,actions,attrs,snips,relation,diagnostic,rec_index))
         elif method.startswith("ambiguous"): ambiguous.append({"source":"forge","method":method,"record":jsonable(rec)})
         else: unmatched_f.append({"record":jsonable(rec),"name":card_name(rec),"reason":method})
-    for rec in xmage:
-        idx, method = match(rec); imports, classes, snippet = java_extract(rec.get("completion", rec.get("output", all_strings(rec))))
-        xmage_counts.update(classes); x_extracts.append((imports, classes))
+
+    for rec_index, rec in enumerate(xmage):
+        idx,method=match(rec); imports,classes,snippet=java_extract(rec.get("completion",rec.get("output",all_strings(rec))))
+        semantic=xmage_semantic_classes(classes)
+        xmage_all_counts.update(classes); xmage_counts.update(semantic); xmage_extracts.append((rec,imports,classes,semantic,snippet))
         if idx is not None:
-            x_matches[idx].append((rec, method, imports, classes, snippet))
-            text_audit["xmage"][oracle_text_relation(rec,sf[idx])]+=1
+            relation=oracle_text_relation(rec,sf[idx]); text_counts["xmage"][relation]+=1
+            diagnostic=mismatch_diagnostic("xmage",rec,sf[idx]) if relation=="MISMATCH" else {"category":None,"join_status":"JOIN_TEXT_MATCH" if relation=="MATCH" else "JOIN_TEXT_MISSING","similarity":1.0 if relation=="MATCH" else None,"notes":"Exact normalized match." if relation=="MATCH" else "Source Oracle text missing."}
+            if relation=="MISMATCH": mismatch_records["xmage"].append(mismatch_sample("xmage",rec,sf[idx],method,diagnostic))
+            suspicious["xmage"]+=diagnostic["join_status"]=="JOIN_TEXT_MISMATCH_REVIEW"
+            x_matches[idx].append((rec,method,imports,classes,semantic,snippet,relation,diagnostic,rec_index))
         elif method.startswith("ambiguous"): ambiguous.append({"source":"xmage","method":method,"record":jsonable(rec)})
         else: unmatched_x.append({"record":jsonable(rec),"name":card_name(rec),"reason":method})
 
-    mapping = read_mapping(); candidates=[]; matched=[]; req_counts=Counter()
-    source_revisions=getattr(mine,"revisions",{})
-    provenance={"extractor_version":"0.1.0","mapping_sha256":hashlib.sha256((ROOT/"mappings.yaml").read_bytes()).hexdigest(),"source_set":{"scryfall":source_revisions.get("scryfall"),"forge":source_revisions.get("forge"),"xmage":source_revisions.get("xmage"),"rules":None}}
-    for i, card in enumerate(sf):
-        f = f_matches.get(i, []); x = x_matches.get(i, [])
-        if f or x:
-            fa = sorted({a for _,_,acts,_,_ in f for a in acts}); xc = sorted({c for _,_,_,cs,_ in x for c in cs})
-            matched.append({"oracle_id":card.get("oracle_id"),"name":card.get("name"),"oracle_text":card.get("oracle_text"),
-                "forge":{"present":bool(f),"actions":fa,"evidence":[{"match_method":m,"oracle_text_comparison":oracle_text_relation(r,card),"input":r.get("input"),"snippets":sn} for r,m,_,_,sn in f]},
-                "xmage":{"present":bool(x),"classes":xc,"evidence":[{"match_method":m,"oracle_text_comparison":oracle_text_relation(r,card),"prompt":r.get("prompt"),"imports":im,"snippet":sn} for r,m,im,_,sn in x]},
-                "match":{"forge":sorted({m for _,m,_,_,_ in f}),"xmage":sorted({m for _,m,_,_,_ in x})}})
-        evidence=defaultdict(list)
-        for _,_,acts,_,_ in f:
-            for token in acts:
-                kind=mapping.get("forge",{}).get(token)
-                if kind: evidence[kind].append({"source":"forge","token":token})
-        for _,_,_,classes,_ in x:
-            for token in classes:
-                kind=mapping.get("xmage",{}).get(token)
-                if kind: evidence[kind].append({"source":"xmage","token":token})
-        if evidence:
-            req=[]
-            for kind, ev in sorted(evidence.items()):
-                sources={e["source"] for e in ev}
-                impl_status=implementation_status(sources)
-                req_counts[impl_status]+=1
-                req.append({"kind":kind,"evidence":ev,"extraction_status":"AUTO_EXTRACTED","implementation_evidence":impl_status,"rules_evidence":"NOT_CHECKED","review_status":"UNREVIEWED"})
-            candidates.append({"oracle_id":card.get("oracle_id"),"name":card.get("name"),"provenance":provenance,"requirements":req})
-        elif f or x:
-            unresolved=[]
-            unresolved.extend({"source":"forge","token":t} for _,_,acts,_,_ in f for t in acts)
-            unresolved.extend({"source":"xmage","token":t} for _,_,_,classes,_ in x for t in classes)
-            req_counts["UNRESOLVED"]+=1
-            candidates.append({"oracle_id":card.get("oracle_id"),"name":card.get("name"),"provenance":provenance,"requirements":[{"kind":"unresolved","evidence":unresolved[:100],"extraction_status":"UNRESOLVED","implementation_evidence":"NONE","rules_evidence":"NOT_CHECKED","review_status":"UNREVIEWED"}]})
-    inv = inventory(rows, getattr(mine,"revisions",{}))
-    field_counts=Counter(a for _,at,_ in forge_extracts for a in at)
-    inv["datasets"]["forge"]["extraction_vocabulary"] = {"actions":dict(forge_counts.most_common(50)),"fields":dict(field_counts.most_common(50))}
-    write_json(OUT/"inventory.json", inv)
-    def csv_counts(path, header, data):
+    forge_mapped=Counter({t:n for t,n in forge_counts.items() if t in forge_map})
+    forge_unmapped=Counter({t:n for t,n in forge_counts.items() if t not in forge_map})
+    xmage_mapped=Counter({t:n for t,n in xmage_counts.items() if t in xmage_map})
+    xmage_unmapped=Counter({t:n for t,n in xmage_counts.items() if t not in xmage_map})
+    mapping_occurrences={
+        "forge":mapping_coverage(forge_counts,forge_map),
+        "xmage":mapping_coverage(xmage_counts,xmage_map),
+    }
+
+    candidates=[]; matched=[]; requirement_counts=Counter()
+    mapped_cards=set(); unmapped_cards=set()
+    unmapped_card_counts={"forge":Counter(),"xmage":Counter()}
+    source_revisions=getattr(mine,"revisions",PINNED_REVISIONS)
+    provenance={"extractor_version":EXTRACTOR_VERSION,"mapping_sha256":hashlib.sha256((ROOT/"mappings.yaml").read_bytes()).hexdigest(),"source_set":{"scryfall":source_revisions.get("scryfall"),"forge":source_revisions.get("forge"),"xmage":source_revisions.get("xmage"),"rules":None}}
+
+    for i,card in enumerate(sf):
+        f=f_matches.get(i,[]); x=x_matches.get(i,[])
+        if not (f or x): continue
+        mapped=defaultdict(list); unmapped=[]
+        for rec,method,actions,attrs,snips,relation,diag,rec_index in f:
+            found,unknown=partition_tokens("forge",actions,forge_map,method,rec_index)
+            for kind,items in found.items():
+                for item in items: item["oracle_text_comparison"]=relation
+                mapped[kind].extend(items)
+            unmapped.extend(unknown)
+            unmapped_card_counts["forge"].update(item["token"] for item in unknown)
+        for rec,method,imports,classes,semantic,snippet,relation,diag,rec_index in x:
+            found,unknown=partition_tokens("xmage",semantic,xmage_map,method,rec_index)
+            for kind,items in found.items():
+                for item in items: item["oracle_text_comparison"]=relation
+                mapped[kind].extend(items)
+            unmapped.extend(unknown)
+            unmapped_card_counts["xmage"].update(item["token"] for item in unknown)
+        mapped_req=[]
+        for kind,evidence in sorted(mapped.items()):
+            impl=implementation_status(e["source"] for e in evidence)
+            requirement_counts[impl]+=1
+            mapped_req.append({"kind":kind,"evidence":evidence,"extraction_status":"AUTO_EXTRACTED","implementation_evidence":impl,"rules_evidence":"NOT_CHECKED","review_status":"UNREVIEWED"})
+        if mapped_req: mapped_cards.add(i)
+        if unmapped: unmapped_cards.add(i)
+        bucket=resolution_bucket(True,len(mapped_req),len(unmapped),False)
+        candidates.append({"oracle_id":card.get("oracle_id"),"name":card.get("name"),"provenance":provenance,"requirements":mapped_req,"unmapped_evidence":unmapped,"resolution_status":bucket,"resolution_note":"Lexical extraction does not prove semantic completeness; no card is declared fully resolved in this calibration pass." if bucket=="COMPLETENESS_UNVERIFIED" else None})
+
+        fa=sorted({a for _,_,actions,_,_,_,_,_ in f for a in actions})
+        xc=sorted({c for _,_,_,classes,_,_,_,_,_ in x for c in classes})
+        matched.append({"oracle_id":card.get("oracle_id"),"name":card.get("name"),"oracle_text":card.get("oracle_text"),
+            "forge":{"present":bool(f),"actions":fa,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"input":r.get("input"),"snippets":sn} for r,m,_,_,sn,rel,diag,_ in f]},
+            "xmage":{"present":bool(x),"classes":xc,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"prompt":r.get("prompt"),"imports":im,"snippet":sn} for r,m,im,_,_,sn,rel,diag,_ in x]},
+            "match":{"forge":sorted({m for _,m,_,_,_,_,_,_ in f}),"xmage":sorted({m for _,m,_,_,_,_,_,_,_ in x})}})
+
+    card_stats=summarize_card_resolution(len(sf),f_matches,x_matches,mapped_cards,unmapped_cards)
+    req_stats={"total_mapped_candidates":sum(requirement_counts.values()),"multi_implementation_agreement":requirement_counts["MULTI_IMPLEMENTATION_AGREEMENT"],"forge_only":requirement_counts["FORGE_ONLY"],"xmage_only":requirement_counts["XMAGE_ONLY"]}
+    req_stats["total_mapped_candidates"]=sum(req_stats[k] for k in ("multi_implementation_agreement","forge_only","xmage_only"))
+    requirement_stats={"cards":card_stats,"requirements":req_stats,"unmapped_evidence":{"forge_tokens":sum(unmapped_card_counts["forge"].values()),"xmage_tokens":sum(unmapped_card_counts["xmage"].values()),"cards_with_unmapped_evidence":len(unmapped_cards)},"definitions":{"fully_unresolved":"External evidence is joined to a Scryfall card, but no extracted semantic token/class has a seed mapping.","partially_resolved":"At least one mapped requirement and at least one unmapped extracted semantic token/class.","fully_resolved":"No cards declared fully resolved because lexical extraction cannot prove that all semantic evidence was captured.","resolution_completeness_unverified":"At least one mapped requirement and no observed unmapped semantic token/class; completeness remains unproven."}}
+
+    mismatch_audit=build_mismatch_audit(mismatch_records,text_counts)
+    suspicious_total=sum(suspicious.values())
+    unmapped_f_rows=unmapped_vocab_rows(forge_unmapped,forge_extracts,"forge")
+    unmapped_x_rows=unmapped_vocab_rows(xmage_unmapped,xmage_extracts,"xmage")
+
+    inv=inventory(rows,source_revisions)
+    inv["remote_head_revisions"]=getattr(mine,"remote_revisions",{})
+    field_counts=Counter(a for _,_,attrs,_ in forge_extracts for a in attrs)
+    inv["datasets"]["forge"]["extraction_vocabulary"]={"actions":dict(forge_counts.most_common(50)),"fields":dict(field_counts.most_common(50))}
+    inv["datasets"]["xmage"]["semantic_class_counts"]=dict(xmage_counts.most_common(100))
+    write_json(OUT/"inventory.json",inv)
+
+    def csv_counts(path,header,data):
         with path.open("w",newline="",encoding="utf-8") as f:
             w=csv.writer(f);w.writerow(header);w.writerows(data)
     csv_counts(OUT/"forge_tokens.csv",["kind","token","count"],[("forge_action",k,v) for k,v in forge_counts.most_common()]+[("forge_field",k,v) for k,v in field_counts.most_common()])
-    # XMage classes are grouped heuristically by name suffix, while all class names remain visible.
-    csv_counts(OUT/"xmage_classes.csv",["category","class_name","count"],[(class_category(k),k,v) for k,v in xmage_counts.most_common()])
+    csv_counts(OUT/"xmage_classes.csv",["category","class_name","count"],[(class_category(k),k,v) for k,v in xmage_all_counts.most_common()])
+    csv_counts(OUT/"unmapped_forge_tokens.csv",["token","count","example_card_names"],unmapped_f_rows)
+    csv_counts(OUT/"unmapped_xmage_classes.csv",["class","count","example_card_names"],unmapped_x_rows)
+    write_json(OUT/"requirement_stats.json",requirement_stats)
+    write_json(OUT/"mapping_coverage.json",mapping_occurrences)
+    write_json(OUT/"oracle_mismatch_audit.json",mismatch_audit)
     write_jsonl(OUT/"matched_cards.jsonl",matched);write_jsonl(OUT/"unmatched_forge.jsonl",unmatched_f);write_jsonl(OUT/"unmatched_xmage.jsonl",unmatched_x);write_jsonl(OUT/"ambiguous_matches.jsonl",ambiguous);write_jsonl(OUT/"requirement_candidates.jsonl",candidates)
-    stats={"scryfall":len(sf),"forge":len(forge),"xmage":len(xmage),"forge_matched_records":sum(map(len,f_matches.values())),"xmage_matched_records":sum(map(len,x_matches.values())),"forge_cards":len(f_matches),"xmage_cards":len(x_matches),"both_cards":len(set(f_matches)&set(x_matches)),"unmatched_forge":len(unmatched_f),"unmatched_xmage":len(unmatched_x),"ambiguous":len(ambiguous),"oracle_text_comparison":{source:dict(counts) for source,counts in text_audit.items()},"requirements":dict(req_counts)}
+    stats={"scryfall":len(sf),"forge":len(forge),"xmage":len(xmage),"forge_matched_records":sum(map(len,f_matches.values())),"xmage_matched_records":sum(map(len,x_matches.values())),"forge_cards":len(f_matches),"xmage_cards":len(x_matches),"both_cards":len(set(f_matches)&set(x_matches)),"unmatched_forge":len(unmatched_f),"unmatched_xmage":len(unmatched_x),"ambiguous":len(ambiguous),"oracle_text_comparison":{source:dict(counts) for source,counts in text_counts.items()},"suspicious_joins":suspicious_total,"requirements":requirement_counts}
     write_json(OUT/"stats.json",stats)
+    mine.last_stats=stats
     return stats
 
 
@@ -320,42 +531,51 @@ def class_category(name):
 
 
 def revisions():
+    return dict(PINNED_REVISIONS)
+
+
+def remote_revisions():
     os.environ.setdefault("HF_HOME", str(RAW / "hf-home"))
     from huggingface_hub import HfApi
     api=HfApi(); result={}
     for key,repo in SOURCES.items():
         try: result[key]=api.dataset_info(repo).sha
-        except Exception as e: result[key]=None
+        except Exception: result[key]=None
     return result
 
 
 def report(stats=None):
-    inv=json.loads((OUT/"inventory.json").read_text(encoding="utf-8")); stats=stats or json.loads((OUT/"stats.json").read_text(encoding="utf-8"))
-    now=dt.datetime.now(dt.timezone.utc).isoformat()
-    lines=["# Manafold CAP miner: bootstrap experiment", "",f"Generated: {now} UTC", "", "## Dataset inventory", ""]
-    for key,d in inv["datasets"].items(): lines += [f"### {key}: `{d['repository']}`", "",f"Revision: `{d.get('revision') or 'unavailable'}`. Rows: **{d['rows']:,}**. Splits: `{d['splits']}`.","",f"Columns: {', '.join('`'+c+'`' for c in d['columns'])}",""]
+    inv=json.loads((OUT/"inventory.json").read_text(encoding="utf-8"))
+    stats=stats or json.loads((OUT/"stats.json").read_text(encoding="utf-8"))
+    card=json.loads((OUT/"requirement_stats.json").read_text(encoding="utf-8"))
+    coverage=json.loads((OUT/"mapping_coverage.json").read_text(encoding="utf-8"))
+    audit=json.loads((OUT/"oracle_mismatch_audit.json").read_text(encoding="utf-8"))
     import importlib.metadata as md
     versions={p:md.version(p) for p in ("datasets","huggingface_hub","PyYAML")}
-    lines += [f"Dataset loading used `datasets`; repository revisions were queried with `huggingface_hub`. Local package versions: `{versions}`. Inventory generation/cache retrieval timestamp: `{inv['generated_at_utc']}` UTC. Rows were materialized from Hugging Face cache at `data/raw/hf`.","", "## Matching", "",f"Scryfall Oracle rows: {stats['scryfall']:,}; Forge records: {stats['forge']:,}; XMage records: {stats['xmage']:,}.",f"Forge records matched: {stats['forge_matched_records']:,}; distinct Oracle identities with Forge: {stats['forge_cards']:,} ({pct(stats['forge_cards'],stats['scryfall'])}).",f"XMage records matched: {stats['xmage_matched_records']:,}; distinct Oracle identities with XMage: {stats['xmage_cards']:,} ({pct(stats['xmage_cards'],stats['scryfall'])}).",f"Both: {stats['both_cards']:,} ({pct(stats['both_cards'],stats['scryfall'])}); unmatched Forge: {stats['unmatched_forge']:,}; unmatched XMage: {stats['unmatched_xmage']:,}; ambiguous records: {stats['ambiguous']:,}.",f"Normalized Oracle-text comparison after name matching: `{stats['oracle_text_comparison']}`. `MISMATCH` is diagnostic (it can indicate stale text, templating differences, or a bad match), not a silently rejected join.","", "Matching tries Oracle ID, normalized exact name (including face names), then normalized name plus normalized Oracle text. It does not fuzzy-match. Records with multiple exact-name candidates are retained as ambiguous.","", "## Forge vocabulary", "", "Action frequencies are in `data/output/forge_tokens.csv`; `$` field vocabulary is in `inventory.json`. The parser inventories observed action names rather than constraining them to a closed list. Top actions:",""]
-    lines += table_rows(OUT/"forge_tokens.csv", 40, "forge_action")
-    lines += ["", "Top Forge `$` fields:", ""]
-    lines += table_rows(OUT/"forge_tokens.csv", 40, "forge_field")
-    lines += ["", "## XMage vocabulary", "", "Java imports and class-like vocabulary are extracted lexically, not parsed as Java. Top classes:",""]
-    lines += table_rows(OUT/"xmage_classes.csv",40)
-    lines += ["", "## Cross-engine evidence", "",f"Requirement candidate counts by implementation evidence: `{stats['requirements']}`. `MULTI_IMPLEMENTATION_AGREEMENT` means both implementations have extracted constructs that the seed map assigns to the same generic candidate. It is corroboration only: all candidates remain `rules_evidence: NOT_CHECKED` and `review_status: UNREVIEWED`. `CONFLICT` is not inferred from different mapped effects on one card because cards commonly contain multiple effects, and this pass has no rule-aware contradiction detector.","", "## Examples and data quality", "", "Machine-readable records retain Oracle text, Forge input/action snippets, and XMage prompt/import/constructor excerpts needed to audit extraction. The report includes review samples below. Scryfall has one row per Oracle ID in this revision. Forge and XMage examples are generated implementation data; mismatched or stale text is possible. Face-name joins can associate a face with its parent card identity. No malformed records were silently repaired.","", "### Simple successful examples", ""]
-    matched_rows=[json.loads(line) for line in (OUT/"matched_cards.jsonl").open(encoding="utf-8")]
-    simple=[r for r in matched_rows if r["forge"]["present"] and r["xmage"]["present"] and len(r.get("oracle_text") or "")<120]
-    lines += [f"- `{r['name']}` — Oracle: {(r.get('oracle_text') or '')[:140]} Forge: `{', '.join(r['forge']['actions'][:5])}`; XMage: `{', '.join(r['xmage']['classes'][:5])}`. Raw Forge: `{first_forge_excerpt(r)}`. Raw XMage: `{first_xmage_excerpt(r)}`." for r in simple[:10]]
-    lines += ["", "### Interesting complex examples", ""]
-    complex_rows=sorted((r for r in matched_rows if r["forge"]["present"] and r["xmage"]["present"]),key=lambda r:len(r.get("oracle_text") or ""),reverse=True)
-    lines += [f"- `{r['name']}` — Oracle excerpt: {(r.get('oracle_text') or '')[:180]} Forge: `{', '.join(r['forge']['actions'][:8])}`; XMage: `{', '.join(r['xmage']['classes'][:8])}`. Raw Forge: `{first_forge_excerpt(r)}`. Raw XMage: `{first_xmage_excerpt(r)}`." for r in complex_rows[:10]]
-    lines += ["", "### Unresolved examples", ""]
-    candidate_rows=[json.loads(line) for line in (OUT/"requirement_candidates.jsonl").open(encoding="utf-8")]
-    lines += [f"- `{r['name']}` — unmapped evidence retained: `{', '.join(dict.fromkeys(e['token'] for q in r['requirements'] for e in q['evidence']) )[:180]}`." for r in [c for c in candidate_rows if any(q['extraction_status']=='UNRESOLVED' for q in c['requirements'])][:10]]
-    lines += ["", "### Ambiguous or problematic joins", ""]
-    ambiguous_rows=[json.loads(line) for line in (OUT/"ambiguous_matches.jsonl").open(encoding="utf-8")]
-    lines += [f"- `{card_name(r.get('record',{})) or '(name unavailable)'}` — `{r['source']}`: `{r['method']}`." for r in ambiguous_rows[:10]]
-    lines += ["", "Observed matching issues include exact-name ambiguity and a small set of records with no exact Scryfall join. The current reports preserve those records in `ambiguous_matches.jsonl` and the source-specific unmatched files. Text mismatch is common: see measured comparisons above. Differences can be stale Oracle wording, templating, or a genuinely problematic join; this pass keeps the join and flags the difference rather than repairing it. The experiment does not systematically validate encoding or Java completeness.","", "## Assessment", "",f"1. Forge and XMage can bootstrap an evidence census over {pct(stats['both_cards'],stats['scryfall'])} of this Oracle corpus; the output remains implementation evidence, not a semantic census without review.",f"2. Forge evidence coverage: {pct(stats['forge_cards'],stats['scryfall'])}.",f"3. XMage evidence coverage: {pct(stats['xmage_cards'],stats['scryfall'])}.",f"4. Both: {pct(stats['both_cards'],stats['scryfall'])}.","5. Repeated actions/classes support a small reviewed mapping seed; the CSV frequency tables give the actual distribution.",f"6. Exact-name ambiguity affects {stats['ambiguous']:,} records; normalized Oracle-text mismatch occurs for Forge {stats['oracle_text_comparison']['forge'].get('MISMATCH',0):,} and XMage {stats['oracle_text_comparison']['xmage'].get('MISMATCH',0):,} matched records. Multiface names, absent fields, text currency, and non-card training examples need review.","7. Deterministic extraction is sufficient to create auditable candidates; it cannot establish correctness by agreement alone.","8. Small Phase 2: version-bound, risk-stratified human samples by pattern; blind double review for high-risk patterns; Wilson lower confidence bounds for precision; report reviewer agreement (simple agreement plus Cohen's kappa and Gwet's AC1 when useful); retain reviewer disagreement separately from extractor errors; stale validation when source, extractor, or mapping versions change; then make CAP eligibility an explicit versioned policy decision with a rule ID and reason. This repository does not yet implement that review or policy layer.","", "Authority boundary: Oracle text is card-specific input; this experiment does not retrieve Comprehensive Rules or official rulings. Forge and XMage are corroborating implementation witnesses only. No LLM, embeddings, or external classification service is used.",""]
+    lines=["# Manafold CAP miner — Phase 0.1.1 Evidence Calibration","",f"Generated: {dt.datetime.now(dt.timezone.utc).isoformat()} UTC","", "## Dataset inventory", ""]
+    for key,d in inv["datasets"].items():
+        latest=inv.get("remote_head_revisions",{}).get(key)
+        state="pinned snapshot" if latest in (None,d.get("revision")) else f"pinned snapshot; current Hub head differs (`{latest}`)"
+        lines += [f"### {key}: `{d['repository']}`","",f"Revision: `{d.get('revision')}` ({state}). Rows: **{d['rows']:,}**. Splits: `{d['splits']}`.",f"Columns: {', '.join('`'+c+'`' for c in d['columns'])}",""]
+    lines += [f"Python package versions: `{versions}`. Cache/materialization timestamp: `{inv['generated_at_utc']}` UTC. Mining is pinned to the Phase 0.1.0 revisions listed above; if the current Hub head has moved, it is recorded but not substituted.","", "## Calibration summary", "",f"Exact-identity matching: Forge {stats['forge_cards']:,}/{stats['scryfall']:,} ({pct(stats['forge_cards'],stats['scryfall'])}); XMage {stats['xmage_cards']:,}/{stats['scryfall']:,} ({pct(stats['xmage_cards'],stats['scryfall'])}); both {stats['both_cards']:,} ({pct(stats['both_cards'],stats['scryfall'])}). Ambiguous records: {stats['ambiguous']:,}.",f"Cards with implementation evidence and at least one mapped requirement: {card['cards']['with_any_mapped_requirement']:,}/{card['cards']['with_any_external_evidence']:,} ({pct(card['cards']['with_any_mapped_requirement'],card['cards']['with_any_external_evidence'])}).",f"Seed mapping SHA-256: `{hashlib.sha256((ROOT/'mappings.yaml').read_bytes()).hexdigest()}`. Extractor version: `{EXTRACTOR_VERSION}`.","", "## Card-level resolution", "", "Card counts are distinct Scryfall Oracle identities, not requirement rows. A card with external evidence is `fully_unresolved` when none of its extracted semantic tokens/classes map; `partially_resolved` when it has both mapped and unmapped evidence. Lexical extraction cannot demonstrate completeness, so `fully_resolved` is conservatively zero. Cards with mapped evidence and no observed unmapped semantic token are shown separately as `resolution_completeness_unverified`.","",f"- Total Oracle identities: **{card['cards']['scryfall_total']:,}**",f"- With any external evidence: **{card['cards']['with_any_external_evidence']:,}**",f"- With Forge / XMage / both: **{card['cards']['with_forge_evidence']:,} / {card['cards']['with_xmage_evidence']:,} / {card['cards']['with_both_evidence']:,}**",f"- With any mapped requirement: **{card['cards']['with_any_mapped_requirement']:,}**",f"- Fully unresolved: **{card['cards']['fully_unresolved']:,}**",f"- Partially resolved: **{card['cards']['partially_resolved']:,}**",f"- Fully resolved: **{card['cards']['fully_resolved']:,}**",f"- Completeness unverified: **{card['cards']['resolution_completeness_unverified']:,}**", "", "## Requirement-level evidence", "", "These counts are mapped requirement candidates (card × generic kind), not cards. `MULTI_IMPLEMENTATION_AGREEMENT` means Forge and XMage independently expose constructs mapped by the seed map to the same generic candidate. It does not mean rules-correct, human-verified, or high-confidence. Every candidate remains `rules_evidence: NOT_CHECKED` and `review_status: UNREVIEWED`.","",f"- Total mapped candidates: **{card['requirements']['total_mapped_candidates']:,}**",f"- Multi-implementation agreement: **{card['requirements']['multi_implementation_agreement']:,}**",f"- Forge only: **{card['requirements']['forge_only']:,}**",f"- XMage only: **{card['requirements']['xmage_only']:,}**",f"- Unmapped evidence attached to matched cards: Forge {card['unmapped_evidence']['forge_tokens']:,} action occurrences; XMage {card['unmapped_evidence']['xmage_tokens']:,} semantic class occurrences; cards affected {card['unmapped_evidence']['cards_with_unmapped_evidence']:,}.","", "## Mapping coverage", "", "Coverage denominators include all records in each pinned source corpus; Forge actions count parsed action occurrences, while each XMage class counts at most once per implementation record. Structural Java bases, targets, and filters are excluded from the XMage semantic-class denominator.",""]
+    for source in ("forge","xmage"):
+        c=coverage[source]
+        lines += [f"### {source}","",f"Unique extracted types: {c['unique_tokens']:,}; mapped: {c['mapped_unique_tokens']:,}; unmapped: {c['unmapped_unique_tokens']:,}.",f"Occurrences: {c['occurrences_mapped']:,}/{c['occurrences_total']:,} mapped ({c['occurrence_coverage_percent']:.2f}%).",""]
+    lines += ["## Oracle mismatch audit","", "Identity matching remains exact and deterministic. Text similarity is used only after an exact-name/Oracle-ID join to label diagnostics; it never establishes identity. Classifier categories are hypotheses or exact-normalization diagnostics, not text repairs.","", "Calibration found that some XMage multiface prompts contain a separate `Oracle Text:` block after a second face's `Name:` and other fields. The earlier extractor could absorb that metadata into the first face's text. The 0.1.1 parser now stops at prompt field boundaries and combines all face text blocks. In this pinned run, the prior 80 `LIKELY_PROMPT_EXTRACTION_ARTIFACT` records disappear; 144 source texts now exactly match the combined face representation. No dataset text was changed.",""]
+    for source in ("forge","xmage"):
+        a=audit["sources"][source]
+        lines += [f"### {source}","",f"Mismatches: {a['matched_text_mismatches']:,}; assigned a diagnostic category: {a['classified_count']:,} ({a['classified_percentage']:.2f}%); `UNCLASSIFIED`: {a['unclassified_count']:,}; suspicious joins requiring manual review: {a['suspicious_joins']:,}.","","| category | count | % of mismatches |","|---|---:|---:|"]
+        lines += [f"| `{category}` | {v['count']:,} | {v['percentage_of_mismatches']:.2f}% |" for category,v in a["categories"].items()]
+        lines += [""]
+    mismatch_total=sum(audit["sources"][s]["matched_text_mismatches"] for s in ("forge","xmage"))
+    unclassified_total=sum(audit["sources"][s]["unclassified_count"] for s in ("forge","xmage"))
+    explained=mismatch_total-unclassified_total
+    exact_explained=sum(audit["sources"][s]["exactly_explained_count"] for s in ("forge","xmage"))
+    lines += [f"Exact diagnostic normalization explains {exact_explained:,}/{mismatch_total:,} mismatches ({pct(exact_explained,mismatch_total)}): equality after reminder-text removal, card-name/self-template normalization, or face-text comparison. Another {explained-exact_explained:,} receive a heuristic diagnostic such as likely stale wording or possible bad join. In total {explained:,}/{mismatch_total:,} ({pct(explained,mismatch_total)}) have a non-`UNCLASSIFIED` category; **{unclassified_total:,}** remain unclassified. Heuristic categories are not confirmed root causes. Categories and up to 20 sorted examples per category are in `data/output/oracle_mismatch_audit.json`.","", "## Top unmapped vocabulary", "", "Examples are the first five distinct names in normalized alphabetical order; token counts are deterministic corpus occurrence counts.","", "### Forge actions", ""]
+    lines += csv_markdown(OUT/"unmapped_forge_tokens.csv",20)
+    lines += ["", "### XMage semantic classes", ""]
+    lines += csv_markdown(OUT/"unmapped_xmage_classes.csv",20)
+    lines += ["", "## Vocabulary overview", "", "Forge action and `$` field counts are in `forge_tokens.csv`; XMage class counts (including structural classes) are in `xmage_classes.csv`. No fuzzy match was used as identity evidence.","", "## Interpretation and next decision", "",f"The new seed mappings changed candidate-level cross-engine agreement from the 0.1.0 baseline of 2,962 to {card['requirements']['multi_implementation_agreement']:,} ({card['requirements']['multi_implementation_agreement']-2962:+,}; {(100*(card['requirements']['multi_implementation_agreement']/2962-1)) if 2962 else 0:+.1f}%). This is a count of mapped candidate pairs, not a correctness score.",f"Exact-name joins with text mismatches flagged for review total {stats.get('suspicious_joins',0):,} across both sources. `oracle_mismatch_audit.json` retains raw current/source text for inspection.","", "This pass only recalibrates deterministic extraction, evidence retention, and seed mappings. It does not fetch rules or official rulings and does not decide CAP eligibility. Forge and XMage remain implementation evidence, not semantic authority. No LLM or embeddings are used.",""]
     (ROOT/"REPORT.md").write_text("\n".join(lines),encoding="utf-8")
 
 
@@ -376,11 +596,18 @@ def table_rows(path, limit, kind=None):
     return ["| token | count |", "|---|---:|"]+[f"| `{r.get('token',r.get('class_name'))}` | {r['count']} |" for r in rows]
 
 
+def csv_markdown(path, limit):
+    with path.open(encoding="utf-8",newline="") as f: rows=list(csv.DictReader(f))[:limit]
+    if not rows: return "(none)"
+    header=list(rows[0])
+    return ["| "+" | ".join(header)+" |","|"+"|".join("---" for _ in header)+"|"]+["| "+" | ".join(str(r.get(k,"")) for k in header)+" |" for r in rows]
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument("command",choices=["download","inspect","mine","report","all"]);args=p.parse_args()
     OUT.mkdir(parents=True,exist_ok=True);RAW.mkdir(parents=True,exist_ok=True)
     if args.command in {"download","inspect","mine","all"}:
-        loaded=load_sources(); rows=dataset_rows(loaded); rev=revisions();mine.revisions=rev
+        loaded=load_sources(); rows=dataset_rows(loaded); rev=revisions();mine.revisions=rev;mine.remote_revisions=remote_revisions()
         if args.command in {"download","inspect"}:
             write_json(OUT/"inventory.json",inventory(rows,rev))
         if args.command in {"mine","all"}: stats=mine(rows)

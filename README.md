@@ -22,10 +22,10 @@ The CLI also supports `download`, `inspect`, `mine`, and `report`. `all` downloa
 - `404NotF0und/MtG-json-to-ForgeScript`
 - `Frogski/xMageData`
 
-The datasets are third-party snapshots and can have stale text, malformed records, or implementation mistakes. Revisions and observed schemas are recorded in `REPORT.md` and `data/output/inventory.json`.
+The datasets are third-party snapshots and can have stale text, malformed records, or implementation mistakes. The miner pins the Phase 0.1.0 dataset revisions; any current Hub-head difference is recorded without silently changing the inputs. Revisions and observed schemas are in `REPORT.md` and `data/output/inventory.json`.
 
 ## Outputs
 
-Generated files go under ignored `data/output/`: inventory, vocabulary CSVs, exact matching samples, unmatched and ambiguous rows, requirement candidates, statistics, and the report. Hugging Face cache files go under ignored `data/raw/`. Generated data is not committed.
+Generated files go under ignored `data/output/`: inventory, vocabulary CSVs, matching samples, requirement candidates/statistics, mapping coverage, unmapped token lists, and the Oracle mismatch audit. Hugging Face cache files go under ignored `data/raw/`. Generated data is not committed.
 
 Requirement candidates separate extraction, implementation evidence, rules evidence, and review state. Agreement between Forge and XMage means corroboration only; it does not establish semantic correctness.
