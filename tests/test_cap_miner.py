@@ -226,9 +226,13 @@ class MinerHelpersTest(unittest.TestCase):
     def test_validation_plan_is_bounded_and_zone_patterns_keep_context_fields(self):
         import yaml
         from pathlib import Path
-        plan=yaml.safe_load((Path(__file__).resolve().parents[1]/"validation_plan.yaml").read_text(encoding="utf-8"))
+        text=(Path(__file__).resolve().parents[1]/"validation_plan.yaml").read_text(encoding="utf-8")
+        self.assertEqual(text.count("interval_method_threshold:"),1)
+        self.assertEqual(text.count("interval_method_policy:"),1)
+        plan=yaml.safe_load(text)
         self.assertEqual(len(plan["patterns"]),15)
         self.assertLessEqual(sum(p["sample_size"] for p in plan["patterns"]),500)
+        self.assertEqual(plan["sampling"]["interval_method_threshold"],0.05)
         zone=next(p for p in plan["patterns"] if p["pattern_id"]=="forge.change_zone.v1")
         self.assertTrue({"Origin","Destination","ValidTgts","ChangeType","ChangeNum"}.issubset(zone["context_fields"]))
 
