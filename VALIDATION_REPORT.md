@@ -1,65 +1,104 @@
-# Phase 0.2A — Pattern Validation Harness + Review Packet
+# Phase 0.2A.1 — Statistical & Sampling Corrections
 
 ## Summary
 
-Selected 15 patterns and produced 460 deterministic card-level review samples from 27,896 pattern/source occurrences. Risk classes: LOW 3, MEDIUM 8, HIGH 4.
-All inputs use pinned revisions Scryfall `0ce026779dae1a9a6448ef7a85e606d662343f5e`, Forge `cef86f363d7f7d5b3293248a75f550a7c3404066`, XMage `6212eb37907c1ce751d8a3fea8b3322056dc0264`. Extractor `0.2.0`; mapping SHA-256 `3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a`.
+Primary probability sample: 460 items; forced join-warning audit: 1; total review packet items: 461. The original LOW-risk 60 and all 460 Phase 0.2A probability sample IDs are preserved.
+Selected patterns: 15 (LOW 3, MEDIUM 8, HIGH 4); blind second review is assigned to 208 primary probability items.
+Pinned source revisions are Scryfall `0ce026779dae1a9a6448ef7a85e606d662343f5e`, Forge `cef86f363d7f7d5b3293248a75f550a7c3404066`, XMage `6212eb37907c1ce751d8a3fea8b3322056dc0264`. Extractor `0.2.0`; mapping SHA-256 `3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a`.
 
-No mapping has been validated yet. No precision claim is made yet. No CAP eligibility decision exists.
+No real review results were consumed. No semantic precision is calculated. No mappings, rules evidence, or CAP eligibility were changed.
 
-## Selected patterns
+## Statistical sampling corrections
 
-Population is the number of distinct exact-joined Scryfall identities containing the construct (or both constructs for cross patterns). `source_population_records` counts all source records with the construct across the pinned corpus; it is a different unit. Sampling uses only exact-joined identities. The cross-pattern rows are labeled corroboration, not independent semantic validation.
+Primary probability items remain distinct from forced audit items. `total_samples` and all pattern sample-size/interval calculations refer only to the 460 probability items. The single forced audit item has `selection_basis: FORCED_FLAGGED_JOIN_AUDIT`; it is excluded from every statistical denominator.
+The existing 460 probability sample IDs match the captured Phase 0.2A baseline digest `feeb4a19ef205df5cb61078e2df8f1ba11f4570b548ac238bd84f59447e93faf`; the LOW 60 match `7423edb900b12bbd86242937da295ea66833c0b4dbcafce1c643917c260eac31`. Existing Reviewer-A decisions can reuse those IDs.
 
-| pattern | why selected | risk | population cards | target n | sampled n | both-engine cards | second review n |
-|---|---|---:|---:|---:|---:|---:|---:|
-| `forge.draw.v1` | Explicit draw action; useful low-risk baseline for a frequent primitive. | LOW | 2,458 | 20 | 20 | 1,567 | 0 |
-| `forge.token.v1` | Explicit token creation action; compare card text with script token parameters. | LOW | 2,230 | 20 | 20 | 1,462 | 0 |
-| `xmage.gain_life_effect.v1` | Narrow named effect with a direct gain-life meaning. | LOW | 684 | 20 | 20 | 646 | 0 |
-| `forge.deal_damage.v1` | Damage amount, recipient, and distribution can materially change the requirement context. | MEDIUM | 2,070 | 30 | 30 | 1,342 | 6 |
-| `forge.destroy.v1` | Inspect target/filter and regeneration-related parameters; the action name alone may be broad. | MEDIUM | 1,205 | 30 | 30 | 810 | 6 |
-| `forge.put_counter.v1` | Counter type, quantity, target, and scope may be important omitted context. | MEDIUM | 1,947 | 30 | 30 | 1,279 | 6 |
-| `xmage.damage_target_effect.v1` | Named damage effect, but amount and target scope require contextual review. | MEDIUM | 921 | 30 | 30 | 871 | 6 |
-| `xmage.destroy_target_effect.v1` | Targeted destroy effect; inspect filters and effect parameters. | MEDIUM | 705 | 30 | 30 | 672 | 6 |
-| `xmage.add_counters_source_effect.v1` | Source counter effect; counter kind, amount, and recipient may be broader than the generic candidate. | MEDIUM | 832 | 30 | 30 | 784 | 6 |
-| `forge.change_zone.v1` | Origin, destination, selection, cardinality, and object linkage may be collapsed by the generic requirement. | HIGH | 4,136 | 40 | 40 | 2,660 | 40 |
-| `forge.change_zone_all.v1` | Mass transitions may differ materially from single-object transitions; inspect filters and cardinality. | HIGH | 467 | 40 | 40 | 302 | 40 |
-| `xmage.exile_target_effect.v1` | Exile is a specific destination and targeted effect; test whether zone_transition is too broad. | HIGH | 243 | 40 | 40 | 228 | 40 |
-| `xmage.return_to_hand_source_effect.v1` | Return-to-hand has source-object and destination context that may not fit a bare transition label. | HIGH | 117 | 40 | 40 | 115 | 40 |
-| `cross.damage.deal_damage__damage_target_effect.v1` | Review cards with both implementation constructs; agreement is corroboration, not independent semantic authority. | MEDIUM | 869 | 30 | 30 | 869 | 6 |
-| `cross.create_token.token__create_token_effect.v1` | Review cards with both implementation constructs; agreement does not establish rules correctness. | MEDIUM | 1,196 | 30 | 30 | 1,196 | 6 |
+## Finite population handling
 
-High-risk context to inspect:
-- `forge.change_zone.v1`: Origin, Destination, ValidTgts, ValidCards, ChangeType, ChangeNum, Defined, SubAbility.
-- `forge.change_zone_all.v1`: Origin, Destination, ValidCards, ChangeType, ChangeNum, selection_mode, cardinality.
-- `xmage.exile_target_effect.v1`: target, filter, source_zone, destination_zone.
-- `xmage.return_to_hand_source_effect.v1`: source_object, source_zone, destination_zone, owner_or_controller.
+Method selector threshold: sampling fraction <= 5% uses `WILSON_BINOMIAL`; larger fractions use `FINITE_POPULATION_HYPERGEOMETRIC` exact inversion under hypergeometric sampling without replacement. This is a planned method only; accepted counts are null, so no interval estimate or bound is calculated.
+Patterns by planned method: Wilson/binomial 12; finite-population hypergeometric 3.
 
-## Deterministic sampling
+| pattern | N | probability n | sampling fraction | planned interval | forced n |
+|---|---:|---:|---:|---|---:|
+| `forge.draw.v1` | 2,458 | 20 | 0.00814 | `WILSON_BINOMIAL` | 0 |
+| `forge.token.v1` | 2,230 | 20 | 0.00897 | `WILSON_BINOMIAL` | 0 |
+| `xmage.gain_life_effect.v1` | 684 | 20 | 0.02924 | `WILSON_BINOMIAL` | 0 |
+| `forge.deal_damage.v1` | 2,070 | 30 | 0.01449 | `WILSON_BINOMIAL` | 1 |
+| `forge.destroy.v1` | 1,205 | 30 | 0.02490 | `WILSON_BINOMIAL` | 0 |
+| `forge.put_counter.v1` | 1,947 | 30 | 0.01541 | `WILSON_BINOMIAL` | 0 |
+| `xmage.damage_target_effect.v1` | 921 | 30 | 0.03257 | `WILSON_BINOMIAL` | 0 |
+| `xmage.destroy_target_effect.v1` | 705 | 30 | 0.04255 | `WILSON_BINOMIAL` | 0 |
+| `xmage.add_counters_source_effect.v1` | 832 | 30 | 0.03606 | `WILSON_BINOMIAL` | 0 |
+| `forge.change_zone.v1` | 4,136 | 40 | 0.00967 | `WILSON_BINOMIAL` | 0 |
+| `forge.change_zone_all.v1` | 467 | 40 | 0.08565 | `FINITE_POPULATION_HYPERGEOMETRIC` | 0 |
+| `xmage.exile_target_effect.v1` | 243 | 40 | 0.16461 | `FINITE_POPULATION_HYPERGEOMETRIC` | 0 |
+| `xmage.return_to_hand_source_effect.v1` | 117 | 40 | 0.34188 | `FINITE_POPULATION_HYPERGEOMETRIC` | 0 |
+| `cross.damage.deal_damage__damage_target_effect.v1` | 869 | 30 | 0.03452 | `WILSON_BINOMIAL` | 0 |
+| `cross.create_token.token__create_token_effect.v1` | 1,196 | 30 | 0.02508 | `WILSON_BINOMIAL` | 0 |
 
-Pattern-specific candidates are deduplicated by Oracle identity. Within each pattern, examples are grouped by card type, single-face/multiface layout, Oracle-text length, and available engine evidence. Within each stratum they are ordered by SHA-256 of stable sample ID; sorted strata are then interleaved round-robin until the target is reached. Sample IDs bind pattern ID, Oracle ID, and pinned source-record identity. Repeated source-row occurrences are reserved after first selection so the same row is not accidentally reviewed twice across this batch. If a pattern's eligible pool is below target, all available cards are included.
-The packet contains 460 samples, at most 500. Source occurrence identities are based on global row offsets within the pinned dataset revision; source revision is part of the identity.
+The standard-library hypergeometric interval helper in `src/cap_miner.py` is prepared for later result aggregation. Synthetic tests cover bounds and census collapse. It is not run on absent review data.
 
-## Reviewer protocol
+## Known warning coverage
 
-Second review is required for 208 samples: all HIGH-risk items and a deterministic 20% from each MEDIUM-risk pattern (208 marked in the packet). LOW-risk items have no second review in this initial batch.
-Each item has empty `review_fields`. `review_results.example.yaml` shows the result format. Give Reviewer B a separate copy containing the selected `second_review_required` items; do not include Reviewer A's result file. Reviewer IDs are opaque labels. No review results were supplied or inferred.
+Known Phase 0.1.2 warning records: 9. Naturally sampled: 1. Forced audit samples added: 1. Of the warnings relevant to selected patterns, 2 have review coverage. Other warnings remain registered but do not relate to these selected patterns.
 
-## Retained context
+| card | relevant selected patterns | coverage | sample ID |
+|---|---|---|---|
+| `Expedition Skulker` | none | `NOT_RELEVANT_TO_SELECTED_PATTERNS` | `` |
+| `Koma's Faithful` | none | `NOT_RELEVANT_TO_SELECTED_PATTERNS` | `` |
+| `Wall of Lost Thoughts` | none | `NOT_RELEVANT_TO_SELECTED_PATTERNS` | `` |
+| `Wailing Ghoul` | none | `NOT_RELEVANT_TO_SELECTED_PATTERNS` | `` |
+| `Faerie Seer` | none | `NOT_RELEVANT_TO_SELECTED_PATTERNS` | `` |
+| `Pelakka Wurm` | forge.draw.v1, xmage.gain_life_effect.v1 | `COVERED_BY_PROBABILITY_SAMPLE` | `03c21bde94362c90febaf2aa` |
+| `Fanatical Firebrand` | forge.deal_damage.v1, xmage.damage_target_effect.v1, cross.damage.deal_damage__damage_target_effect.v1 | `COVERED_BY_FORCED_AUDIT` | `a5aad239504276dc868b6712` |
+| `Kargan Dragonrider` | none | `NOT_RELEVANT_TO_SELECTED_PATTERNS` | `` |
+| `Undersea Invader` | none | `NOT_RELEVANT_TO_SELECTED_PATTERNS` | `` |
 
-Review items include current Scryfall Oracle text, card type/layout/faces, implementation evidence, and exact join method. Forge evidence retains script action snippets and parsed `$` parameters such as origin, destination, target/filter, cardinality, damage/counter/token values when present. XMage evidence retains prompt fields, imports/classes, and a source excerpt around relevant constructors. Higher-risk zone patterns explicitly list the context fields reviewers should inspect.
-All nine Phase 0.1.2 `KEEP_WITH_FLAG` XMage type-line warnings are listed in `pattern_inventory.json`; 1 sampled card carries warning metadata directly in its review item. Join review remains separate from semantic pattern review.
+Forced records carry their reviewed join status/reason and use stable IDs. They are audit coverage, not representative observations. Warnings outside the selected pattern populations stay in the warning register and are not forced into unrelated pattern reviews.
 
-## Validation state
+## Oracle text availability
 
-Every pattern is `AWAITING_REVIEW`; `patterns_validated = 0`. Precision estimate and Wilson bounds are null. Inter-rater agreement is `NOT_AVAILABLE`; no Cohen's kappa or Gwet's AC1 value is produced without two real independent result sets.
+Counts below use exactly the 460 primary probability items; forced audit items are excluded. Source availability is distinct from canonical Scryfall text.
+- Pattern-source Oracle text: PRESENT 414; MISSING 46.
+- Source-by-engine rows: Forge PRESENT 380, MISSING 69, NOT_AVAILABLE 11; XMage PRESENT 453, MISSING 0, NOT_AVAILABLE 7.
+- Canonical parent text available: 398.
+- Canonical face text available: 62.
+- Canonical parent and face text available: 0.
+- Canonical text completely missing: 0.
+- Source text missing while canonical face text exists: 42.
 
-Proposed Phase 0.2B reporting: accept only `CORRECT` as accepted for a primary precision estimate; show `TOO_BROAD`, `TOO_NARROW`, `CONTEXT_DEPENDENT`, and `WRONG` separately as decisive non-accepts. Keep `AMBIGUOUS` and `SOURCE_EVIDENCE_INSUFFICIENT` out of that decisive denominator and report them separately. Exclude reviewer disagreements from precision until adjudicated; do not count disagreement as an extractor error. Report raw agreement plus an agreement coefficient only after independent reviews exist. Use the Wilson 95% lower bound when interpreting small sample estimates.
+| pattern | primary n | source PRESENT | source MISSING | parent text | face text | canonical missing |
+|---|---:|---:|---:|---:|---:|---:|
+| `cross.create_token.token__create_token_effect.v1` | 30 | 26 | 4 | 26 | 4 | 0 |
+| `cross.damage.deal_damage__damage_target_effect.v1` | 30 | 27 | 3 | 28 | 2 | 0 |
+| `forge.change_zone.v1` | 40 | 32 | 8 | 32 | 8 | 0 |
+| `forge.change_zone_all.v1` | 40 | 36 | 4 | 37 | 3 | 0 |
+| `forge.deal_damage.v1` | 30 | 25 | 5 | 25 | 5 | 0 |
+| `forge.destroy.v1` | 30 | 26 | 4 | 26 | 4 | 0 |
+| `forge.draw.v1` | 20 | 14 | 6 | 16 | 4 | 0 |
+| `forge.put_counter.v1` | 30 | 23 | 7 | 23 | 7 | 0 |
+| `forge.token.v1` | 20 | 15 | 5 | 15 | 5 | 0 |
+| `xmage.add_counters_source_effect.v1` | 30 | 30 | 0 | 27 | 3 | 0 |
+| `xmage.damage_target_effect.v1` | 30 | 30 | 0 | 25 | 5 | 0 |
+| `xmage.destroy_target_effect.v1` | 30 | 30 | 0 | 27 | 3 | 0 |
+| `xmage.exile_target_effect.v1` | 40 | 40 | 0 | 36 | 4 | 0 |
+| `xmage.gain_life_effect.v1` | 20 | 20 | 0 | 16 | 4 | 0 |
+| `xmage.return_to_hand_source_effect.v1` | 40 | 40 | 0 | 39 | 1 | 0 |
 
-## Data quality and blockers
+Each review item carries `source_oracle_text_status`, per-engine source statuses, `canonical_oracle_text_status`, and a named `canonical_oracle.faces` array. `source_oracle_text_status: MISSING` does not imply missing canonical support. `rules_evidence` remains `NOT_CHECKED`; Oracle text is not Comprehensive Rules evidence.
 
-No pinned-source or join-review blocker occurred. The existing suspicious-join review retained 49 stale-wording joins and 9 warning-flagged XMage type-line encoding cases; packet items preserve those warnings. Cross-engine patterns measure whether the proposed generic requirement describes the card-level evidence, not whether either engine is rules-correct.
+## Requirement evidence projection
 
-## Ready for human review
+`requirement_evidence_projection.yaml` lists separate source mapping paths for 5 Requirements. Pattern precision is not averaged, summed, minimized, maximized, or combined. When both engines support a card candidate, retain Forge and XMage path results separately and record the cross pattern as `CROSS_IMPLEMENTATION_CORROBORATION` only.
 
-Yes. Review the JSONL packet and return completed result YAML separately per reviewer. Do not edit mappings or treat corroboration as validation in this phase.
+## Existing review compatibility
+
+`EXISTING_REVIEW_COMPATIBILITY = PRESERVED`. A runtime guard verifies the complete 460-ID digest and the LOW-risk 60-ID digest before writing the packet. Forced audit items are appended separately; probability rows are not regenerated with altered IDs.
+
+## Validation state and next review
+
+No real Reviewer-A decisions were consumed. No real precision or reviewer agreement is available. Pattern statuses remain `AWAITING_REVIEW`; `patterns_validated = 0`; no CAP eligibility decision exists.
+
+Review `data/output/review_samples.jsonl` for probability samples. Review `data/output/forced_audit_samples.jsonl` separately for forced warning audits. Record results in separate reviewer YAML files copied from `review_results.example.yaml`; do not show Reviewer A's answers to Reviewer B. Use only `selection_basis: PROBABILITY_SAMPLE` for later precision inference. Keep forced audit findings separate.
+
+Phase 0.2B should report source-path validation profiles rather than one synthetic Requirement precision. For a future primary estimate, count `CORRECT` as accepted and decisive labels (`TOO_BROAD`, `TOO_NARROW`, `CONTEXT_DEPENDENT`, `WRONG`) as non-accepts; report `AMBIGUOUS`, `SOURCE_EVIDENCE_INSUFFICIENT`, and reviewer disagreement separately. Exclude disagreements until adjudicated. No such aggregation is implemented here.

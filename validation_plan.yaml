@@ -11,6 +11,10 @@ sampling:
   algorithm: stable_sha256_order_with_round_robin_stratification
   sample_identity: pattern_id + oracle_id + source_record_identity
   deduplicate_within_pattern: oracle_id
+  interval_method_threshold: 0.05
+  interval_method_policy: Wilson/binomial through five percent sampling fraction; exact hypergeometric inversion above five percent
+  interval_method_threshold: 0.05
+  interval_method_policy: sampling_fraction <= threshold uses Wilson/binomial; larger fractions use exact hypergeometric inversion without replacement
   strata:
     - card_type
     - single_face_or_multiface

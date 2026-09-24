@@ -30,6 +30,8 @@ PINNED_REVISIONS = {
 EXTRACTOR_VERSION = "0.2.0"
 VALIDATION_EXTRACTOR_VERSION = "0.2.0"
 REVIEW_DECISIONS = {"CORRECT","TOO_BROAD","TOO_NARROW","CONTEXT_DEPENDENT","WRONG","AMBIGUOUS","SOURCE_EVIDENCE_INSUFFICIENT"}
+PHASE_0_2A_SAMPLE_IDS_SHA256 = "feeb4a19ef205df5cb61078e2df8f1ba11f4570b548ac238bd84f59447e93faf"
+PHASE_0_2A_LOW_SAMPLE_IDS_SHA256 = "7423edb900b12bbd86242937da295ea66833c0b4dbcafce1c643917c260eac31"
 VALIDATION_EXTRACTOR_VERSION = "0.2.0"
 REVIEW_DECISIONS = {"CORRECT","TOO_BROAD","TOO_NARROW","CONTEXT_DEPENDENT","WRONG","AMBIGUOUS","SOURCE_EVIDENCE_INSUFFICIENT"}
 GENERIC_XMAGE_CLASSES = {
@@ -123,8 +125,121 @@ def wilson_interval(accepted, total, z=1.959963984540054):
     return {"estimate":p,"reviewed_n":total,"accepted_n":accepted,"confidence_level":0.95,"interval_method":"wilson","lower":max(0.0,center-radius),"upper":min(1.0,center+radius)}
 
 
+def sampling_fraction(population_n, sample_n):
+    return sample_n/population_n if population_n>0 else None
+
+
+def interval_method_for_population(population_n, sample_n, threshold=0.05):
+    fraction=sampling_fraction(population_n,sample_n)
+    if fraction is None or sample_n<=0: return "NOT_AVAILABLE"
+    return "WILSON_BINOMIAL" if fraction<=threshold else "FINITE_POPULATION_HYPERGEOMETRIC"
+
+
+def primary_interval_summary(population_n, sample_n, threshold=0.05):
+    method=interval_method_for_population(population_n,sample_n,threshold)
+    if method=="FINITE_POPULATION_HYPERGEOMETRIC":
+        interval=hypergeometric_interval(population_n,sample_n,None)
+    else:
+        interval={"method":method,"population_n":population_n,"sample_n":sample_n,"accepted_n":None,"confidence_level":0.95,"estimate":None,"lower":None,"upper":None}
+    return {"sampling_fraction":sampling_fraction(population_n,sample_n),"planned_interval_method":method,"interval":interval}
+
+
+def _log_choose(n,k):
+    if k<0 or k>n: return float("-inf")
+    return math.lgamma(n+1)-math.lgamma(k+1)-math.lgamma(n-k+1)
+
+
+def _hypergeometric_tails(population_n,population_successes,sample_n,observed):
+    low=max(0,sample_n-(population_n-population_successes));high=min(sample_n,population_successes)
+    denom=_log_choose(population_n,sample_n)
+    lower=upper=0.0
+    for x in range(low,high+1):
+        logp=_log_choose(population_successes,x)+_log_choose(population_n-population_successes,sample_n-x)-denom
+        probability=math.exp(logp) if logp>-745 else 0.0
+        if x<=observed: lower+=probability
+        if x>=observed: upper+=probability
+    return min(1.0,lower),min(1.0,upper)
+
+
+def hypergeometric_interval(population_n, sample_n, accepted_n, confidence_level=0.95):
+    """Equal-tailed exact inversion for a hypergeometric population proportion."""
+    base={"method":"FINITE_POPULATION_HYPERGEOMETRIC","population_n":population_n,"sample_n":sample_n,"accepted_n":accepted_n,"confidence_level":confidence_level,"estimate":None,"lower":None,"upper":None}
+    if population_n<0 or sample_n<0 or sample_n>population_n: raise ValueError("Require 0 <= sample_n <= population_n")
+    if accepted_n is None: return base
+    if accepted_n<0 or accepted_n>sample_n: raise ValueError("accepted_n must be between zero and sample_n")
+    if population_n==0: return base
+    if sample_n==population_n:
+        estimate=accepted_n/population_n
+        return {**base,"estimate":estimate,"lower":estimate,"upper":estimate}
+    alpha=(1-confidence_level)/2
+    plausible=[]
+    for successes in range(population_n+1):
+        lower_tail,upper_tail=_hypergeometric_tails(population_n,successes,sample_n,accepted_n)
+        if lower_tail>=alpha and upper_tail>=alpha: plausible.append(successes)
+    if not plausible: return {**base,"estimate":accepted_n/sample_n if sample_n else None}
+    return {**base,"estimate":accepted_n/sample_n if sample_n else None,"lower":min(plausible)/population_n,"upper":max(plausible)/population_n}
+
+
+def empty_interval_for_population(population_n, sample_n, threshold=0.05):
+    method=interval_method_for_population(population_n,sample_n,threshold)
+    if method=="FINITE_POPULATION_HYPERGEOMETRIC":
+        return hypergeometric_interval(population_n,sample_n,None)
+    return {"method":method,"population_n":population_n,"sample_n":sample_n,"accepted_n":None,"confidence_level":0.95,"estimate":None,"lower":None,"upper":None}
+
+
+def canonical_oracle_info(card):
+    faces=[{"name":face.get("name"),"oracle_text":face.get("oracle_text")} for face in (card.get("card_faces") or []) if isinstance(face,dict) and face.get("oracle_text")]
+    parent=card.get("oracle_text") or None
+    if parent and faces: status="PARENT_AND_FACE_TEXT_AVAILABLE"
+    elif parent: status="PARENT_TEXT_AVAILABLE"
+    elif faces: status="FACE_TEXT_AVAILABLE"
+    else: status="MISSING"
+    return {"status":status,"parent_text":parent,"faces":faces}
+
+
+def source_text_status_by_engine(evidence):
+    result={}
+    for source in ("forge","xmage"):
+        item=evidence.get(source,{})
+        result[source]="NOT_AVAILABLE" if not item.get("present") else ("PRESENT" if str(item.get("source_oracle_text") or "").strip() else "MISSING")
+    return result
+
+
+def build_oracle_availability(probability_samples):
+    source_sample_counts=Counter(); by_engine={s:Counter() for s in ("forge","xmage")}
+    canonical_counts=Counter(); by_pattern=defaultdict(lambda:{"sample_count":0,"source_text_present":0,"source_text_missing":0,"canonical_parent_text_available":0,"canonical_face_text_available":0,"canonical_text_missing":0})
+    missing_source_with_face=0
+    for sample in probability_samples:
+        source_sample_counts[sample["source_oracle_text_status"]]+=1
+        for engine,status in sample["source_oracle_text_status_by_engine"].items(): by_engine[engine][status]+=1
+        canonical=sample["canonical_oracle_text_status"]; canonical_counts[canonical]+=1
+        row=by_pattern[sample["pattern_id"]];row["sample_count"]+=1
+        row["source_text_present"]+=sample["source_oracle_text_status"]=="PRESENT"
+        row["source_text_missing"]+=sample["source_oracle_text_status"]=="MISSING"
+        row["canonical_parent_text_available"]+=canonical in {"PARENT_TEXT_AVAILABLE","PARENT_AND_FACE_TEXT_AVAILABLE"}
+        row["canonical_face_text_available"]+=canonical in {"FACE_TEXT_AVAILABLE","PARENT_AND_FACE_TEXT_AVAILABLE"}
+        row["canonical_text_missing"]+=canonical=="MISSING"
+        missing_source_with_face+=sample["source_oracle_text_status"]=="MISSING" and canonical in {"FACE_TEXT_AVAILABLE","PARENT_AND_FACE_TEXT_AVAILABLE"}
+    return {"unit":"primary probability sample review items (forced audit items excluded)","primary_sample_count":len(probability_samples),"source_oracle_text_status":{"PRESENT":source_sample_counts["PRESENT"],"MISSING":source_sample_counts["MISSING"]},"source_oracle_text_by_engine":{engine:{"PRESENT":counts["PRESENT"],"MISSING":counts["MISSING"],"NOT_AVAILABLE":counts["NOT_AVAILABLE"]} for engine,counts in by_engine.items()},"canonical_oracle_text_status":{status:canonical_counts[status] for status in ("PARENT_TEXT_AVAILABLE","FACE_TEXT_AVAILABLE","PARENT_AND_FACE_TEXT_AVAILABLE","MISSING")},"canonical_parent_text_available":canonical_counts["PARENT_TEXT_AVAILABLE"]+canonical_counts["PARENT_AND_FACE_TEXT_AVAILABLE"],"canonical_face_text_available":canonical_counts["FACE_TEXT_AVAILABLE"]+canonical_counts["PARENT_AND_FACE_TEXT_AVAILABLE"],"canonical_text_missing":canonical_counts["MISSING"],"source_missing_but_canonical_face_available":missing_source_with_face,"by_pattern":{pattern:values for pattern,values in sorted(by_pattern.items())}}
+
+
 def deterministic_sample_id(pattern_id, oracle_id, source_record_identity):
     key="\x1f".join((pattern_id,str(oracle_id),str(source_record_identity)))
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()[:24]
+
+
+def sample_id_set_sha256(samples):
+    ids=sorted(sample["sample_id"] if isinstance(sample,dict) else str(sample) for sample in samples)
+    return hashlib.sha256(("\n".join(ids)+"\n").encode("utf-8")).hexdigest()
+
+
+def sample_id_set_sha256(samples):
+    ids=sorted(sample["sample_id"] if isinstance(sample,dict) else str(sample) for sample in samples)
+    return hashlib.sha256(("\n".join(ids)+"\n").encode("utf-8")).hexdigest()
+
+
+def forced_audit_sample_id(audit_id, pattern_id, source_record_identity):
+    key="\x1f".join(("FORCED_FLAGGED_JOIN_AUDIT",audit_id,pattern_id,str(source_record_identity)))
     return hashlib.sha256(key.encode("utf-8")).hexdigest()[:24]
 
 
@@ -209,6 +324,8 @@ def generate_review_artifacts(sf, f_matches, x_matches, forge_extracts, xmage_ex
     samples=[]; inventories=[]; used_occurrences=set()
     matched_ids=set(f_matches)|set(x_matches)
     both_engine_ids=set(f_matches)&set(x_matches)
+    known_join_warning_ids={d["oracle_id"] for d in reviewed_decisions.values() if d["action"]=="KEEP_WITH_FLAG"}
+    pattern_candidate_lookup={}
 
     def matches_for_construct(source, index, construct):
         if source=="forge":
@@ -228,6 +345,31 @@ def generate_review_artifacts(sf, f_matches, x_matches, forge_extracts, xmage_ex
         java=record.get("completion",record.get("output",""))
         excerpt=java_review_excerpt(java,set(selected_constructs)|set(semantic))
         return {"present":True,"source_record_identity":row_id(source,chosen),"match_method":method,"selected_constructs":sorted(selected_constructs),"semantic_classes":semantic,"imports":imports,"source_oracle_text":oracle_text(record),"oracle_text_comparison":relation,"prompt":record.get("prompt",""),"java_excerpt":excerpt,"join_review":join_review_metadata(source,card.get("oracle_id"),reviewed_decisions)}
+
+    def build_review_item(spec,candidate,sample_id,selection_basis,second_review_required=False,known_join_warning=False,forced_decision=None):
+        index=candidate["index"];card=candidate["card"];chosen=candidate["chosen"]
+        construct_specs=spec.get("external_constructs") or [{"source":spec["source"],"token":spec["external_construct"]}]
+        pattern_constructs=defaultdict(set)
+        for construct in construct_specs: pattern_constructs[construct["source"]].add(construct.get("token") or construct.get("class"))
+        forge_choice=chosen.get("forge",{});xmage_choice=chosen.get("xmage",{})
+        if not forge_choice and f_matches.get(index): forge_choice={"_corroborating":min(f_matches[index],key=lambda value:value[-1])}
+        if not xmage_choice and x_matches.get(index): xmage_choice={"_corroborating":min(x_matches[index],key=lambda value:value[-1])}
+        forge_items=list(forge_choice.values());xmage_items=list(xmage_choice.values())
+        forge_payload=evidence_payload("forge",index,forge_items[0],pattern_constructs.get("forge",set()),card) if forge_items else {"present":False}
+        xmage_payload=evidence_payload("xmage",index,xmage_items[0],pattern_constructs.get("xmage",set()),card) if xmage_items else {"present":False}
+        all_review=[]
+        for source,items in (("forge",forge_items),("xmage",xmage_items)):
+            for _ in items:
+                meta=join_review_metadata(source,card.get("oracle_id"),reviewed_decisions)
+                if meta: all_review.append({"source":source,**meta})
+        canonical=canonical_oracle_info(card)
+        evidence={"forge":forge_payload,"xmage":xmage_payload}
+        source_statuses=source_text_status_by_engine(evidence)
+        required_sources=("forge","xmage") if spec["source"]=="cross" else (spec["source"],)
+        row={"sample_id":sample_id,"validation_status":"AWAITING_REVIEW","pattern_id":spec["pattern_id"],"pattern_version":spec["pattern_version"],"validation_scope":{"extractor_version":VALIDATION_EXTRACTOR_VERSION,"mapping_sha256":mapping_sha,"source_set":source_revisions},"pattern":{"kind":spec.get("pattern_kind","SOURCE_MAPPING"),"source":spec["source"],"external_construct":spec.get("external_construct"),"external_constructs":construct_specs if spec["source"]=="cross" else None,"proposed_requirement":spec["proposed_requirement"],"risk":spec["risk"],"context_fields_to_check":spec.get("context_fields",[])},"source_record_identity":candidate["identity"],"card":{"oracle_id":card.get("oracle_id"),"name":card.get("name"),"type_line":card.get("type_line"),"layout":card.get("layout"),"mana_cost":card.get("mana_cost"),"oracle_text":card.get("oracle_text"),"faces":[{"name":f.get("name"),"oracle_text":f.get("oracle_text")} for f in (card.get("card_faces") or []) if isinstance(f,dict)]},"evidence":evidence,"source_oracle_text_status_by_engine":source_statuses,"source_oracle_text_status":"PRESENT" if all(source_statuses.get(source)=="PRESENT" for source in required_sources) else "MISSING","source_oracle_text_missing_sources":[source for source in required_sources if source_statuses.get(source)!="PRESENT"],"canonical_oracle_text_status":canonical["status"],"canonical_oracle":{"parent_text":canonical["parent_text"],"faces":canonical["faces"]},"oracle_support_available":canonical["status"]!="MISSING","join_review":{"status":"KEEP_WITH_FLAG" if any(r["join_review_status"]=="KEEP_WITH_FLAG" for r in all_review) else ("REVIEWED_KEEP_JOIN" if all_review else "NOT_IN_SUSPICIOUS_JOIN_AUDIT"),"decisions":all_review},"stratum":candidate["stratum"],"selection_basis":selection_basis,"known_join_warning":known_join_warning,"covered_by_probability_sample":selection_basis=="PROBABILITY_SAMPLE" and known_join_warning,"review_protocol":{"reviewer_a_required":True,"second_review_required":second_review_required,"blind_second_review":second_review_required,"second_review_fraction":spec.get("second_review_fraction",0.0) if selection_basis=="PROBABILITY_SAMPLE" else 0.0},"review_fields":{"decision":None,"reason":None,"suggested_requirement":None}}
+        if forced_decision:
+            row["forced_join_audit"]={"audit_id":join_audit_id(forced_decision["source"],forced_decision["oracle_id"]),"source":forced_decision["source"],"oracle_id":forced_decision["oracle_id"],"card_name":forced_decision["card_name"],"join_review_status":forced_decision["action"],"join_review_reason":forced_decision["reason"]}
+        return row
 
     for spec in plan["patterns"]:
         constructs=spec.get("external_constructs") or [{"source":spec["source"],"token":spec["external_construct"]}]
@@ -270,6 +412,7 @@ def generate_review_artifacts(sf, f_matches, x_matches, forge_extracts, xmage_ex
             sid=deterministic_sample_id(spec["pattern_id"],card.get("oracle_id"),identity)
             stratum=sample_stratum(card,idx in f_matches,idx in x_matches)
             candidates.append({"sample_id":sid,"oracle_id":card.get("oracle_id"),"name":card.get("name"),"identity":identity,"stratum":stratum,"index":idx,"card":card,"chosen":chosen_by_source})
+        pattern_candidate_lookup[spec["pattern_id"]]={c["oracle_id"]:c for c in candidates}
         # Sampling is per-card; reserve source rows already used by earlier patterns so an
         # occurrence is not duplicated across the review packet. Population remains unfiltered.
         available=[]
@@ -279,40 +422,67 @@ def generate_review_artifacts(sf, f_matches, x_matches, forge_extracts, xmage_ex
         selected=stratified_stable_sample(available,requested)
         for candidate in selected: used_occurrences.update(source_occurrence_parts(candidate["identity"]))
         second_ids=stable_second_review_ids(selected,spec["risk"],spec.get("second_review_fraction",0.0))
-        pattern_constructs=defaultdict(set)
-        for c in constructs: pattern_constructs[c["source"]].add(c.get("token") or c.get("class"))
-        output_rows=[]
-        for candidate in selected:
-            idx=candidate["index"];card=candidate["card"];chosen=candidate["chosen"]
-            forge_selected=pattern_constructs.get("forge",set()); xmage_selected=pattern_constructs.get("xmage",set())
-            forge_choice=chosen.get("forge",{});xmage_choice=chosen.get("xmage",{})
-            if not forge_choice and f_matches.get(idx):
-                item=min(f_matches[idx],key=lambda value:value[-1]);forge_choice={"_corroborating":item}
-            if not xmage_choice and x_matches.get(idx):
-                item=min(x_matches[idx],key=lambda value:value[-1]);xmage_choice={"_corroborating":item}
-            forge_items=list(forge_choice.values());xmage_items=list(xmage_choice.values())
-            forge_payload=evidence_payload("forge",idx,forge_items[0],forge_selected,card) if forge_items else {"present":False}
-            xmage_payload=evidence_payload("xmage",idx,xmage_items[0],xmage_selected,card) if xmage_items else {"present":False}
-            all_review=[]
-            for source,items in (("forge",forge_items),("xmage",xmage_items)):
-                for item in items:
-                    meta=join_review_metadata(source,card.get("oracle_id"),reviewed_decisions)
-                    if meta: all_review.append({"source":source,**meta})
-            faces=card.get("card_faces") or []
-            row={"sample_id":candidate["sample_id"],"validation_status":"AWAITING_REVIEW","pattern_id":spec["pattern_id"],"pattern_version":spec["pattern_version"],"validation_scope":{"extractor_version":VALIDATION_EXTRACTOR_VERSION,"mapping_sha256":mapping_sha,"source_set":source_revisions},"pattern":{"kind":spec.get("pattern_kind","SOURCE_MAPPING"),"source":spec["source"],"external_construct":spec.get("external_construct"),"external_constructs":constructs if spec["source"]=="cross" else None,"proposed_requirement":spec["proposed_requirement"],"risk":spec["risk"],"context_fields_to_check":spec.get("context_fields",[])},"source_record_identity":candidate["identity"],"card":{"oracle_id":card.get("oracle_id"),"name":card.get("name"),"type_line":card.get("type_line"),"layout":card.get("layout"),"mana_cost":card.get("mana_cost"),"oracle_text":card.get("oracle_text"),"faces":[{"name":f.get("name"),"oracle_text":f.get("oracle_text")} for f in faces if isinstance(f,dict)]},"evidence":{"forge":forge_payload,"xmage":xmage_payload},"join_review":{"status":"KEEP_WITH_FLAG" if any(r["join_review_status"]=="KEEP_WITH_FLAG" for r in all_review) else ("REVIEWED_KEEP_JOIN" if all_review else "NOT_IN_SUSPICIOUS_JOIN_AUDIT"),"decisions":all_review},"stratum":candidate["stratum"],"review_protocol":{"reviewer_a_required":True,"second_review_required":candidate["sample_id"] in second_ids,"blind_second_review":candidate["sample_id"] in second_ids,"second_review_fraction":spec.get("second_review_fraction",0.0)},"review_fields":{"decision":None,"reason":None,"suggested_requirement":None}}
-            output_rows.append(row)
+        output_rows=[build_review_item(spec,candidate,candidate["sample_id"],"PROBABILITY_SAMPLE",candidate["sample_id"] in second_ids,candidate["oracle_id"] in known_join_warning_ids) for candidate in selected]
         samples.extend(output_rows)
         both_count=sum(idx in both_engine_ids for idx,_,_ in population)
-        inventories.append({"pattern_id":spec["pattern_id"],"pattern_version":spec["pattern_version"],"validation_scope":plan["validation_scope"],"source":spec["source"],"external_construct":spec.get("external_construct"),"external_constructs":constructs if spec["source"]=="cross" else None,"proposed_requirement":spec["proposed_requirement"],"risk":spec["risk"],"rationale":spec["rationale"],"context_fields_to_check":spec.get("context_fields",[]),"population_size":len(population),"source_population_records":dict(source_occurrence_counts),"cards_with_both_engine_evidence":both_count,"target_sample_size":spec["sample_size"],"sample_size":len(selected),"sample_ids":[r["sample_id"] for r in output_rows],"second_review_fraction":spec.get("second_review_fraction",0.0),"second_review_required_samples":len(second_ids),"validation_status":"AWAITING_REVIEW","precision":{"estimate":None,"reviewed_n":0,"accepted_n":0,"confidence_level":0.95,"interval_method":"wilson","lower":None,"upper":None},"inter_rater_agreement":"NOT_AVAILABLE"})
-    if len(samples)>500: raise RuntimeError(f"Review sample cap exceeded: {len(samples)}")
-    if sum(p["sample_size"] for p in inventories)!=len(samples): raise RuntimeError("Pattern inventory sample totals do not match packet")
-    all_sample_occurrences=[part for row in samples for part in source_occurrence_parts(row["source_record_identity"])]
+        interval_plan=primary_interval_summary(len(population),len(selected),plan["sampling"].get("interval_method_threshold",0.05))
+        inventories.append({"pattern_id":spec["pattern_id"],"pattern_version":spec["pattern_version"],"validation_scope":plan["validation_scope"],"source":spec["source"],"external_construct":spec.get("external_construct"),"external_constructs":constructs if spec["source"]=="cross" else None,"proposed_requirement":spec["proposed_requirement"],"risk":spec["risk"],"rationale":spec["rationale"],"context_fields_to_check":spec.get("context_fields",[]),"population_size":len(population),"source_population_records":dict(source_occurrence_counts),"cards_with_both_engine_evidence":both_count,"target_sample_size":spec["sample_size"],"sample_size":len(selected),"probability_sample_size":len(selected),"forced_audit_sample_size":0,"sampling_fraction":interval_plan["sampling_fraction"],"planned_interval_method":interval_plan["planned_interval_method"],"planned_interval":interval_plan["interval"],"sample_ids":[r["sample_id"] for r in output_rows],"probability_sample_ids":[r["sample_id"] for r in output_rows],"forced_sample_ids":[],"second_review_fraction":spec.get("second_review_fraction",0.0),"second_review_required_samples":len(second_ids),"validation_status":"AWAITING_REVIEW","precision":interval_plan["interval"],"inter_rater_agreement":"NOT_AVAILABLE"})
+    probability_samples=list(samples)
+    low_probability_samples=[s for s in probability_samples if s["pattern"]["risk"]=="LOW"]
+    if len(probability_samples)!=460 or sample_id_set_sha256(probability_samples)!=PHASE_0_2A_SAMPLE_IDS_SHA256:
+        raise RuntimeError("Phase 0.2A probability sample IDs changed; refusing to invalidate existing reviews")
+    if len(low_probability_samples)!=60 or sample_id_set_sha256(low_probability_samples)!=PHASE_0_2A_LOW_SAMPLE_IDS_SHA256:
+        raise RuntimeError("Phase 0.2A LOW-risk sample IDs changed; refusing to invalidate existing reviews")
+    probability_ids_by_card=defaultdict(list)
+    for sample in probability_samples: probability_ids_by_card[sample["card"]["oracle_id"]].append(sample["sample_id"])
+
+    forced_samples=[]; forced_by_pattern=Counter(); forced_ids_by_pattern=defaultdict(list); warning_coverage=[]
+    specs_by_id={spec["pattern_id"]:spec for spec in plan["patterns"]}
+    for decision in reviewed_decisions.values():
+        if decision["action"]!="KEEP_WITH_FLAG": continue
+        oid=decision["oracle_id"]
+        relevant=[spec for spec in plan["patterns"] if oid in pattern_candidate_lookup[spec["pattern_id"]]]
+        covered=bool(probability_ids_by_card.get(oid))
+        forced_id=None
+        if relevant and not covered:
+            spec=relevant[0]
+            candidate=pattern_candidate_lookup[spec["pattern_id"]][oid]
+            audit_id=join_audit_id(decision["source"],oid)
+            forced_id=hashlib.sha256("\x1f".join(("FORCED_FLAGGED_JOIN_AUDIT",audit_id,spec["pattern_id"],candidate["identity"])).encode("utf-8")).hexdigest()[:24]
+            forced=build_review_item(spec,candidate,forced_id,"FORCED_FLAGGED_JOIN_AUDIT",False,True,decision)
+            forced["forced_join_audit"]["relevant_pattern_ids"]=[p["pattern_id"] for p in relevant]
+            forced["forced_join_audit"]["covered_by_probability_sample"]=False
+            forced["review_protocol"]["second_review_required"]=False
+            forced["review_protocol"]["blind_second_review"]=False
+            forced_samples.append(forced);forced_by_pattern[spec["pattern_id"]]+=1;forced_ids_by_pattern[spec["pattern_id"]].append(forced_id)
+        warning_coverage.append({"source":decision["source"],"oracle_id":oid,"card_name":decision["card_name"],"join_review_status":decision["action"],"join_review_reason":decision["reason"],"relevant_pattern_ids":[p["pattern_id"] for p in relevant],"covered_by_probability_sample":covered,"forced_sample_id":forced_id,"coverage_status":"COVERED_BY_PROBABILITY_SAMPLE" if covered else ("COVERED_BY_FORCED_AUDIT" if forced_id else "NOT_RELEVANT_TO_SELECTED_PATTERNS"),"review_sample_ids":sorted(probability_ids_by_card.get(oid,[])+([forced_id] if forced_id else []))})
+    relevant_warnings=[w for w in warning_coverage if w["relevant_pattern_ids"]]
+    if any(w["coverage_status"]=="NOT_RELEVANT_TO_SELECTED_PATTERNS" for w in relevant_warnings): raise RuntimeError("A flagged join relevant to a selected pattern has no review coverage")
+
+    probability_count=len(probability_samples); forced_count=len(forced_samples); all_samples=probability_samples+forced_samples
+    if probability_count!=sum(p["sample_size"] for p in inventories): raise RuntimeError("Pattern probability sample totals do not match the Phase 0.2A baseline")
+    if probability_count+forced_count>500: raise RuntimeError(f"Review packet cap exceeded: {probability_count+forced_count}")
+    for inv in inventories:
+        inv["probability_sample_size"]=inv["sample_size"]
+        inv["forced_audit_sample_size"]=forced_by_pattern[inv["pattern_id"]]
+        inv["forced_sample_ids"]=sorted(forced_ids_by_pattern[inv["pattern_id"]])
+        interval_plan=primary_interval_summary(inv["population_size"],inv["probability_sample_size"],plan["sampling"].get("interval_method_threshold",0.05))
+        inv["sampling_fraction"]=interval_plan["sampling_fraction"]
+        inv["planned_interval_method"]=interval_plan["planned_interval_method"]
+        inv["planned_interval"]=interval_plan["interval"]
+        inv["precision"]=interval_plan["interval"]
+        inv["probability_sample_ids"]=list(inv["sample_ids"])
+    all_sample_occurrences=[part for row in all_samples for part in source_occurrence_parts(row["source_record_identity"])]
     if len(all_sample_occurrences)!=len(set(all_sample_occurrences)): raise RuntimeError("A source record occurrence was included more than once in the review packet")
-    write_jsonl(OUT/"review_samples.jsonl",samples)
-    sample_ids_by_card=defaultdict(list)
-    for sample in samples: sample_ids_by_card[sample["card"]["oracle_id"]].append(sample["sample_id"])
-    warning_register=[{"source":decision["source"],"oracle_id":decision["oracle_id"],"card_name":decision["card_name"],"join_review_status":decision["action"],"join_review_reason":decision["reason"],"review_sample_ids":sorted(sample_ids_by_card.get(decision["oracle_id"],[]))} for decision in reviewed_decisions.values() if decision["action"]=="KEEP_WITH_FLAG"]
-    inventory={"validation_scope":plan["validation_scope"],"plan_id":plan["plan_id"],"review_batch_id":plan["review_batch_id"],"sampling":plan["sampling"],"pattern_count":len(inventories),"total_population_occurrences":sum(sum(p["source_population_records"].values()) for p in inventories),"total_samples":len(samples),"low_risk_patterns":sum(p["risk"]=="LOW" for p in inventories),"medium_risk_patterns":sum(p["risk"]=="MEDIUM" for p in inventories),"high_risk_patterns":sum(p["risk"]=="HIGH" for p in inventories),"second_review_required_samples":sum(p["second_review_required_samples"] for p in inventories),"validation_status":validation_status_from_results([]),"patterns_validated":0,"precision_available":False,"inter_rater_agreement_available":False,"join_quality_warnings":warning_register,"patterns":inventories}
+    write_jsonl(OUT/"review_samples.jsonl",all_samples)
+    write_jsonl(OUT/"forced_audit_samples.jsonl",forced_samples)
+
+    availability=build_oracle_availability(probability_samples)
+    probability_missing=sum(sample["source_oracle_text_status"]=="MISSING" for sample in probability_samples)
+    finite_count=sum(p["planned_interval_method"]=="FINITE_POPULATION_HYPERGEOMETRIC" for p in inventories)
+    warning_naturally_sampled=sum(w["covered_by_probability_sample"] for w in warning_coverage)
+    warning_forced=sum(w["forced_sample_id"] is not None for w in warning_coverage)
+    inventory={"validation_scope":plan["validation_scope"],"plan_id":plan["plan_id"],"review_batch_id":plan["review_batch_id"],"sampling":plan["sampling"],"pattern_count":len(inventories),"total_population_occurrences":sum(sum(p["source_population_records"].values()) for p in inventories),"total_samples":probability_count,"probability_sample_count":probability_count,"forced_audit_sample_count":forced_count,"total_review_packet_items":len(all_samples),"phase_0_2a_sample_ids_preserved":True,"phase_0_2a_sample_ids_sha256":PHASE_0_2A_SAMPLE_IDS_SHA256,"phase_0_2a_low_sample_ids_sha256":PHASE_0_2A_LOW_SAMPLE_IDS_SHA256,"low_risk_patterns":sum(p["risk"]=="LOW" for p in inventories),"medium_risk_patterns":sum(p["risk"]=="MEDIUM" for p in inventories),"high_risk_patterns":sum(p["risk"]=="HIGH" for p in inventories),"second_review_required_samples":sum(p["second_review_required_samples"] for p in inventories),"validation_status":validation_status_from_results([]),"patterns_validated":0,"precision_available":False,"inter_rater_agreement_available":False,"interval_method_counts":{"WILSON_BINOMIAL":len(inventories)-finite_count,"FINITE_POPULATION_HYPERGEOMETRIC":finite_count},"probability_samples_with_source_text_missing":probability_missing,"oracle_text_availability":availability,"join_quality_warnings":warning_coverage,"known_join_warning_count":len(warning_coverage),"relevant_warning_count":sum(bool(w["relevant_pattern_ids"]) for w in warning_coverage),"naturally_sampled_warning_count":warning_naturally_sampled,"forced_warning_count":warning_forced,"patterns":inventories}
     write_json(OUT/"pattern_inventory.json",inventory)
     return inventory
 
@@ -964,20 +1134,30 @@ def write_join_audit_report(stats):
 
 def write_validation_report():
     inv=json.loads((OUT/"pattern_inventory.json").read_text(encoding="utf-8"))
-    patterns=inv["patterns"]
-    counts=Counter(p["risk"] for p in patterns)
+    patterns=inv["patterns"]; counts=Counter(p["risk"] for p in patterns)
     second=sum(p["second_review_required_samples"] for p in patterns)
-    warning_sample_ids={sample_id for warning in inv.get("join_quality_warnings",[]) for sample_id in warning.get("review_sample_ids",[])}
-    warning_sample_n=len(warning_sample_ids)
-    warning_sample_phrase=f"{warning_sample_n} sampled {'card' if warning_sample_n==1 else 'cards'} {'carries' if warning_sample_n==1 else 'carry'} warning metadata directly in its review item" if warning_sample_n==1 else f"{warning_sample_n} sampled cards carry warning metadata directly in their review items"
-    lines=["# Phase 0.2A — Pattern Validation Harness + Review Packet","", "## Summary", "",f"Selected {len(patterns)} patterns and produced {inv['total_samples']} deterministic card-level review samples from {inv['total_population_occurrences']:,} pattern/source occurrences. Risk classes: LOW {counts['LOW']}, MEDIUM {counts['MEDIUM']}, HIGH {counts['HIGH']}.",f"All inputs use pinned revisions Scryfall `{PINNED_REVISIONS['scryfall']}`, Forge `{PINNED_REVISIONS['forge']}`, XMage `{PINNED_REVISIONS['xmage']}`. Extractor `{VALIDATION_EXTRACTOR_VERSION}`; mapping SHA-256 `{inv['validation_scope']['mapping_sha256']}`.","", "No mapping has been validated yet. No precision claim is made yet. No CAP eligibility decision exists.","", "## Selected patterns", "", "Population is the number of distinct exact-joined Scryfall identities containing the construct (or both constructs for cross patterns). `source_population_records` counts all source records with the construct across the pinned corpus; it is a different unit. Sampling uses only exact-joined identities. The cross-pattern rows are labeled corroboration, not independent semantic validation.","","| pattern | why selected | risk | population cards | target n | sampled n | both-engine cards | second review n |","|---|---|---:|---:|---:|---:|---:|---:|"]
-    lines += [f"| `{p['pattern_id']}` | {p['rationale']} | {p['risk']} | {p['population_size']:,} | {p['target_sample_size']} | {p['sample_size']} | {p['cards_with_both_engine_evidence']:,} | {p['second_review_required_samples']} |" for p in patterns]
-    lines += ["", "High-risk context to inspect:"]
-    lines += [f"- `{p['pattern_id']}`: {', '.join(p['context_fields_to_check'])}." for p in patterns if p["risk"]=="HIGH"]
-    lines += ["", "## Deterministic sampling", "", "Pattern-specific candidates are deduplicated by Oracle identity. Within each pattern, examples are grouped by card type, single-face/multiface layout, Oracle-text length, and available engine evidence. Within each stratum they are ordered by SHA-256 of stable sample ID; sorted strata are then interleaved round-robin until the target is reached. Sample IDs bind pattern ID, Oracle ID, and pinned source-record identity. Repeated source-row occurrences are reserved after first selection so the same row is not accidentally reviewed twice across this batch. If a pattern's eligible pool is below target, all available cards are included.",f"The packet contains {inv['total_samples']} samples, at most 500. Source occurrence identities are based on global row offsets within the pinned dataset revision; source revision is part of the identity.","", "## Reviewer protocol", "",f"Second review is required for {second} samples: all HIGH-risk items and a deterministic 20% from each MEDIUM-risk pattern ({sum(1 for r in _read_jsonl(OUT/'review_samples.jsonl') if r['review_protocol']['second_review_required'])} marked in the packet). LOW-risk items have no second review in this initial batch.","Each item has empty `review_fields`. `review_results.example.yaml` shows the result format. Give Reviewer B a separate copy containing the selected `second_review_required` items; do not include Reviewer A's result file. Reviewer IDs are opaque labels. No review results were supplied or inferred.","", "## Retained context", "", "Review items include current Scryfall Oracle text, card type/layout/faces, implementation evidence, and exact join method. Forge evidence retains script action snippets and parsed `$` parameters such as origin, destination, target/filter, cardinality, damage/counter/token values when present. XMage evidence retains prompt fields, imports/classes, and a source excerpt around relevant constructors. Higher-risk zone patterns explicitly list the context fields reviewers should inspect.",f"All nine Phase 0.1.2 `KEEP_WITH_FLAG` XMage type-line warnings are listed in `pattern_inventory.json`; {len(warning_sample_ids)} sampled cards carry warning metadata directly in their review item. Join review remains separate from semantic pattern review.","", "## Validation state", "", "Every pattern is `AWAITING_REVIEW`; `patterns_validated = 0`. Precision estimate and Wilson bounds are null. Inter-rater agreement is `NOT_AVAILABLE`; no Cohen's kappa or Gwet's AC1 value is produced without two real independent result sets.","", "Proposed Phase 0.2B reporting: accept only `CORRECT` as accepted for a primary precision estimate; show `TOO_BROAD`, `TOO_NARROW`, `CONTEXT_DEPENDENT`, and `WRONG` separately as decisive non-accepts. Keep `AMBIGUOUS` and `SOURCE_EVIDENCE_INSUFFICIENT` out of that decisive denominator and report them separately. Exclude reviewer disagreements from precision until adjudicated; do not count disagreement as an extractor error. Report raw agreement plus an agreement coefficient only after independent reviews exist. Use the Wilson 95% lower bound when interpreting small sample estimates.","", "## Data quality and blockers", "",f"No pinned-source or join-review blocker occurred. The existing suspicious-join review retained 49 stale-wording joins and 9 warning-flagged XMage type-line encoding cases; packet items preserve those warnings. Cross-engine patterns measure whether the proposed generic requirement describes the card-level evidence, not whether either engine is rules-correct.","", "## Ready for human review", "", "Yes. Review the JSONL packet and return completed result YAML separately per reviewer. Do not edit mappings or treat corroboration as validation in this phase.",""]
+    availability=inv["oracle_text_availability"]
+    warnings=inv["join_quality_warnings"]
+    methods=inv["interval_method_counts"]
+    projection=__import__("yaml").safe_load((ROOT/"requirement_evidence_projection.yaml").read_text(encoding="utf-8"))
+    naturally=inv["naturally_sampled_warning_count"]; forced=inv["forced_warning_count"]
+    warning_covered=sum(w["coverage_status"] in {"COVERED_BY_PROBABILITY_SAMPLE","COVERED_BY_FORCED_AUDIT"} and bool(w["relevant_pattern_ids"]) for w in warnings)
+    lines=["# Phase 0.2A.1 — Statistical & Sampling Corrections","", "## Summary", "",f"Primary probability sample: {inv['probability_sample_count']} items; forced join-warning audit: {inv['forced_audit_sample_count']}; total review packet items: {inv['total_review_packet_items']}. The original LOW-risk 60 and all 460 Phase 0.2A probability sample IDs are preserved.",f"Selected patterns: {len(patterns)} (LOW {counts['LOW']}, MEDIUM {counts['MEDIUM']}, HIGH {counts['HIGH']}); blind second review is assigned to {second} primary probability items.",f"Pinned source revisions are Scryfall `{PINNED_REVISIONS['scryfall']}`, Forge `{PINNED_REVISIONS['forge']}`, XMage `{PINNED_REVISIONS['xmage']}`. Extractor `{VALIDATION_EXTRACTOR_VERSION}`; mapping SHA-256 `{inv['validation_scope']['mapping_sha256']}`.","", "No real review results were consumed. No semantic precision is calculated. No mappings, rules evidence, or CAP eligibility were changed.","", "## Statistical sampling corrections", "",f"Primary probability items remain distinct from forced audit items. `total_samples` and all pattern sample-size/interval calculations refer only to the {inv['probability_sample_count']} probability items. The additional {inv['forced_audit_sample_count']} forced audit items have `selection_basis: FORCED_FLAGGED_JOIN_AUDIT` and are excluded from every statistical denominator.",f"The existing 460 probability sample IDs match the captured Phase 0.2A baseline digest `{PHASE_0_2A_SAMPLE_IDS_SHA256}`; the LOW 60 match `{PHASE_0_2A_LOW_SAMPLE_IDS_SHA256}`. Existing Reviewer-A decisions can reuse those IDs.","", "## Finite population handling", "",f"Method selector threshold: sampling fraction <= {plan_threshold(inv):.0%} uses `WILSON_BINOMIAL`; larger fractions use `FINITE_POPULATION_HYPERGEOMETRIC` exact inversion under hypergeometric sampling without replacement. This is a planned method only; accepted counts are null, so no interval estimate or bound is calculated.",f"Patterns by planned method: Wilson/binomial {methods['WILSON_BINOMIAL']}; finite-population hypergeometric {methods['FINITE_POPULATION_HYPERGEOMETRIC']}.","","| pattern | N | probability n | sampling fraction | planned interval | forced n |","|---|---:|---:|---:|---|---:|"]
+    lines += [f"| `{p['pattern_id']}` | {p['population_size']:,} | {p['probability_sample_size']} | {p['sampling_fraction']:.5f} | `{p['planned_interval_method']}` | {p['forced_audit_sample_size']} |" for p in patterns]
+    lines += ["", "The standard-library hypergeometric interval helper in `src/cap_miner.py` is prepared for later result aggregation. Synthetic tests cover bounds and census collapse. It is not run on absent review data.","", "## Known warning coverage", "",f"Known Phase 0.1.2 warning records: {inv['known_join_warning_count']}. Naturally sampled: {naturally}. Forced audit samples added: {forced}. Of the warnings relevant to selected patterns, {warning_covered} have review coverage. Other warnings remain registered but do not relate to these selected patterns.","","| card | relevant selected patterns | coverage | sample ID |","|---|---|---|---|"]
+    lines += [f"| `{w['card_name']}` | {', '.join(w['relevant_pattern_ids']) or 'none'} | `{w['coverage_status']}` | `{w['forced_sample_id'] or ', '.join(w['review_sample_ids'])}` |" for w in warnings]
+    lines += ["", "Forced records carry their reviewed join status/reason and use stable IDs. They are audit coverage, not representative observations. Warnings outside the selected pattern populations stay in the warning register and are not forced into unrelated pattern reviews.","", "## Oracle text availability", "",f"Counts below use exactly the {availability['primary_sample_count']} primary probability items; forced audit items are excluded. Source availability is distinct from canonical Scryfall text.",f"- Pattern-source Oracle text: PRESENT {availability['source_oracle_text_status']['PRESENT']}; MISSING {availability['source_oracle_text_status']['MISSING']}.",f"- Source-by-engine rows: Forge PRESENT {availability['source_oracle_text_by_engine']['forge']['PRESENT']}, MISSING {availability['source_oracle_text_by_engine']['forge']['MISSING']}, NOT_AVAILABLE {availability['source_oracle_text_by_engine']['forge']['NOT_AVAILABLE']}; XMage PRESENT {availability['source_oracle_text_by_engine']['xmage']['PRESENT']}, MISSING {availability['source_oracle_text_by_engine']['xmage']['MISSING']}, NOT_AVAILABLE {availability['source_oracle_text_by_engine']['xmage']['NOT_AVAILABLE']}.",f"- Canonical parent text available: {availability['canonical_parent_text_available']}.",f"- Canonical face text available: {availability['canonical_face_text_available']}.",f"- Canonical parent and face text available: {availability['canonical_oracle_text_status']['PARENT_AND_FACE_TEXT_AVAILABLE']}.",f"- Canonical text completely missing: {availability['canonical_text_missing']}.",f"- Source text missing while canonical face text exists: {availability['source_missing_but_canonical_face_available']}.","","| pattern | primary n | source PRESENT | source MISSING | parent text | face text | canonical missing |","|---|---:|---:|---:|---:|---:|---:|"]
+    lines += [f"| `{pattern}` | {v['sample_count']} | {v['source_text_present']} | {v['source_text_missing']} | {v['canonical_parent_text_available']} | {v['canonical_face_text_available']} | {v['canonical_text_missing']} |" for pattern,v in availability['by_pattern'].items()]
+    lines += ["", "Each review item carries `source_oracle_text_status`, per-engine source statuses, `canonical_oracle_text_status`, and a named `canonical_oracle.faces` array. `source_oracle_text_status: MISSING` does not imply missing canonical support. `rules_evidence` remains `NOT_CHECKED`; Oracle text is not Comprehensive Rules evidence.","", "## Requirement evidence projection", "",f"`requirement_evidence_projection.yaml` lists separate source mapping paths for {len(projection['requirements'])} Requirements. Pattern precision is not averaged, summed, minimized, maximized, or combined. When both engines support a card candidate, retain Forge and XMage path results separately and record the cross pattern as `CROSS_IMPLEMENTATION_CORROBORATION` only.","", "## Existing review compatibility", "", "`EXISTING_REVIEW_COMPATIBILITY = PRESERVED`. A runtime guard verifies the complete 460-ID digest and the LOW-risk 60-ID digest before writing the packet. Forced audit items are appended separately; probability rows are not regenerated with altered IDs.","", "## Validation state and next review", "", "No real Reviewer-A decisions were consumed. No real precision or reviewer agreement is available. Pattern statuses remain `AWAITING_REVIEW`; `patterns_validated = 0`; no CAP eligibility decision exists.","", "Review `data/output/review_samples.jsonl` for probability samples. Review `data/output/forced_audit_samples.jsonl` separately for forced warning audits. Record results in separate reviewer YAML files copied from `review_results.example.yaml`; do not show Reviewer A's answers to Reviewer B. Use only `selection_basis: PROBABILITY_SAMPLE` for later precision inference. Keep forced audit findings separate.","", "Phase 0.2B should report source-path validation profiles rather than one synthetic Requirement precision. For a future primary estimate, count `CORRECT` as accepted and decisive labels (`TOO_BROAD`, `TOO_NARROW`, `CONTEXT_DEPENDENT`, `WRONG`) as non-accepts; report `AMBIGUOUS`, `SOURCE_EVIDENCE_INSUFFICIENT`, and reviewer disagreement separately. Exclude disagreements until adjudicated. No such aggregation is implemented here.",""]
     rendered="\n".join(lines)
-    rendered=rendered.replace(f"{warning_sample_n} sampled cards carry warning metadata directly in their review item",warning_sample_phrase)
+    if inv["forced_audit_sample_count"]==1:
+        rendered=rendered.replace("The additional 1 forced audit items have", "The single forced audit item has")
+        rendered=rendered.replace("The single forced audit item has `selection_basis: FORCED_FLAGGED_JOIN_AUDIT` and are excluded", "The single forced audit item has `selection_basis: FORCED_FLAGGED_JOIN_AUDIT`; it is excluded")
     (ROOT/"VALIDATION_REPORT.md").write_text(rendered,encoding="utf-8")
+
+
+def plan_threshold(inventory):
+    return inventory["sampling"].get("interval_method_threshold",0.05)
 
 
 def pct(n,d): return f"{(100*n/d if d else 0):.2f}%"

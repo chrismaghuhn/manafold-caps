@@ -1,6 +1,6 @@
 # Manafold CAP miner — Phase 0.1.2 Suspicious Join Audit
 
-Generated: 2026-09-24T07:44:31.348651+00:00 UTC
+Generated: 2026-09-24T08:22:34.476519+00:00 UTC
 
 ## Dataset inventory
 
@@ -19,7 +19,7 @@ Columns: `instruction`, `input`, `output`, `text`
 Revision: `6212eb37907c1ce751d8a3fea8b3322056dc0264` (pinned snapshot). Rows: **18,985**. Splits: `{'train': 18985}`.
 Columns: `prompt`, `completion`
 
-Python package versions: `{'datasets': '5.0.1', 'huggingface_hub': '1.32.0', 'PyYAML': '6.0.3'}`. Cache/materialization timestamp: `2026-09-24T07:43:08.430573+00:00` UTC. Mining is pinned to the Phase 0.1.0 revisions listed above; if the current Hub head has moved, it is recorded but not substituted.
+Python package versions: `{'datasets': '5.0.1', 'huggingface_hub': '1.32.0', 'PyYAML': '6.0.3'}`. Cache/materialization timestamp: `2026-09-24T08:22:30.780700+00:00` UTC. Mining is pinned to the Phase 0.1.0 revisions listed above; if the current Hub head has moved, it is recorded but not substituted.
 
 ## Calibration summary
 

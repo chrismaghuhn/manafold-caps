@@ -7,13 +7,18 @@ from src.cap_miner import (
     java_review_excerpt,
     apply_join_review,
     can_reserve_sample_occurrences,
+    canonical_oracle_info,
     deterministic_sample_id,
+    empty_interval_for_population,
     exact_oracle_id_match,
+    hypergeometric_interval,
+    interval_method_for_population,
     java_extract,
     load_join_decisions,
     join_review_metadata,
     lookup_join_decision,
     stable_second_review_ids,
+    source_text_status_by_engine,
     stratified_stable_sample,
     validation_status_from_results,
     validate_review_decision,
@@ -23,6 +28,7 @@ from src.cap_miner import (
     oracle_text,
     partition_tokens,
     resolution_bucket,
+    sample_id_set_sha256,
     select_unambiguous,
     summarize_card_resolution,
     xmage_semantic_classes,
@@ -155,6 +161,61 @@ class MinerHelpersTest(unittest.TestCase):
         self.assertAlmostEqual(interval["lower"],0.2366,places=3)
         self.assertAlmostEqual(interval["upper"],0.7634,places=3)
         self.assertIsNone(wilson_interval(0,0)["lower"])
+
+    def test_finite_population_method_and_hypergeometric_bounds(self):
+        self.assertAlmostEqual(40/4136,0.00967,places=4)
+        self.assertEqual(interval_method_for_population(4136,40),"WILSON_BINOMIAL")
+        self.assertEqual(interval_method_for_population(117,40),"FINITE_POPULATION_HYPERGEOMETRIC")
+        interval=hypergeometric_interval(100,20,10)
+        self.assertGreaterEqual(interval["lower"],0.0)
+        self.assertLessEqual(interval["upper"],1.0)
+        self.assertLessEqual(interval["lower"],interval["estimate"])
+        self.assertGreaterEqual(interval["upper"],interval["estimate"])
+        self.assertEqual(interval,hypergeometric_interval(100,20,10))
+
+    def test_hypergeometric_census_has_no_sampling_uncertainty(self):
+        interval=hypergeometric_interval(10,10,4)
+        self.assertEqual(interval["lower"],0.4)
+        self.assertEqual(interval["upper"],0.4)
+
+    def test_missing_source_text_does_not_hide_canonical_face_text(self):
+        canonical=canonical_oracle_info({"oracle_text":None,"card_faces":[{"name":"Front","oracle_text":"Front text."},{"name":"Back","oracle_text":"Back text."}]})
+        self.assertEqual(canonical["status"],"FACE_TEXT_AVAILABLE")
+        statuses=source_text_status_by_engine({"forge":{"present":True,"source_oracle_text":""},"xmage":{"present":False}})
+        self.assertEqual(statuses["forge"],"MISSING")
+        self.assertTrue(canonical["status"]!="MISSING")
+
+    def test_existing_probability_sample_ids_match_phase_0_2a_baseline_when_packet_exists(self):
+        import json
+        from pathlib import Path
+        from src.cap_miner import sample_id_set_sha256
+        path=Path(__file__).resolve().parents[1]/"data"/"output"/"review_samples.jsonl"
+        if not path.exists(): self.skipTest("Generated Phase 0.2A review packet is not present yet")
+        rows=[json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        primary=[r for r in rows if r.get("selection_basis","PROBABILITY_SAMPLE")=="PROBABILITY_SAMPLE"]
+        low=[r for r in primary if r["pattern"]["risk"]=="LOW"]
+        self.assertEqual(len(primary),460)
+        self.assertEqual(len(low),60)
+        self.assertEqual(sample_id_set_sha256(primary),"feeb4a19ef205df5cb61078e2df8f1ba11f4570b548ac238bd84f59447e93faf")
+        self.assertEqual(sample_id_set_sha256(low),"7423edb900b12bbd86242937da295ea66833c0b4dbcafce1c643917c260eac31")
+
+    def test_forced_warning_sample_is_separate_from_probability_sizes_when_packet_exists(self):
+        import json
+        from pathlib import Path
+        root=Path(__file__).resolve().parents[1]
+        path=root/"data"/"output"/"review_samples.jsonl"
+        if not path.exists(): self.skipTest("Generated review packet is not present yet")
+        rows=[json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        if not rows or "selection_basis" not in rows[0]: self.skipTest("Review packet has not been regenerated for Phase 0.2A.1")
+        primary=[r for r in rows if r["selection_basis"]=="PROBABILITY_SAMPLE"]
+        forced=[r for r in rows if r["selection_basis"]=="FORCED_FLAGGED_JOIN_AUDIT"]
+        inventory=json.loads((root/"data"/"output"/"pattern_inventory.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(primary),460)
+        self.assertEqual(len(forced),1)
+        self.assertEqual(inventory["total_samples"],460)
+        self.assertEqual(inventory["total_review_packet_items"],461)
+        self.assertTrue(forced[0]["known_join_warning"])
+        self.assertFalse(forced[0]["covered_by_probability_sample"])
 
     def test_plan_keeps_mapping_hash_at_phase_0_1_2_value(self):
         import hashlib

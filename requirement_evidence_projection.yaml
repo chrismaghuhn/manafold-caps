@@ -1,0 +1,54 @@
+projection_id: cap-miner-requirement-evidence-projection.v1
+status: DESIGN_ONLY_NO_AGGREGATION
+numeric_precision_combination: NONE
+notes:
+  - A generic Requirement has no synthetic precision score derived by averaging patterns.
+  - Forge and XMage mapping paths remain separate evidence paths.
+  - A card with both sources retains both paths and cross corroboration separately.
+  - Cross-engine corroboration does not increase numerical precision.
+requirements:
+  damage:
+    evidence_paths:
+      forge:
+        - forge.deal_damage.v1
+      xmage:
+        - xmage.damage_target_effect.v1
+      cross_corroboration:
+        - pattern_id: cross.damage.deal_damage__damage_target_effect.v1
+          role: CROSS_IMPLEMENTATION_CORROBORATION
+    precision: null
+  zone_transition:
+    evidence_paths:
+      forge:
+        - forge.change_zone.v1
+        - forge.change_zone_all.v1
+      xmage:
+        - xmage.exile_target_effect.v1
+        - xmage.return_to_hand_source_effect.v1
+      cross_corroboration: []
+    precision: null
+  destroy:
+    evidence_paths:
+      forge:
+        - forge.destroy.v1
+      xmage:
+        - xmage.destroy_target_effect.v1
+      cross_corroboration: []
+    precision: null
+  counter_change:
+    evidence_paths:
+      forge:
+        - forge.put_counter.v1
+      xmage:
+        - xmage.add_counters_source_effect.v1
+      cross_corroboration: []
+    precision: null
+  create_token:
+    evidence_paths:
+      forge:
+        - forge.token.v1
+      xmage: []
+      cross_corroboration:
+        - pattern_id: cross.create_token.token__create_token_effect.v1
+          role: CROSS_IMPLEMENTATION_CORROBORATION
+    precision: null
