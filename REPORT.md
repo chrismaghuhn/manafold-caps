@@ -1,6 +1,6 @@
 # Manafold CAP miner — Phase 0.1.2 Suspicious Join Audit
 
-Generated: 2026-09-24T07:16:56.872191+00:00 UTC
+Generated: 2026-09-24T07:44:31.348651+00:00 UTC
 
 ## Dataset inventory
 
@@ -19,13 +19,13 @@ Columns: `instruction`, `input`, `output`, `text`
 Revision: `6212eb37907c1ce751d8a3fea8b3322056dc0264` (pinned snapshot). Rows: **18,985**. Splits: `{'train': 18985}`.
 Columns: `prompt`, `completion`
 
-Python package versions: `{'datasets': '5.0.1', 'huggingface_hub': '1.32.0', 'PyYAML': '6.0.3'}`. Cache/materialization timestamp: `2026-09-24T07:16:54.402510+00:00` UTC. Mining is pinned to the Phase 0.1.0 revisions listed above; if the current Hub head has moved, it is recorded but not substituted.
+Python package versions: `{'datasets': '5.0.1', 'huggingface_hub': '1.32.0', 'PyYAML': '6.0.3'}`. Cache/materialization timestamp: `2026-09-24T07:43:08.430573+00:00` UTC. Mining is pinned to the Phase 0.1.0 revisions listed above; if the current Hub head has moved, it is recorded but not substituted.
 
 ## Calibration summary
 
 Exact-identity matching: Forge 26,384/36,923 (71.46%); XMage 18,252/36,923 (49.43%); both 17,270 (46.77%). Ambiguous records: 1,520.
 Cards with implementation evidence and at least one mapped requirement: 16,341/27,366 (59.71%).
-Seed mapping SHA-256: `3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a`. Extractor version: `0.1.2`.
+Seed mapping SHA-256: `3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a`. Extractor version: `0.2.0`.
 
 ## Card-level resolution
 

@@ -30,4 +30,6 @@ Generated files go under ignored `data/output/`: inventory, vocabulary CSVs, mat
 
 The 0.1.2 suspicious-join review decisions are recorded in `reviewed_join_decisions.yaml`; the concise human audit is `JOIN_AUDIT.md`. Review flags concern identity/source quality only and do not validate requirement semantics.
 
+Phase 0.2A adds the bounded pattern plan in `validation_plan.yaml`; `all` writes `data/output/review_samples.jsonl` and `data/output/pattern_inventory.json`, plus `VALIDATION_REPORT.md`. No precision or inter-reviewer agreement is reported until actual independent human result files are supplied.
+
 Requirement candidates separate extraction, implementation evidence, rules evidence, and review state. Agreement between Forge and XMage means corroboration only; it does not establish semantic correctness.

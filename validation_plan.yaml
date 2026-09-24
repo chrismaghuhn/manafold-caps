@@ -1,0 +1,234 @@
+plan_id: cap-miner-pattern-validation-0.2a-v1
+review_batch_id: phase-0.2a-batch-1
+validation_scope:
+  extractor_version: 0.2.0
+  mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+  source_set:
+    scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+    forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+    xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+sampling:
+  algorithm: stable_sha256_order_with_round_robin_stratification
+  sample_identity: pattern_id + oracle_id + source_record_identity
+  deduplicate_within_pattern: oracle_id
+  strata:
+    - card_type
+    - single_face_or_multiface
+    - oracle_text_length
+    - available_engine_evidence
+  second_review:
+    low_fraction: 0.0
+    medium_fraction: 0.2
+    high_fraction: 1.0
+  target_total_samples: 460
+review_decisions:
+  - CORRECT
+  - TOO_BROAD
+  - TOO_NARROW
+  - CONTEXT_DEPENDENT
+  - WRONG
+  - AMBIGUOUS
+  - SOURCE_EVIDENCE_INSUFFICIENT
+patterns:
+  - pattern_id: forge.draw.v1
+    pattern_version: 1
+    source: forge
+    external_construct: Draw
+    proposed_requirement: draw
+    risk: LOW
+    sample_size: 20
+    second_review_fraction: 0.0
+    rationale: Explicit draw action; useful low-risk baseline for a frequent primitive.
+  - pattern_id: forge.token.v1
+    pattern_version: 1
+    source: forge
+    external_construct: Token
+    proposed_requirement: create_token
+    risk: LOW
+    sample_size: 20
+    second_review_fraction: 0.0
+    rationale: Explicit token creation action; compare card text with script token parameters.
+  - pattern_id: xmage.gain_life_effect.v1
+    pattern_version: 1
+    source: xmage
+    external_construct: GainLifeEffect
+    proposed_requirement: gain_life
+    risk: LOW
+    sample_size: 20
+    second_review_fraction: 0.0
+    rationale: Narrow named effect with a direct gain-life meaning.
+  - pattern_id: forge.deal_damage.v1
+    pattern_version: 1
+    source: forge
+    external_construct: DealDamage
+    proposed_requirement: damage
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Damage amount, recipient, and distribution can materially change the requirement context.
+    context_fields:
+      - NumDmg
+      - ValidTgts
+      - ValidCards
+      - Defined
+      - Targeting
+  - pattern_id: forge.destroy.v1
+    pattern_version: 1
+    source: forge
+    external_construct: Destroy
+    proposed_requirement: destroy
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Inspect target/filter and regeneration-related parameters; the action name alone may be broad.
+    context_fields:
+      - ValidTgts
+      - ValidCards
+      - ValidPlayer
+      - Defined
+  - pattern_id: forge.put_counter.v1
+    pattern_version: 1
+    source: forge
+    external_construct: PutCounter
+    proposed_requirement: counter_change
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Counter type, quantity, target, and scope may be important omitted context.
+    context_fields:
+      - CounterType
+      - CounterNum
+      - ValidTgts
+      - ValidCards
+      - Defined
+  - pattern_id: xmage.damage_target_effect.v1
+    pattern_version: 1
+    source: xmage
+    external_construct: DamageTargetEffect
+    proposed_requirement: damage
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Named damage effect, but amount and target scope require contextual review.
+    context_fields:
+      - amount
+      - target
+      - filter
+      - duration
+  - pattern_id: xmage.destroy_target_effect.v1
+    pattern_version: 1
+    source: xmage
+    external_construct: DestroyTargetEffect
+    proposed_requirement: destroy
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Targeted destroy effect; inspect filters and effect parameters.
+    context_fields:
+      - target
+      - filter
+      - regeneration
+  - pattern_id: xmage.add_counters_source_effect.v1
+    pattern_version: 1
+    source: xmage
+    external_construct: AddCountersSourceEffect
+    proposed_requirement: counter_change
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Source counter effect; counter kind, amount, and recipient may be broader than the generic candidate.
+    context_fields:
+      - counter_type
+      - amount
+      - recipient
+  - pattern_id: forge.change_zone.v1
+    pattern_version: 1
+    source: forge
+    external_construct: ChangeZone
+    proposed_requirement: zone_transition
+    risk: HIGH
+    sample_size: 40
+    second_review_fraction: 1.0
+    rationale: Origin, destination, selection, cardinality, and object linkage may be collapsed by the generic requirement.
+    context_fields:
+      - Origin
+      - Destination
+      - ValidTgts
+      - ValidCards
+      - ChangeType
+      - ChangeNum
+      - Defined
+      - SubAbility
+  - pattern_id: forge.change_zone_all.v1
+    pattern_version: 1
+    source: forge
+    external_construct: ChangeZoneAll
+    proposed_requirement: zone_transition
+    risk: HIGH
+    sample_size: 40
+    second_review_fraction: 1.0
+    rationale: Mass transitions may differ materially from single-object transitions; inspect filters and cardinality.
+    context_fields:
+      - Origin
+      - Destination
+      - ValidCards
+      - ChangeType
+      - ChangeNum
+      - selection_mode
+      - cardinality
+  - pattern_id: xmage.exile_target_effect.v1
+    pattern_version: 1
+    source: xmage
+    external_construct: ExileTargetEffect
+    proposed_requirement: zone_transition
+    risk: HIGH
+    sample_size: 40
+    second_review_fraction: 1.0
+    rationale: Exile is a specific destination and targeted effect; test whether zone_transition is too broad.
+    context_fields:
+      - target
+      - filter
+      - source_zone
+      - destination_zone
+  - pattern_id: xmage.return_to_hand_source_effect.v1
+    pattern_version: 1
+    source: xmage
+    external_construct: ReturnToHandSourceEffect
+    proposed_requirement: zone_transition
+    risk: HIGH
+    sample_size: 40
+    second_review_fraction: 1.0
+    rationale: Return-to-hand has source-object and destination context that may not fit a bare transition label.
+    context_fields:
+      - source_object
+      - source_zone
+      - destination_zone
+      - owner_or_controller
+  - pattern_id: cross.damage.deal_damage__damage_target_effect.v1
+    pattern_version: 1
+    source: cross
+    pattern_kind: CROSS_IMPLEMENTATION_CORROBORATION
+    external_constructs:
+      - source: forge
+        token: DealDamage
+      - source: xmage
+        class: DamageTargetEffect
+    proposed_requirement: damage
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Review cards with both implementation constructs; agreement is corroboration, not independent semantic authority.
+  - pattern_id: cross.create_token.token__create_token_effect.v1
+    pattern_version: 1
+    source: cross
+    pattern_kind: CROSS_IMPLEMENTATION_CORROBORATION
+    external_constructs:
+      - source: forge
+        token: Token
+      - source: xmage
+        class: CreateTokenEffect
+    proposed_requirement: create_token
+    risk: MEDIUM
+    sample_size: 30
+    second_review_fraction: 0.2
+    rationale: Review cards with both implementation constructs; agreement does not establish rules correctness.

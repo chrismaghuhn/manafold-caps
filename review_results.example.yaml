@@ -1,0 +1,9 @@
+# Copy one file per reviewer and fill decisions independently.
+# Do not share another reviewer's decisions with a blind second reviewer.
+reviewer_id: reviewer-a
+review_batch_id: phase-0.2a-batch-1
+decisions:
+  - sample_id: replace-with-sample-id
+    decision: CORRECT
+    reason: Replace with a concise evidence-based explanation.
+    suggested_requirement: null

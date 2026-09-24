@@ -2,12 +2,22 @@ import unittest
 
 from src.cap_miner import (
     forge_extract,
+    forge_parameter_inventory,
     implementation_status,
+    java_review_excerpt,
     apply_join_review,
+    can_reserve_sample_occurrences,
+    deterministic_sample_id,
     exact_oracle_id_match,
     java_extract,
     load_join_decisions,
+    join_review_metadata,
     lookup_join_decision,
+    stable_second_review_ids,
+    stratified_stable_sample,
+    validation_status_from_results,
+    validate_review_decision,
+    wilson_interval,
     mismatch_diagnostic,
     norm,
     oracle_text,
@@ -118,6 +128,66 @@ class MinerHelpersTest(unittest.TestCase):
     def test_oracle_id_precedes_name_or_text_similarity(self):
         self.assertEqual(exact_oracle_id_match({"oracle_id":"oracle-exact","name":"Near Match"},{"oracle-exact":[7]}),(7,"oracle_id"))
         self.assertIsNone(exact_oracle_id_match({"oracle_id":"near-match","name":"Exact Name"},{"other-id":[2]}))
+
+    def test_pattern_ids_and_stratified_selection_are_deterministic(self):
+        self.assertEqual(deterministic_sample_id("forge.draw.v1","oid","forge@rev:row:1"),deterministic_sample_id("forge.draw.v1","oid","forge@rev:row:1"))
+        candidates=[{"sample_id":f"id-{i:02d}","stratum":{"type":"creature" if i%2 else "land","face":"single"}} for i in range(8)]
+        self.assertEqual(stratified_stable_sample(candidates,5),stratified_stable_sample(candidates,5))
+
+    def test_source_occurrence_is_not_reused(self):
+        used={"forge@revision:row:00000001"}
+        self.assertFalse(can_reserve_sample_occurrences("forge@revision:row:00000001|xmage@revision:row:00000002",used))
+        self.assertTrue(can_reserve_sample_occurrences("forge@revision:row:00000003",used))
+
+    def test_high_risk_second_review_and_medium_sample(self):
+        samples=[{"sample_id":f"s{i:02d}"} for i in range(40)]
+        self.assertEqual(len(stable_second_review_ids(samples,"HIGH",1.0)),40)
+        self.assertEqual(len(stable_second_review_ids(samples,"MEDIUM",0.2)),8)
+
+    def test_review_enum_and_no_results_state(self):
+        self.assertEqual(validate_review_decision("CORRECT"),"CORRECT")
+        with self.assertRaises(ValueError): validate_review_decision("MAYBE")
+        self.assertEqual(validation_status_from_results([]),"AWAITING_REVIEW")
+
+    def test_wilson_interval_known_values(self):
+        interval=wilson_interval(5,10)
+        self.assertAlmostEqual(interval["estimate"],0.5)
+        self.assertAlmostEqual(interval["lower"],0.2366,places=3)
+        self.assertAlmostEqual(interval["upper"],0.7634,places=3)
+        self.assertIsNone(wilson_interval(0,0)["lower"])
+
+    def test_plan_keeps_mapping_hash_at_phase_0_1_2_value(self):
+        import hashlib
+        from pathlib import Path
+        digest=hashlib.sha256((Path(__file__).resolve().parents[1]/"mappings.yaml").read_bytes()).hexdigest()
+        self.assertEqual(digest,"3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a")
+
+    def test_validation_plan_is_bounded_and_zone_patterns_keep_context_fields(self):
+        import yaml
+        from pathlib import Path
+        plan=yaml.safe_load((Path(__file__).resolve().parents[1]/"validation_plan.yaml").read_text(encoding="utf-8"))
+        self.assertEqual(len(plan["patterns"]),15)
+        self.assertLessEqual(sum(p["sample_size"] for p in plan["patterns"]),500)
+        zone=next(p for p in plan["patterns"] if p["pattern_id"]=="forge.change_zone.v1")
+        self.assertTrue({"Origin","Destination","ValidTgts","ChangeType","ChangeNum"}.issubset(zone["context_fields"]))
+
+    def test_high_risk_forge_parameters_are_retained(self):
+        params=forge_parameter_inventory({"output":"A:SP$ ChangeZone | Origin$ Graveyard | Destination$ Battlefield | ValidTgts$ Creature.YouCtrl | ChangeNum$ 1"})
+        self.assertEqual(params["Origin"],["Graveyard"])
+        self.assertEqual(params["Destination"],["Battlefield"])
+        self.assertEqual(params["ValidTgts"],["Creature.YouCtrl"])
+        self.assertEqual(params["ChangeNum"],["1"])
+
+    def test_xmage_review_excerpt_keeps_effect_construction_context(self):
+        excerpt=java_review_excerpt("import mage.abilities.effects.common.ExileTargetEffect;\n"
+                                   "Ability ability = new SimpleActivatedAbility(cost);\n"
+                                   "ability.addEffect(new ExileTargetEffect(filter));\n",{"ExileTargetEffect"})
+        self.assertIn("ExileTargetEffect(filter)",excerpt)
+
+    def test_join_warning_is_carried_into_review_metadata(self):
+        metadata=join_review_metadata("xmage","1b6e0d65-202e-4fd3-861e-8d2eaffe3269",load_join_decisions())
+        self.assertEqual(metadata["join_review_status"],"KEEP_WITH_FLAG")
+        self.assertIn("mojibake",metadata["join_review_reason"])
 
 
 if __name__ == "__main__":

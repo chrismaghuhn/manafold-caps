@@ -7,6 +7,7 @@ import datetime as dt
 import difflib
 import hashlib
 import json
+import math
 import os
 import re
 import unicodedata
@@ -26,7 +27,11 @@ PINNED_REVISIONS = {
     "forge": "cef86f363d7f7d5b3293248a75f550a7c3404066",
     "xmage": "6212eb37907c1ce751d8a3fea8b3322056dc0264",
 }
-EXTRACTOR_VERSION = "0.1.2"
+EXTRACTOR_VERSION = "0.2.0"
+VALIDATION_EXTRACTOR_VERSION = "0.2.0"
+REVIEW_DECISIONS = {"CORRECT","TOO_BROAD","TOO_NARROW","CONTEXT_DEPENDENT","WRONG","AMBIGUOUS","SOURCE_EVIDENCE_INSUFFICIENT"}
+VALIDATION_EXTRACTOR_VERSION = "0.2.0"
+REVIEW_DECISIONS = {"CORRECT","TOO_BROAD","TOO_NARROW","CONTEXT_DEPENDENT","WRONG","AMBIGUOUS","SOURCE_EVIDENCE_INSUFFICIENT"}
 GENERIC_XMAGE_CLASSES = {
     "Ability", "Effect", "Cost", "Target", "Filter", "Condition",
     "OneShotEffect", "ContinuousEffect", "SimpleActivatedAbility",
@@ -98,6 +103,218 @@ def candidate_status_counts(sf, forge_matches, xmage_matches, forge_map, xmage_m
         for sources in kinds.values():
             counts[implementation_status(sources)]+=1
     return {"total_mapped_candidates":sum(counts.values()),"multi_implementation_agreement":counts["MULTI_IMPLEMENTATION_AGREEMENT"],"forge_only":counts["FORGE_ONLY"],"xmage_only":counts["XMAGE_ONLY"]}
+
+
+def validate_review_decision(value):
+    if value not in REVIEW_DECISIONS: raise ValueError(f"Unknown pattern review decision: {value}")
+    return value
+
+
+def validation_status_from_results(results):
+    return "AWAITING_REVIEW" if not results else "REVIEW_RESULTS_PRESENT_AGGREGATION_PENDING"
+
+
+def wilson_interval(accepted, total, z=1.959963984540054):
+    """Return estimate and 95% Wilson bounds; null values when no reviews exist."""
+    if total<=0: return {"estimate":None,"reviewed_n":0,"accepted_n":0,"confidence_level":0.95,"interval_method":"wilson","lower":None,"upper":None}
+    p=accepted/total; z2=z*z; den=1+z2/total
+    center=(p+z2/(2*total))/den
+    radius=(z*((p*(1-p)/total+z2/(4*total*total))**0.5))/den
+    return {"estimate":p,"reviewed_n":total,"accepted_n":accepted,"confidence_level":0.95,"interval_method":"wilson","lower":max(0.0,center-radius),"upper":min(1.0,center+radius)}
+
+
+def deterministic_sample_id(pattern_id, oracle_id, source_record_identity):
+    key="\x1f".join((pattern_id,str(oracle_id),str(source_record_identity)))
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()[:24]
+
+
+def source_occurrence_parts(source_record_identity):
+    return {part for part in str(source_record_identity).split("|") if part}
+
+
+def can_reserve_sample_occurrences(source_record_identity, used_occurrences):
+    return not (source_occurrence_parts(source_record_identity)&set(used_occurrences))
+
+
+def stratified_stable_sample(candidates, sample_size):
+    groups=defaultdict(list)
+    for item in candidates: groups[tuple(item["stratum"][k] for k in sorted(item["stratum"]))].append(item)
+    queues={key:sorted(values,key=lambda item:item["sample_id"]) for key,values in sorted(groups.items())}
+    selected=[]
+    while len(selected)<min(sample_size,len(candidates)):
+        progressed=False
+        for key in sorted(queues):
+            if queues[key] and len(selected)<sample_size:
+                selected.append(queues[key].pop(0));progressed=True
+        if not progressed: break
+    return selected
+
+
+def stable_second_review_ids(samples, risk, fraction):
+    if risk=="HIGH": return {s["sample_id"] for s in samples}
+    if risk!="MEDIUM" or fraction<=0: return set()
+    required=math.ceil(len(samples)*fraction)
+    return {s["sample_id"] for s in sorted(samples,key=lambda s:hashlib.sha256((s["sample_id"]+"|reviewer-b").encode()).hexdigest())[:required]}
+
+
+def java_review_excerpt(source, constructs, limit=5000):
+    text=source.replace("\\n","\n")
+    lines=text.splitlines(); terms=set(constructs)
+    selected=set()
+    for i,line in enumerate(lines):
+        if any(term and term in line for term in terms):
+            selected.update(range(max(0,i-2),min(len(lines),i+3)))
+    excerpt="\n".join(lines[i] for i in sorted(selected))
+    return excerpt[:limit]
+
+
+def reviewable_record_identity(source, revision, row_index):
+    return f"{source}@{revision}:row:{row_index:08d}"
+
+
+def sample_stratum(card, forge_present, xmage_present):
+    type_line=card.get("type_line") or ""
+    card_type=type_line.split("—",1)[0].split("//",1)[0].strip() or "unknown"
+    layout=card.get("layout") or "normal"
+    faces=card.get("card_faces") or []
+    face_kind="MULTIFACE" if len(faces)>1 or layout not in {"normal","token"} else "SINGLE_FACE"
+    text=card.get("oracle_text") or ""
+    text_length="SHORT" if len(text)<=120 else ("MEDIUM" if len(text)<=300 else "LONG")
+    engine_mode="BOTH" if forge_present and xmage_present else ("FORGE_ONLY" if forge_present else "XMAGE_ONLY")
+    return {"card_type":card_type,"face_kind":face_kind,"oracle_text_length":text_length,"available_engine_evidence":engine_mode}
+
+
+def forge_parameter_inventory(record):
+    text=str(record.get("output","")).replace("\\n","\n")
+    result=defaultdict(list)
+    for key,value in re.findall(r"\b([A-Za-z][\w]*)\$\s*([^|\r\n]+)",text):
+        value=value.strip()
+        if value and value not in result[key]: result[key].append(value[:500])
+    return dict(sorted(result.items()))
+
+
+def load_validation_plan(mapping_sha, source_revisions):
+    import yaml
+    plan=yaml.safe_load((ROOT/"validation_plan.yaml").read_text(encoding="utf-8"))
+    scope=plan["validation_scope"]
+    expected={"extractor_version":VALIDATION_EXTRACTOR_VERSION,"mapping_sha256":mapping_sha,"source_set":source_revisions}
+    actual={"extractor_version":scope.get("extractor_version"),"mapping_sha256":scope.get("mapping_sha256"),"source_set":scope.get("source_set")}
+    if actual!=expected: raise RuntimeError(f"Validation plan scope does not match pinned run: plan={actual}, run={expected}")
+    return plan
+
+
+def generate_review_artifacts(sf, f_matches, x_matches, forge_extracts, xmage_extracts, forge_map, xmage_map, source_revisions, reviewed_decisions):
+    mapping_sha=hashlib.sha256((ROOT/"mappings.yaml").read_bytes()).hexdigest()
+    plan=load_validation_plan(mapping_sha,source_revisions)
+    samples=[]; inventories=[]; used_occurrences=set()
+    matched_ids=set(f_matches)|set(x_matches)
+    both_engine_ids=set(f_matches)&set(x_matches)
+
+    def matches_for_construct(source, index, construct):
+        if source=="forge":
+            return [item for item in f_matches.get(index,[]) if construct in item[2]]
+        return [item for item in x_matches.get(index,[]) if construct in item[4]]
+
+    def row_id(source,item):
+        revision=source_revisions[source]
+        return reviewable_record_identity(source,revision,item[-1])
+
+    def evidence_payload(source,index,chosen,selected_constructs,card):
+        if source=="forge":
+            record,method,actions,attrs,snips,relation,diag,rec_index=chosen
+            selected_snippets=[snippet for snippet in snips if any(token in snippet for token in selected_constructs)] or snips
+            return {"present":True,"source_record_identity":row_id(source,chosen),"match_method":method,"selected_constructs":sorted(selected_constructs),"actions":sorted(set(actions)),"source_oracle_text":oracle_text(record),"oracle_text_comparison":relation,"parameters":forge_parameter_inventory(record),"snippet":"\n".join(selected_snippets[:8])[:5000],"join_review":join_review_metadata(source,card.get("oracle_id"),reviewed_decisions)}
+        record,method,imports,classes,semantic,snippet,relation,diag,rec_index=chosen
+        java=record.get("completion",record.get("output",""))
+        excerpt=java_review_excerpt(java,set(selected_constructs)|set(semantic))
+        return {"present":True,"source_record_identity":row_id(source,chosen),"match_method":method,"selected_constructs":sorted(selected_constructs),"semantic_classes":semantic,"imports":imports,"source_oracle_text":oracle_text(record),"oracle_text_comparison":relation,"prompt":record.get("prompt",""),"java_excerpt":excerpt,"join_review":join_review_metadata(source,card.get("oracle_id"),reviewed_decisions)}
+
+    for spec in plan["patterns"]:
+        constructs=spec.get("external_constructs") or [{"source":spec["source"],"token":spec["external_construct"]}]
+        population=[]; source_occurrence_counts=Counter()
+        for idx,card in enumerate(sf):
+            if idx not in matched_ids: continue
+            chosen_by_source={}
+            present=True
+            for construct in constructs:
+                source=construct["source"]
+                token=construct.get("token") or construct.get("class")
+                hits=matches_for_construct(source,idx,token)
+                if not hits:
+                    present=False;break
+                chosen=min(hits,key=lambda item:item[-1])
+                chosen_by_source.setdefault(source,{})[token]=chosen
+            if not present: continue
+            population.append((idx,card,chosen_by_source))
+        if spec["source"]=="forge":
+            token=spec["external_construct"]
+            source_occurrence_counts["forge"]=sum(actions.count(token) for _,actions,_,_ in forge_extracts)
+        elif spec["source"]=="xmage":
+            token=spec["external_construct"]
+            source_occurrence_counts["xmage"]=sum(token in semantic for _,_,_,semantic,_ in xmage_extracts)
+        else:
+            for construct in constructs:
+                source=construct["source"]; token=construct.get("token") or construct.get("class")
+                if source=="forge": source_occurrence_counts[source]=sum(actions.count(token) for _,actions,_,_ in forge_extracts)
+                else: source_occurrence_counts[source]=sum(token in semantic for _,_,_,semantic,_ in xmage_extracts)
+
+        candidates=[]
+        for idx,card,chosen_by_source in population:
+            identities=[]
+            for source in sorted(chosen_by_source):
+                for token,entry in sorted(chosen_by_source[source].items()): identities.append(row_id(source,entry))
+            for source,matched in (("forge",f_matches.get(idx,[])),("xmage",x_matches.get(idx,[]))):
+                if matched and source not in chosen_by_source:
+                    identities.append(row_id(source,min(matched,key=lambda item:item[-1])))
+            identity="|".join(identities)
+            sid=deterministic_sample_id(spec["pattern_id"],card.get("oracle_id"),identity)
+            stratum=sample_stratum(card,idx in f_matches,idx in x_matches)
+            candidates.append({"sample_id":sid,"oracle_id":card.get("oracle_id"),"name":card.get("name"),"identity":identity,"stratum":stratum,"index":idx,"card":card,"chosen":chosen_by_source})
+        # Sampling is per-card; reserve source rows already used by earlier patterns so an
+        # occurrence is not duplicated across the review packet. Population remains unfiltered.
+        available=[]
+        for candidate in candidates:
+            if can_reserve_sample_occurrences(candidate["identity"],used_occurrences): available.append(candidate)
+        requested=min(spec["sample_size"],len(available))
+        selected=stratified_stable_sample(available,requested)
+        for candidate in selected: used_occurrences.update(source_occurrence_parts(candidate["identity"]))
+        second_ids=stable_second_review_ids(selected,spec["risk"],spec.get("second_review_fraction",0.0))
+        pattern_constructs=defaultdict(set)
+        for c in constructs: pattern_constructs[c["source"]].add(c.get("token") or c.get("class"))
+        output_rows=[]
+        for candidate in selected:
+            idx=candidate["index"];card=candidate["card"];chosen=candidate["chosen"]
+            forge_selected=pattern_constructs.get("forge",set()); xmage_selected=pattern_constructs.get("xmage",set())
+            forge_choice=chosen.get("forge",{});xmage_choice=chosen.get("xmage",{})
+            if not forge_choice and f_matches.get(idx):
+                item=min(f_matches[idx],key=lambda value:value[-1]);forge_choice={"_corroborating":item}
+            if not xmage_choice and x_matches.get(idx):
+                item=min(x_matches[idx],key=lambda value:value[-1]);xmage_choice={"_corroborating":item}
+            forge_items=list(forge_choice.values());xmage_items=list(xmage_choice.values())
+            forge_payload=evidence_payload("forge",idx,forge_items[0],forge_selected,card) if forge_items else {"present":False}
+            xmage_payload=evidence_payload("xmage",idx,xmage_items[0],xmage_selected,card) if xmage_items else {"present":False}
+            all_review=[]
+            for source,items in (("forge",forge_items),("xmage",xmage_items)):
+                for item in items:
+                    meta=join_review_metadata(source,card.get("oracle_id"),reviewed_decisions)
+                    if meta: all_review.append({"source":source,**meta})
+            faces=card.get("card_faces") or []
+            row={"sample_id":candidate["sample_id"],"validation_status":"AWAITING_REVIEW","pattern_id":spec["pattern_id"],"pattern_version":spec["pattern_version"],"validation_scope":{"extractor_version":VALIDATION_EXTRACTOR_VERSION,"mapping_sha256":mapping_sha,"source_set":source_revisions},"pattern":{"kind":spec.get("pattern_kind","SOURCE_MAPPING"),"source":spec["source"],"external_construct":spec.get("external_construct"),"external_constructs":constructs if spec["source"]=="cross" else None,"proposed_requirement":spec["proposed_requirement"],"risk":spec["risk"],"context_fields_to_check":spec.get("context_fields",[])},"source_record_identity":candidate["identity"],"card":{"oracle_id":card.get("oracle_id"),"name":card.get("name"),"type_line":card.get("type_line"),"layout":card.get("layout"),"mana_cost":card.get("mana_cost"),"oracle_text":card.get("oracle_text"),"faces":[{"name":f.get("name"),"oracle_text":f.get("oracle_text")} for f in faces if isinstance(f,dict)]},"evidence":{"forge":forge_payload,"xmage":xmage_payload},"join_review":{"status":"KEEP_WITH_FLAG" if any(r["join_review_status"]=="KEEP_WITH_FLAG" for r in all_review) else ("REVIEWED_KEEP_JOIN" if all_review else "NOT_IN_SUSPICIOUS_JOIN_AUDIT"),"decisions":all_review},"stratum":candidate["stratum"],"review_protocol":{"reviewer_a_required":True,"second_review_required":candidate["sample_id"] in second_ids,"blind_second_review":candidate["sample_id"] in second_ids,"second_review_fraction":spec.get("second_review_fraction",0.0)},"review_fields":{"decision":None,"reason":None,"suggested_requirement":None}}
+            output_rows.append(row)
+        samples.extend(output_rows)
+        both_count=sum(idx in both_engine_ids for idx,_,_ in population)
+        inventories.append({"pattern_id":spec["pattern_id"],"pattern_version":spec["pattern_version"],"validation_scope":plan["validation_scope"],"source":spec["source"],"external_construct":spec.get("external_construct"),"external_constructs":constructs if spec["source"]=="cross" else None,"proposed_requirement":spec["proposed_requirement"],"risk":spec["risk"],"rationale":spec["rationale"],"context_fields_to_check":spec.get("context_fields",[]),"population_size":len(population),"source_population_records":dict(source_occurrence_counts),"cards_with_both_engine_evidence":both_count,"target_sample_size":spec["sample_size"],"sample_size":len(selected),"sample_ids":[r["sample_id"] for r in output_rows],"second_review_fraction":spec.get("second_review_fraction",0.0),"second_review_required_samples":len(second_ids),"validation_status":"AWAITING_REVIEW","precision":{"estimate":None,"reviewed_n":0,"accepted_n":0,"confidence_level":0.95,"interval_method":"wilson","lower":None,"upper":None},"inter_rater_agreement":"NOT_AVAILABLE"})
+    if len(samples)>500: raise RuntimeError(f"Review sample cap exceeded: {len(samples)}")
+    if sum(p["sample_size"] for p in inventories)!=len(samples): raise RuntimeError("Pattern inventory sample totals do not match packet")
+    all_sample_occurrences=[part for row in samples for part in source_occurrence_parts(row["source_record_identity"])]
+    if len(all_sample_occurrences)!=len(set(all_sample_occurrences)): raise RuntimeError("A source record occurrence was included more than once in the review packet")
+    write_jsonl(OUT/"review_samples.jsonl",samples)
+    sample_ids_by_card=defaultdict(list)
+    for sample in samples: sample_ids_by_card[sample["card"]["oracle_id"]].append(sample["sample_id"])
+    warning_register=[{"source":decision["source"],"oracle_id":decision["oracle_id"],"card_name":decision["card_name"],"join_review_status":decision["action"],"join_review_reason":decision["reason"],"review_sample_ids":sorted(sample_ids_by_card.get(decision["oracle_id"],[]))} for decision in reviewed_decisions.values() if decision["action"]=="KEEP_WITH_FLAG"]
+    inventory={"validation_scope":plan["validation_scope"],"plan_id":plan["plan_id"],"review_batch_id":plan["review_batch_id"],"sampling":plan["sampling"],"pattern_count":len(inventories),"total_population_occurrences":sum(sum(p["source_population_records"].values()) for p in inventories),"total_samples":len(samples),"low_risk_patterns":sum(p["risk"]=="LOW" for p in inventories),"medium_risk_patterns":sum(p["risk"]=="MEDIUM" for p in inventories),"high_risk_patterns":sum(p["risk"]=="HIGH" for p in inventories),"second_review_required_samples":sum(p["second_review_required_samples"] for p in inventories),"validation_status":validation_status_from_results([]),"patterns_validated":0,"precision_available":False,"inter_rater_agreement_available":False,"join_quality_warnings":warning_register,"patterns":inventories}
+    write_json(OUT/"pattern_inventory.json",inventory)
+    return inventory
 
 
 def load_join_decisions():
@@ -458,6 +675,12 @@ def write_jsonl(path, records):
         for r in records: f.write(json.dumps(jsonable(r), ensure_ascii=False) + "\n")
 
 
+def _read_jsonl(path):
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip(): yield json.loads(line)
+
+
 def read_mapping():
     import yaml
     return yaml.safe_load((ROOT / "mappings.yaml").read_text(encoding="utf-8"))
@@ -659,6 +882,7 @@ def mine(rows):
     write_jsonl(OUT/"matched_cards.jsonl",matched);write_jsonl(OUT/"unmatched_forge.jsonl",unmatched_f);write_jsonl(OUT/"unmatched_xmage.jsonl",unmatched_x);write_jsonl(OUT/"ambiguous_matches.jsonl",ambiguous);write_jsonl(OUT/"requirement_candidates.jsonl",candidates)
     stats={"scryfall":len(sf),"forge":len(forge),"xmage":len(xmage),"forge_matched_records":sum(map(len,f_matches.values())),"xmage_matched_records":sum(map(len,x_matches.values())),"forge_cards":len(f_matches),"xmage_cards":len(x_matches),"both_cards":len(set(f_matches)&set(x_matches)),"unmatched_forge":len(unmatched_f),"unmatched_xmage":len(unmatched_x),"ambiguous":len(ambiguous),"oracle_text_comparison":{source:dict(counts) for source,counts in text_counts.items()},"suspicious_joins":suspicious_total,"requirements":requirement_counts}
     write_json(OUT/"stats.json",stats)
+    mine.validation_inventory=generate_review_artifacts(sf,f_matches,x_matches,forge_extracts,xmage_extracts,forge_map,xmage_map,source_revisions,reviewed_decisions)
     mine.last_stats=stats
     return stats
 
@@ -720,6 +944,7 @@ def report(stats=None):
     lines += ["", "## Phase 0.1.2 join decisions", "",f"The pinned suspicious set contains {join_stats['total_audited']} individually reviewed records: {join_stats['actions']}. No join was rejected. {join_stats['unresolved']} decisions remain unresolved. Nine XMage records are retained with warnings because their type-line dash is mojibake; warning metadata is attached to their matched evidence.",f"Identity counts and mapped candidate counts did not change: before/after Forge {join_stats['matching_before']['forge_identities']}/{join_stats['matching_after']['forge_identities']}, XMage {join_stats['matching_before']['xmage_identities']}/{join_stats['matching_after']['xmage_identities']}, both {join_stats['matching_before']['both_identities']}/{join_stats['matching_after']['both_identities']}; mapped candidates {join_stats['candidate_impact']['before']['total_mapped_candidates']}/{join_stats['candidate_impact']['after']['total_mapped_candidates']}.","", "## Interpretation and next decision", "",f"The 0.1.1 seed mappings changed candidate-level cross-engine agreement from the 0.1.0 baseline of 2,962 to {card['requirements']['multi_implementation_agreement']:,}. This is a count of mapped candidate pairs, not a correctness score.","All audited identities were supported by an exact unique normalized card name and matching card context. Oracle wording variants are retained; nine encoding warnings remain visible on XMage evidence. No name collision, face collision, or matching-policy defect was found. The audited identity joins are suitable for Phase 0.2 while preserving those warnings.","", "No rules validation, eligibility policy, or CAP integration was added. Forge and XMage remain implementation evidence, not semantic authority. No LLM or embeddings are used.",""]
     (ROOT/"REPORT.md").write_text("\n".join(lines),encoding="utf-8")
     write_join_audit_report(join_stats)
+    write_validation_report()
 
 
 def write_join_audit_report(stats):
@@ -735,6 +960,24 @@ def write_join_audit_report(stats):
     lines += [f"- `{r['source']}` `{r['card_name']}` — {r['reason']}" for r in stale[:8]]
     lines += ["", "## Systematic issues found", "", "No normalized-name collision or multiface collision occurred among the 58. All were `normalized_name` joins; the name index resolved each to one Scryfall row, and no Oracle ID was available in the external records. All source type lines match Scryfall except nine XMage prompts whose em dash is encoded as the mojibake sequence U+00E2 U+20AC U+201D. Those nine have matching type words after that known encoding normalization and retain matching names/mana context; they are `SOURCE_RECORD_WRONG_OR_CORRUPT` with `KEEP_WITH_FLAG`. No bug was found in card-name extraction, Oracle-text extraction, face indexing, ambiguity detection, or Oracle-ID precedence.","", "## Matching changes", "",f"Before / after distinct identities — Forge: {stats['matching_before']['forge_identities']} / {stats['matching_after']['forge_identities']}; XMage: {stats['matching_before']['xmage_identities']} / {stats['matching_after']['xmage_identities']}; both: {stats['matching_before']['both_identities']} / {stats['matching_after']['both_identities']}.",f"Mapped candidates — total {stats['candidate_impact']['before']['total_mapped_candidates']} / {stats['candidate_impact']['after']['total_mapped_candidates']}; multi-implementation {stats['candidate_impact']['before']['multi_implementation_agreement']} / {stats['candidate_impact']['after']['multi_implementation_agreement']}. No rejected joins means downstream counts are unchanged. `KEEP_WITH_FLAG` metadata is attached to the affected matched evidence and requirement evidence.","", "## Recommendation for Phase 0.2", "", "READY. The exact-name joins in this narrowly audited set are supported by unique identity and card context; none should be excluded. Carry the nine XMage encoding warnings forward. This decision is about identity only and does not assert that source Oracle wording or extracted implementation semantics are correct.",""]
     (ROOT/"JOIN_AUDIT.md").write_text("\n".join(lines),encoding="utf-8")
+
+
+def write_validation_report():
+    inv=json.loads((OUT/"pattern_inventory.json").read_text(encoding="utf-8"))
+    patterns=inv["patterns"]
+    counts=Counter(p["risk"] for p in patterns)
+    second=sum(p["second_review_required_samples"] for p in patterns)
+    warning_sample_ids={sample_id for warning in inv.get("join_quality_warnings",[]) for sample_id in warning.get("review_sample_ids",[])}
+    warning_sample_n=len(warning_sample_ids)
+    warning_sample_phrase=f"{warning_sample_n} sampled {'card' if warning_sample_n==1 else 'cards'} {'carries' if warning_sample_n==1 else 'carry'} warning metadata directly in its review item" if warning_sample_n==1 else f"{warning_sample_n} sampled cards carry warning metadata directly in their review items"
+    lines=["# Phase 0.2A — Pattern Validation Harness + Review Packet","", "## Summary", "",f"Selected {len(patterns)} patterns and produced {inv['total_samples']} deterministic card-level review samples from {inv['total_population_occurrences']:,} pattern/source occurrences. Risk classes: LOW {counts['LOW']}, MEDIUM {counts['MEDIUM']}, HIGH {counts['HIGH']}.",f"All inputs use pinned revisions Scryfall `{PINNED_REVISIONS['scryfall']}`, Forge `{PINNED_REVISIONS['forge']}`, XMage `{PINNED_REVISIONS['xmage']}`. Extractor `{VALIDATION_EXTRACTOR_VERSION}`; mapping SHA-256 `{inv['validation_scope']['mapping_sha256']}`.","", "No mapping has been validated yet. No precision claim is made yet. No CAP eligibility decision exists.","", "## Selected patterns", "", "Population is the number of distinct exact-joined Scryfall identities containing the construct (or both constructs for cross patterns). `source_population_records` counts all source records with the construct across the pinned corpus; it is a different unit. Sampling uses only exact-joined identities. The cross-pattern rows are labeled corroboration, not independent semantic validation.","","| pattern | why selected | risk | population cards | target n | sampled n | both-engine cards | second review n |","|---|---|---:|---:|---:|---:|---:|---:|"]
+    lines += [f"| `{p['pattern_id']}` | {p['rationale']} | {p['risk']} | {p['population_size']:,} | {p['target_sample_size']} | {p['sample_size']} | {p['cards_with_both_engine_evidence']:,} | {p['second_review_required_samples']} |" for p in patterns]
+    lines += ["", "High-risk context to inspect:"]
+    lines += [f"- `{p['pattern_id']}`: {', '.join(p['context_fields_to_check'])}." for p in patterns if p["risk"]=="HIGH"]
+    lines += ["", "## Deterministic sampling", "", "Pattern-specific candidates are deduplicated by Oracle identity. Within each pattern, examples are grouped by card type, single-face/multiface layout, Oracle-text length, and available engine evidence. Within each stratum they are ordered by SHA-256 of stable sample ID; sorted strata are then interleaved round-robin until the target is reached. Sample IDs bind pattern ID, Oracle ID, and pinned source-record identity. Repeated source-row occurrences are reserved after first selection so the same row is not accidentally reviewed twice across this batch. If a pattern's eligible pool is below target, all available cards are included.",f"The packet contains {inv['total_samples']} samples, at most 500. Source occurrence identities are based on global row offsets within the pinned dataset revision; source revision is part of the identity.","", "## Reviewer protocol", "",f"Second review is required for {second} samples: all HIGH-risk items and a deterministic 20% from each MEDIUM-risk pattern ({sum(1 for r in _read_jsonl(OUT/'review_samples.jsonl') if r['review_protocol']['second_review_required'])} marked in the packet). LOW-risk items have no second review in this initial batch.","Each item has empty `review_fields`. `review_results.example.yaml` shows the result format. Give Reviewer B a separate copy containing the selected `second_review_required` items; do not include Reviewer A's result file. Reviewer IDs are opaque labels. No review results were supplied or inferred.","", "## Retained context", "", "Review items include current Scryfall Oracle text, card type/layout/faces, implementation evidence, and exact join method. Forge evidence retains script action snippets and parsed `$` parameters such as origin, destination, target/filter, cardinality, damage/counter/token values when present. XMage evidence retains prompt fields, imports/classes, and a source excerpt around relevant constructors. Higher-risk zone patterns explicitly list the context fields reviewers should inspect.",f"All nine Phase 0.1.2 `KEEP_WITH_FLAG` XMage type-line warnings are listed in `pattern_inventory.json`; {len(warning_sample_ids)} sampled cards carry warning metadata directly in their review item. Join review remains separate from semantic pattern review.","", "## Validation state", "", "Every pattern is `AWAITING_REVIEW`; `patterns_validated = 0`. Precision estimate and Wilson bounds are null. Inter-rater agreement is `NOT_AVAILABLE`; no Cohen's kappa or Gwet's AC1 value is produced without two real independent result sets.","", "Proposed Phase 0.2B reporting: accept only `CORRECT` as accepted for a primary precision estimate; show `TOO_BROAD`, `TOO_NARROW`, `CONTEXT_DEPENDENT`, and `WRONG` separately as decisive non-accepts. Keep `AMBIGUOUS` and `SOURCE_EVIDENCE_INSUFFICIENT` out of that decisive denominator and report them separately. Exclude reviewer disagreements from precision until adjudicated; do not count disagreement as an extractor error. Report raw agreement plus an agreement coefficient only after independent reviews exist. Use the Wilson 95% lower bound when interpreting small sample estimates.","", "## Data quality and blockers", "",f"No pinned-source or join-review blocker occurred. The existing suspicious-join review retained 49 stale-wording joins and 9 warning-flagged XMage type-line encoding cases; packet items preserve those warnings. Cross-engine patterns measure whether the proposed generic requirement describes the card-level evidence, not whether either engine is rules-correct.","", "## Ready for human review", "", "Yes. Review the JSONL packet and return completed result YAML separately per reviewer. Do not edit mappings or treat corroboration as validation in this phase.",""]
+    rendered="\n".join(lines)
+    rendered=rendered.replace(f"{warning_sample_n} sampled cards carry warning metadata directly in their review item",warning_sample_phrase)
+    (ROOT/"VALIDATION_REPORT.md").write_text(rendered,encoding="utf-8")
 
 
 def pct(n,d): return f"{(100*n/d if d else 0):.2f}%"
