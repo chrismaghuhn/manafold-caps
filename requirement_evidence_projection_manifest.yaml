@@ -1,0 +1,83 @@
+projection_version: 1
+extractor_version: 0.2.1
+source_set:
+  scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+  forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+  xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+validation:
+  differential_status: DIFFERENTIAL_VALIDATION_COMPLETE
+  validation_transfer_artifact: extractor_0_2_1_validation_transfer.yaml
+  parent_pattern_validation_extractor_version: 0.2.0
+  phase_0_2b_precision_reused_as_0_2_1: false
+identity:
+  primary_card_identity: oracle_id
+  occurrence_identity_version: 1
+  occurrence_identity_components:
+  - oracle_id
+  - source
+  - source_record_identity
+  - external_construct
+  - requirement_id
+  - occurrence_index
+  unchanged_candidate_identity_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+projection_counts:
+  total_oracle_cards: 36923
+  cards_with_mapped_requirement_evidence: 16301
+  cards_with_no_mapped_requirement_evidence: 20622
+  cards_with_unresolved_evidence: 24585
+  cards_with_join_warnings: 9
+  distinct_requirements: 14
+  total_card_requirement_pairs: 21196
+  total_active_mapped_occurrences: 29182
+  forge_only_card_requirement_pairs: 14620
+  xmage_only_card_requirement_pairs: 750
+  multi_source_card_requirement_pairs: 5826
+  cards_with_both_engines_on_requirement: 5826
+  active_source_evidence_paths: 29
+  validated_evidence_paths: 13
+  unreviewed_evidence_paths: 16
+  validated_cross_engine_paths: 2
+  transferred_unchanged_occurrences: 29182
+  removed_occurrence_intersection: 0
+  added_candidates: 0
+  unmapped_forge_occurrences: 38338
+  unmapped_xmage_occurrences: 51585
+  card_requirement_pairs_by_requirement:
+    counter: 145
+    counter_change: 2140
+    create_token: 2362
+    damage: 2418
+    destroy: 1524
+    discard: 803
+    draw: 2565
+    gain_life: 1364
+    lose_life: 846
+    mana_production: 1545
+    shuffle: 51
+    tap: 625
+    untap: 379
+    zone_transition: 4429
+  implementation_pair_partition:
+    FORGE_ONLY: 14620
+    MULTI_SOURCE_EVIDENCE: 5826
+    XMAGE_ONLY: 750
+input_provenance:
+  requirement_candidates_0_2_1_sha256: b7a1092e8f40792329ef8a1ab872c74cca83417363fc6bebaf34ee48aefa29b7
+  requirement_candidates_0_2_0_sha256: cca6e0badc253254c62c559f805884647ccb38674191f50384f74d29772ca497
+  mappings_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+  validation_transfer_sha256: 8205d16a814eca0bfba498188b93b20a748c0054551b09e96600e90d4bdcb3b8
+  differential_validation_results_sha256: 9d5a6f4009c4f8799d15a9a300f02990d9ddd9171002376dc79894eadc1365b7
+outputs:
+  data/output/card_requirement_evidence.jsonl:
+    rows: 36923
+    sha256: 4cfae1d9e08e2c84708c93582216cca37a71ce787f4eb8e0a2ed438d621ba803
+  requirement_evidence_projection.yaml:
+    sha256: 891afc2550f88c2c6558ccce7320f0bc19a46acc56ecb942559316e6bf0dd3ac
+  REQUIREMENT_EVIDENCE_PROJECTION_REPORT.md:
+    sha256: c1362271e006ba9ea4c10f6230999d7f7f09d0e2f82ab7d591a8e1c71d253966
+limitations:
+  cap_eligibility: false
+  rules_authority_integrated: false
+  requirement_level_combined_precision: false
+  sqlite: false

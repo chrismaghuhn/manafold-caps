@@ -1,54 +1,701 @@
-projection_id: cap-miner-requirement-evidence-projection.v1
-status: DESIGN_ONLY_NO_AGGREGATION
+projection_id: manafold-cap-miner-requirement-evidence-projection.v1
+status: GENERATED_READ_MODEL_NO_ELIGIBILITY
+projection_scope:
+  extractor_version: 0.2.1
+  parent_extractor_version: 0.2.0
+  source_set:
+    scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+    forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+    xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+  mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+  differential_validation_status: DIFFERENTIAL_VALIDATION_COMPLETE
+  unchanged_identity_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
 numeric_precision_combination: NONE
-notes:
-  - A generic Requirement has no synthetic precision score derived by averaging patterns.
-  - Forge and XMage mapping paths remain separate evidence paths.
-  - A card with both sources retains both paths and cross corroboration separately.
-  - Cross-engine corroboration does not increase numerical precision.
+semantics:
+  forge_and_xmage: implementation evidence only; not normative rules authority
+  cross_engine_corroboration: source presence is not proof of rules correctness and
+    does not increase a numeric score
+  no_evidence: no currently extracted mapped evidence; does not mean the card lacks
+    a capability
+  completeness: absence of unmapped evidence is not proof of semantic completeness
+  historical_validation: pattern review remains scoped to extractor 0.2.0; exact unchanged
+    occurrence identity transfer is recorded separately
+summary:
+  total_oracle_cards: 36923
+  cards_with_mapped_requirement_evidence: 16301
+  cards_with_no_mapped_requirement_evidence: 20622
+  cards_with_unresolved_evidence: 24585
+  cards_with_join_warnings: 9
+  distinct_requirements: 14
+  total_card_requirement_pairs: 21196
+  total_active_mapped_occurrences: 29182
+  forge_only_card_requirement_pairs: 14620
+  xmage_only_card_requirement_pairs: 750
+  multi_source_card_requirement_pairs: 5826
+  cards_with_both_engines_on_requirement: 5826
+  active_source_evidence_paths: 29
+  validated_evidence_paths: 13
+  unreviewed_evidence_paths: 16
+  validated_cross_engine_paths: 2
+  transferred_unchanged_occurrences: 29182
+  removed_occurrence_intersection: 0
+  added_candidates: 0
+  unmapped_forge_occurrences: 38338
+  unmapped_xmage_occurrences: 51585
+  card_requirement_pairs_by_requirement:
+    counter: 145
+    counter_change: 2140
+    create_token: 2362
+    damage: 2418
+    destroy: 1524
+    discard: 803
+    draw: 2565
+    gain_life: 1364
+    lose_life: 846
+    mana_production: 1545
+    shuffle: 51
+    tap: 625
+    untap: 379
+    zone_transition: 4429
+  implementation_pair_partition:
+    FORGE_ONLY: 14620
+    MULTI_SOURCE_EVIDENCE: 5826
+    XMAGE_ONLY: 750
 requirements:
-  damage:
+  counter:
     evidence_paths:
-      forge:
-        - forge.deal_damage.v1
+      forge: []
       xmage:
-        - xmage.damage_target_effect.v1
-      cross_corroboration:
-        - pattern_id: cross.damage.deal_damage__damage_target_effect.v1
-          role: CROSS_IMPLEMENTATION_CORROBORATION
-    precision: null
-  zone_transition:
-    evidence_paths:
-      forge:
-        - forge.change_zone.v1
-        - forge.change_zone_all.v1
-      xmage:
-        - xmage.exile_target_effect.v1
-        - xmage.return_to_hand_source_effect.v1
-      cross_corroboration: []
-    precision: null
-  destroy:
-    evidence_paths:
-      forge:
-        - forge.destroy.v1
-      xmage:
-        - xmage.destroy_target_effect.v1
-      cross_corroboration: []
-    precision: null
+      - evidence_path_id: xmage:CounterTargetEffect->counter
+        source: xmage
+        external_construct: CounterTargetEffect
+        requirement_id: counter
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 145
+        active_occurrences: 145
+    cross_corroboration: []
+    active_card_requirement_pairs: 145
+    active_occurrences: 145
+    requirement_precision: null
   counter_change:
     evidence_paths:
       forge:
+      - evidence_path_id: forge:PutCounter->counter_change
+        source: forge
+        external_construct: PutCounter
+        requirement_id: counter_change
+        validation_pattern_ids:
         - forge.put_counter.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: &id001
+              scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+              forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+              xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8864866068260312
+            upper: 0.9999999999999999
+          probability_sample_size: 30
+          population_size: 1947
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 1947
+        active_occurrences: 2049
       xmage:
+      - evidence_path_id: xmage:AddCountersSourceEffect->counter_change
+        source: xmage
+        external_construct: AddCountersSourceEffect
+        requirement_id: counter_change
+        validation_pattern_ids:
         - xmage.add_counters_source_effect.v1
-      cross_corroboration: []
-    precision: null
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8864866068260312
+            upper: 0.9999999999999999
+          probability_sample_size: 30
+          population_size: 832
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 832
+        active_occurrences: 832
+    cross_corroboration: []
+    active_card_requirement_pairs: 2140
+    active_occurrences: 2881
+    requirement_precision: null
   create_token:
     evidence_paths:
       forge:
+      - evidence_path_id: forge:Token->create_token
+        source: forge
+        external_construct: Token
+        requirement_id: create_token
+        validation_pattern_ids:
         - forge.token.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8388748419471806
+            upper: 1.0
+          probability_sample_size: 20
+          population_size: 2230
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 2230
+        active_occurrences: 2391
+      xmage:
+      - evidence_path_id: xmage:CreateTokenEffect->create_token
+        source: xmage
+        external_construct: CreateTokenEffect
+        requirement_id: create_token
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 1327
+        active_occurrences: 1327
+    cross_corroboration:
+    - pattern_id: cross.create_token.token__create_token_effect.v1
+      role: CROSS_IMPLEMENTATION_CORROBORATION
+      requirement_id: create_token
+      external_constructs:
+      - source: forge
+        token: Token
+      - source: xmage
+        class: CreateTokenEffect
+      status: REVIEW_COMPLETE
+      historical_validation:
+        status: REVIEW_COMPLETE
+        scope:
+          extractor_version: 0.2.0
+          mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+          source_set: *id001
+        historical_precision_estimate: 1.0
+        historical_interval:
+          method: WILSON_BINOMIAL
+          confidence_level: 0.95
+          lower: 0.8864866068260312
+          upper: 0.9999999999999999
+        probability_sample_size: 30
+        population_size: 1196
+      extractor_0_2_1_population_status: REMOVALS_ONLY
+      active_card_requirement_pairs: 1195
+    active_card_requirement_pairs: 2362
+    active_occurrences: 3718
+    requirement_precision: null
+  damage:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:DamageAll->damage
+        source: forge
+        external_construct: DamageAll
+        requirement_id: damage
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 330
+        active_occurrences: 352
+      - evidence_path_id: forge:DealDamage->damage
+        source: forge
+        external_construct: DealDamage
+        requirement_id: damage
+        validation_pattern_ids:
+        - forge.deal_damage.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8864866068260312
+            upper: 0.9999999999999999
+          probability_sample_size: 30
+          population_size: 2070
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 2070
+        active_occurrences: 2284
+      xmage:
+      - evidence_path_id: xmage:DamageAllEffect->damage
+        source: xmage
+        external_construct: DamageAllEffect
+        requirement_id: damage
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 126
+        active_occurrences: 126
+      - evidence_path_id: xmage:DamageTargetEffect->damage
+        source: xmage
+        external_construct: DamageTargetEffect
+        requirement_id: damage
+        validation_pattern_ids:
+        - xmage.damage_target_effect.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8864866068260312
+            upper: 0.9999999999999999
+          probability_sample_size: 30
+          population_size: 921
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 921
+        active_occurrences: 921
+    cross_corroboration:
+    - pattern_id: cross.damage.deal_damage__damage_target_effect.v1
+      role: CROSS_IMPLEMENTATION_CORROBORATION
+      requirement_id: damage
+      external_constructs:
+      - source: forge
+        token: DealDamage
+      - source: xmage
+        class: DamageTargetEffect
+      status: REVIEW_COMPLETE
+      historical_validation:
+        status: REVIEW_COMPLETE
+        scope:
+          extractor_version: 0.2.0
+          mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+          source_set: *id001
+        historical_precision_estimate: 1.0
+        historical_interval:
+          method: WILSON_BINOMIAL
+          confidence_level: 0.95
+          lower: 0.8864866068260312
+          upper: 0.9999999999999999
+        probability_sample_size: 30
+        population_size: 869
+      extractor_0_2_1_population_status: UNCHANGED
+      active_card_requirement_pairs: 869
+    active_card_requirement_pairs: 2418
+    active_occurrences: 3683
+    requirement_precision: null
+  destroy:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:Destroy->destroy
+        source: forge
+        external_construct: Destroy
+        requirement_id: destroy
+        validation_pattern_ids:
+        - forge.destroy.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8864866068260312
+            upper: 0.9999999999999999
+          probability_sample_size: 30
+          population_size: 1205
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 1205
+        active_occurrences: 1274
+      - evidence_path_id: forge:DestroyAll->destroy
+        source: forge
+        external_construct: DestroyAll
+        requirement_id: destroy
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 288
+        active_occurrences: 312
+      xmage:
+      - evidence_path_id: xmage:DestroyAllEffect->destroy
+        source: xmage
+        external_construct: DestroyAllEffect
+        requirement_id: destroy
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 115
+        active_occurrences: 115
+      - evidence_path_id: xmage:DestroyTargetEffect->destroy
+        source: xmage
+        external_construct: DestroyTargetEffect
+        requirement_id: destroy
+        validation_pattern_ids:
+        - xmage.destroy_target_effect.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 0.9666666666666667
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8332960900859082
+            upper: 0.9940914096183874
+          probability_sample_size: 30
+          population_size: 705
+        extractor_0_2_1_population_status: REMOVALS_ONLY
+        active_card_requirement_pairs: 704
+        active_occurrences: 704
+    cross_corroboration: []
+    active_card_requirement_pairs: 1524
+    active_occurrences: 2405
+    requirement_precision: null
+  discard:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:Discard->discard
+        source: forge
+        external_construct: Discard
+        requirement_id: discard
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 803
+        active_occurrences: 839
       xmage: []
-      cross_corroboration:
-        - pattern_id: cross.create_token.token__create_token_effect.v1
-          role: CROSS_IMPLEMENTATION_CORROBORATION
-    precision: null
+    cross_corroboration: []
+    active_card_requirement_pairs: 803
+    active_occurrences: 839
+    requirement_precision: null
+  draw:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:Draw->draw
+        source: forge
+        external_construct: Draw
+        requirement_id: draw
+        validation_pattern_ids:
+        - forge.draw.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8388748419471806
+            upper: 1.0
+          probability_sample_size: 20
+          population_size: 2458
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 2458
+        active_occurrences: 2561
+      xmage:
+      - evidence_path_id: xmage:DrawCardSourceControllerEffect->draw
+        source: xmage
+        external_construct: DrawCardSourceControllerEffect
+        requirement_id: draw
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 1204
+        active_occurrences: 1205
+    cross_corroboration: []
+    active_card_requirement_pairs: 2565
+    active_occurrences: 3766
+    requirement_precision: null
+  gain_life:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:GainLife->gain_life
+        source: forge
+        external_construct: GainLife
+        requirement_id: gain_life
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 1325
+        active_occurrences: 1364
+      xmage:
+      - evidence_path_id: xmage:GainLifeEffect->gain_life
+        source: xmage
+        external_construct: GainLifeEffect
+        requirement_id: gain_life
+        validation_pattern_ids:
+        - xmage.gain_life_effect.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8388748419471806
+            upper: 1.0
+          probability_sample_size: 20
+          population_size: 684
+        extractor_0_2_1_population_status: UNCHANGED
+        active_card_requirement_pairs: 684
+        active_occurrences: 685
+    cross_corroboration: []
+    active_card_requirement_pairs: 1364
+    active_occurrences: 2049
+    requirement_precision: null
+  lose_life:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:LoseLife->lose_life
+        source: forge
+        external_construct: LoseLife
+        requirement_id: lose_life
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 837
+        active_occurrences: 882
+      xmage:
+      - evidence_path_id: xmage:LoseLifeTargetEffect->lose_life
+        source: xmage
+        external_construct: LoseLifeTargetEffect
+        requirement_id: lose_life
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 167
+        active_occurrences: 167
+    cross_corroboration: []
+    active_card_requirement_pairs: 846
+    active_occurrences: 1049
+    requirement_precision: null
+  mana_production:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:Mana->mana_production
+        source: forge
+        external_construct: Mana
+        requirement_id: mana_production
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 1545
+        active_occurrences: 1769
+      xmage: []
+    cross_corroboration: []
+    active_card_requirement_pairs: 1545
+    active_occurrences: 1769
+    requirement_precision: null
+  shuffle:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:Shuffle->shuffle
+        source: forge
+        external_construct: Shuffle
+        requirement_id: shuffle
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 51
+        active_occurrences: 51
+      xmage: []
+    cross_corroboration: []
+    active_card_requirement_pairs: 51
+    active_occurrences: 51
+    requirement_precision: null
+  tap:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:Tap->tap
+        source: forge
+        external_construct: Tap
+        requirement_id: tap
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 625
+        active_occurrences: 637
+      xmage: []
+    cross_corroboration: []
+    active_card_requirement_pairs: 625
+    active_occurrences: 637
+    requirement_precision: null
+  untap:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:Untap->untap
+        source: forge
+        external_construct: Untap
+        requirement_id: untap
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 379
+        active_occurrences: 389
+      xmage:
+      - evidence_path_id: xmage:UntapLandsEffect->untap
+        source: xmage
+        external_construct: UntapLandsEffect
+        requirement_id: untap
+        validation_pattern_ids: []
+        status: UNREVIEWED
+        historical_validation: null
+        extractor_0_2_1_population_status: NOT_VALIDATED
+        active_card_requirement_pairs: 7
+        active_occurrences: 7
+    cross_corroboration: []
+    active_card_requirement_pairs: 379
+    active_occurrences: 396
+    requirement_precision: null
+  zone_transition:
+    evidence_paths:
+      forge:
+      - evidence_path_id: forge:ChangeZone->zone_transition
+        source: forge
+        external_construct: ChangeZone
+        requirement_id: zone_transition
+        validation_pattern_ids:
+        - forge.change_zone.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 0.95
+          historical_interval:
+            method: WILSON_BINOMIAL
+            confidence_level: 0.95
+            lower: 0.8349612263085903
+            upper: 0.9861793326138516
+          probability_sample_size: 40
+          population_size: 4136
+        extractor_0_2_1_population_status: REMOVALS_ONLY
+        active_card_requirement_pairs: 4088
+        active_occurrences: 4906
+      - evidence_path_id: forge:ChangeZoneAll->zone_transition
+        source: forge
+        external_construct: ChangeZoneAll
+        requirement_id: zone_transition
+        validation_pattern_ids:
+        - forge.change_zone_all.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 0.95
+          historical_interval:
+            method: FINITE_POPULATION_HYPERGEOMETRIC
+            confidence_level: 0.95
+            lower: 0.8372591006423983
+            upper: 0.9914346895074947
+          probability_sample_size: 40
+          population_size: 467
+        extractor_0_2_1_population_status: REMOVALS_ONLY
+        active_card_requirement_pairs: 457
+        active_occurrences: 530
+      xmage:
+      - evidence_path_id: xmage:ExileTargetEffect->zone_transition
+        source: xmage
+        external_construct: ExileTargetEffect
+        requirement_id: zone_transition
+        validation_pattern_ids:
+        - xmage.exile_target_effect.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: FINITE_POPULATION_HYPERGEOMETRIC
+            confidence_level: 0.95
+            lower: 0.9218106995884774
+            upper: 1.0
+          probability_sample_size: 40
+          population_size: 243
+        extractor_0_2_1_population_status: REMOVALS_ONLY
+        active_card_requirement_pairs: 242
+        active_occurrences: 242
+      - evidence_path_id: xmage:ReturnToHandSourceEffect->zone_transition
+        source: xmage
+        external_construct: ReturnToHandSourceEffect
+        requirement_id: zone_transition
+        validation_pattern_ids:
+        - xmage.return_to_hand_source_effect.v1
+        status: REVIEW_COMPLETE
+        historical_validation:
+          status: REVIEW_COMPLETE
+          scope:
+            extractor_version: 0.2.0
+            mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+            source_set: *id001
+          historical_precision_estimate: 1.0
+          historical_interval:
+            method: FINITE_POPULATION_HYPERGEOMETRIC
+            confidence_level: 0.95
+            lower: 0.9316239316239316
+            upper: 1.0
+          probability_sample_size: 40
+          population_size: 117
+        extractor_0_2_1_population_status: REMOVALS_ONLY
+        active_card_requirement_pairs: 116
+        active_occurrences: 116
+    cross_corroboration: []
+    active_card_requirement_pairs: 4429
+    active_occurrences: 5794
+    requirement_precision: null
