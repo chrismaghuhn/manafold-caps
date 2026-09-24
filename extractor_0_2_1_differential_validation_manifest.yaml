@@ -1,0 +1,45 @@
+extractor_version: 0.2.1
+parent_extractor_version: 0.2.0
+review_batch_id: phase-0.2c-2-differential-v1
+validation_scope:
+  extractor_version: 0.2.1
+  source_set:
+    scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+    forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+    xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+  mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+source_set:
+  scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+  forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+  xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+parent_validation:
+  extractor_version: 0.2.0
+  review_batch_id: phase-0.2a-batch-1
+  primary_samples: 460
+  final_correct: 455
+  final_wrong: 5
+changed_population:
+  removed: 104
+  added: 0
+  sampling_fraction: 1.0
+removed_by_guard:
+  FORGE_SAME_ZONE: 98
+  XMAGE_IMPORT_ONLY: 6
+unchanged_identity:
+  match: true
+  digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+  old_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+  new_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+review_status:
+  reviewer_a: NOT_STARTED
+  reviewer_b: NOT_STARTED
+  adjudication: NOT_STARTED
+  reviewer_a_required: 104
+  reviewer_b_required: 104
+validation_transfer:
+  unchanged_candidates_eligible: true
+  removed_candidates_require_review: true
+  new_candidates: 0
+  phase_0_2b_scope_inherited: false
+  precision_recalculated: false
