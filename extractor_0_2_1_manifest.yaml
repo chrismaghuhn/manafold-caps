@@ -1,0 +1,39 @@
+extractor_version: 0.2.1
+parent_extractor_version: 0.2.0
+source_set: &id001
+  scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+  forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+  xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+validation_scope:
+  extractor_version: 0.2.1
+  mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+  source_set: *id001
+guards:
+  forge_same_zone:
+    enabled: true
+    predicate: For an individual ChangeZone or ChangeZoneAll action, suppress only
+      when Origin and Destination each parse as one recognized zone and normalize
+      to the same value. Missing, multi-valued, dynamic, and unrecognized endpoints
+      remain eligible.
+  xmage_import_only:
+    enabled: true
+    predicate: For a mapped semantic class in one XMage record, suppress only when
+      the lexical classifier proves there is no executable reference and every visible
+      reference is confined to imports, package declarations, comments, or string/char
+      literals. Unresolved cases without positive non-executable-only proof are retained.
+differential:
+  artifact: extractor_0_2_0_to_0_2_1_diff.json
+  removed_occurrences: 104
+  added_occurrences: 0
+  removed_distinct_cards: 104
+  removed_distinct_oracle_ids: 104
+  unchanged_candidate_identity_sha256: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+validation:
+  phase_0_2b_scope_inherited: false
+  differential_revalidation_required: true
+  phase_0_2b_extractor_version: 0.2.0
+  reviewed_correct_removed: 0
+  known_wrong_fixed: 5
+  known_wrong_still_emitted: 0
+  new_precision_calculated: false

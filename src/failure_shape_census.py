@@ -167,6 +167,11 @@ def classify_java_class_usage(source, class_name, non_code=None, imports=None, c
     }
 
 
+# Keep the census and production guard on the same lexical usage implementation.
+strip_java_non_code = miner.strip_java_non_code
+classify_java_class_usage = miner.classify_java_class_usage
+
+
 def _read_jsonl(path):
     with Path(path).open(encoding="utf-8") as f:
         for line in f:

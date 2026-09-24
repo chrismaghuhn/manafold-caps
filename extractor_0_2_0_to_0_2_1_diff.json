@@ -1,0 +1,1124 @@
+{
+  "old_extractor_version": "0.2.0",
+  "new_extractor_version": "0.2.1",
+  "source_set": {
+    "scryfall": "0ce026779dae1a9a6448ef7a85e606d662343f5e",
+    "forge": "cef86f363d7f7d5b3293248a75f550a7c3404066",
+    "xmage": "6212eb37907c1ce751d8a3fea8b3322056dc0264"
+  },
+  "mapping_sha256": "3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a",
+  "old_candidate_occurrence_count": 29286,
+  "new_candidate_occurrence_count": 29182,
+  "removed_occurrences": [
+    {
+      "oracle_id": "01160cb5-6d83-4317-9522-74083b3a83bb",
+      "card_name": "Eldrazi Confluence",
+      "source": "xmage",
+      "source_record_identity": "xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00004088",
+      "external_construct": "ExileTargetEffect",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "0221330a-3e7a-40aa-9c78-85c88a4c1a53",
+      "card_name": "Green Sun's Twilight",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006174",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "035ee753-232f-4ba2-afbf-8d1eb162e6f8",
+      "card_name": "Merrow Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015132",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "04d8615c-3883-4251-9790-1d8a4a40e142",
+      "card_name": "Eternal Dragon",
+      "source": "xmage",
+      "source_record_identity": "xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00004637",
+      "external_construct": "ReturnToHandSourceEffect",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "0635ab65-fc1a-4e43-9e11-3a1ad3093830",
+      "card_name": "Ecological Appreciation",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003708",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "10674c2f-7920-4505-b8d5-e96f3da1cda3",
+      "card_name": "Truth or Tale",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017320",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "10d482fd-e034-4187-b148-51fe15885360",
+      "card_name": "Sunbird's Invocation",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004549",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "113c3024-c3bd-4c3a-8c08-3828646d9ca2",
+      "card_name": "Forerunner of the Empire",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019841",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "12684e95-2652-4c3c-b2c7-021b62344d77",
+      "card_name": "Grim Reminder",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000749",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "12778951-7b11-400b-98ed-06434d7ecc11",
+      "card_name": "Glimpse of Tomorrow",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00020318",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 3
+    },
+    {
+      "oracle_id": "139efb5c-55a1-4890-9212-ac2e8ea4ee7d",
+      "card_name": "Enigma Sphinx Avatar",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016866",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "1593ea18-2f2f-4ab4-83fb-6ccc0bec8a90",
+      "card_name": "Kodama's Reach",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021730",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "16cd0b90-f70c-4efa-b252-8de8784ef9a3",
+      "card_name": "Imperial Seal",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00011525",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "2274c7ae-5a40-4fd4-a4ac-6f56b23034e4",
+      "card_name": "Jace, Architect of Thought",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019149",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "24108160-e72b-4451-b1b1-b2b3ac3ede85",
+      "card_name": "Threats Undetected",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021763",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "2445e58b-87ed-4ab2-8209-a5e1f566fba7",
+      "card_name": "Giant Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026791",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "28ddc23c-5b0b-4747-9a33-6845acf27bec",
+      "card_name": "Elvish Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021291",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "298fd21f-8ac8-49a4-8ed6-689576ff4241",
+      "card_name": "Urza, Academy Headmaster",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026348",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "2aff9be5-f6d4-4cdd-ab59-20202bc2f144",
+      "card_name": "Peregrination",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015883",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "2c275a85-5a15-46cd-a6e7-add63f9b853d",
+      "card_name": "Sterling Grove",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019719",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "302e4ac2-522b-4a0a-850a-d856639ea2a4",
+      "card_name": "Morphic Tide",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009721",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 3
+    },
+    {
+      "oracle_id": "38d2176c-1a1e-4030-9c63-e28ba4a69b6d",
+      "card_name": "Dune Mover",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003051",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "3bc12623-3852-42f0-b458-5c67fe1b7a07",
+      "card_name": "Fork in the Road",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024459",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "3c1ef404-e2c6-486d-a5a2-d5779c71d498",
+      "card_name": "Archdruid's Charm",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00023077",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "3c49df27-b725-4578-a059-f7f4cee5f853",
+      "card_name": "A-Navigation Orb",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025751",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "3c7ea603-c985-4107-806b-a467b5fcca36",
+      "card_name": "Scholar of New Horizons",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001511",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "3c9faba7-f2d3-4978-be94-020dc8003dc0",
+      "card_name": "Intuition",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003590",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "3df26058-c58d-4869-ae32-922d28c3aca2",
+      "card_name": "Treasure Chest",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018376",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "3f8e7a45-4c6e-4ee6-93d0-b7de9715ec97",
+      "card_name": "Lim-Dûl's Vault",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017407",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "42820e09-f817-4485-a96a-ac2b0b798269",
+      "card_name": "Stoic Farmer",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024026",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "43832745-5d7d-4957-8e30-2072ad012564",
+      "card_name": "Velomachus Lorehold",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024450",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "439537ca-53c1-47cb-9174-5872c3c46288",
+      "card_name": "Forerunner of the Legion",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00011102",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "45b3a028-5705-4dc8-bfab-04bb5e01eea6",
+      "card_name": "Kenessos, Priest of Thassa",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008010",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "470ec98e-120c-446d-ade6-7d80aa836b55",
+      "card_name": "Aetherworks Marvel",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009329",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "48ee9007-2d1c-446f-aee3-795d23028e06",
+      "card_name": "Faerie Slumber Party",
+      "source": "xmage",
+      "source_record_identity": "xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00004943",
+      "external_construct": "CreateTokenEffect",
+      "requirement": "create_token",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "4badd4e0-e5d7-4516-b220-cea2b02c79aa",
+      "card_name": "Insidious Dreams",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022188",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "50a228a2-c8b6-4416-b0ab-417926a9b9b6",
+      "card_name": "Warp World",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019954",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 3
+    },
+    {
+      "oracle_id": "528a19d7-ee79-45a5-b27f-e0bff4213193",
+      "card_name": "Loam Larva",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005720",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "530dc119-e266-4525-abe9-7fab599e9de2",
+      "card_name": "Invasion of New Capenna // Holy Frazzle-Cannon",
+      "source": "xmage",
+      "source_record_identity": "xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00007534",
+      "external_construct": "DestroyTargetEffect",
+      "requirement": "destroy",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "56508ae7-6013-4149-8935-96b8d5091baa",
+      "card_name": "Boggart Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00011788",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "56e2bdcf-d1d8-4c56-af3a-388cd42353e6",
+      "card_name": "Forerunner of the Heralds",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016900",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "58aec411-167d-4709-8560-793eaaed62c5",
+      "card_name": "Gifts Ungiven",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017583",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "5b8e0913-47e9-4d56-971d-abd91b0f7587",
+      "card_name": "Campus Guide",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006322",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "61ad3299-474a-400f-a1c1-b86024aca3e8",
+      "card_name": "Knowledge Exploitation",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026347",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "6202d1cf-5359-4783-846d-7f35460e42b4",
+      "card_name": "Momir Vig, Simic Visionary",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022233",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "68adbc52-34dd-47c4-bb1c-0c51033fe7cc",
+      "card_name": "Ruin in Their Wake",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00010687",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "68b41a04-8cb0-4edf-b488-a219494453ae",
+      "card_name": "Varragoth, Bloodsky Sire",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001534",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "69e1a166-02f7-43f8-b099-dbb01034370c",
+      "card_name": "Sphinx Ambassador",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024430",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "6c2e6447-c32b-4b92-a3e6-4d770e3dd250",
+      "card_name": "Rootweaver Druid",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009256",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "6dbd0764-4bfe-4a58-905d-aeee70ceb798",
+      "card_name": "Vivien's Grizzly",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017027",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "6dfb50d7-359b-4644-90e3-7ecdacee7c12",
+      "card_name": "Scheming Symmetry",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027188",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "7021aaad-549d-48be-996a-f3b439f5c10b",
+      "card_name": "Calim, Djinn Emperor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00013588",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "792e1072-00bf-4f63-b956-5f20cdf09f11",
+      "card_name": "Goblin Recruiter",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026800",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "7fd8a508-335c-4d5a-9916-23bf26dfff38",
+      "card_name": "Svella, Ice Shaper",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026481",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "8818bbf8-58ec-4070-a81a-c7ce248057ab",
+      "card_name": "Hew the Entwood",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00014862",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 2
+    },
+    {
+      "oracle_id": "88260cfe-5520-497a-8712-c83ea098a866",
+      "card_name": "Stroke of Luck",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021717",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "88fb1dd1-60fb-4f51-ac4d-30b43156a474",
+      "card_name": "Neera, Wild Mage",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015991",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "89ed0598-a3ee-4d14-9a35-25e0dd80d9fb",
+      "card_name": "Moon-Blessed Cleric",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00013110",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "8b755881-a72d-4e21-a369-d2924eb4585a",
+      "card_name": "Cultivate",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00010412",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "90f54959-2c9b-4b8a-84c9-d6893eb43553",
+      "card_name": "Personal Tutor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019489",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "913e6182-706a-4872-8c8a-e146b0ae0738",
+      "card_name": "Sword of Hearth and Home",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002950",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "929c231a-12d9-4f1a-9849-64a8b5a65f20",
+      "card_name": "Scouting Trek",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00023194",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "93036f4e-f553-4cc7-a747-6cd087b0994c",
+      "card_name": "Jarad's Orders",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027169",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "935e0cac-51ee-4cb7-a209-f085e0f099ed",
+      "card_name": "Sylvan Tutor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015953",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "957df9f4-73e9-4540-b838-52f65d0c62ee",
+      "card_name": "Hurkyl, Master Wizard",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016830",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "95df54e2-0196-4e54-8144-de5982ce07f5",
+      "card_name": "Kiora, Sovereign of the Deep",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00020262",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "98c387bd-c9ba-464a-8380-839a5604a37f",
+      "card_name": "Treefolk Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016684",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "9c793037-6ba8-400a-b24d-6032141e8dae",
+      "card_name": "Manifold Insights",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005759",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "a171a01c-43f7-488a-870d-b1a9bcc501d1",
+      "card_name": "Faerie Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009508",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "a3a6c024-43de-4f5c-a1d6-c48a0c96a43b",
+      "card_name": "Nazahn, Revered Bladesmith",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00020709",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "a3d68848-e8cc-497c-951b-e7111f6d5142",
+      "card_name": "Kithkin Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00007232",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "a5852994-d816-4e62-8a03-254223714544",
+      "card_name": "Final Parting",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00012811",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "a6c05941-2cfb-4dac-a7c0-ab808187eb7c",
+      "card_name": "Liliana Vess",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004409",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "a9f98ad5-e8d4-4142-a19f-3368b85d1c95",
+      "card_name": "Bringer of the Black Dawn",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019865",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "abfe31f1-7c6d-4a7a-9f44-7f3e4166d9f1",
+      "card_name": "Giant Ladybug",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00010490",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "acf54a85-0e9e-43fb-99d9-c223c02f13c4",
+      "card_name": "Druid of the Emerald Grove",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001979",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "af7aa378-efab-47ed-91ed-c10ea9798d18",
+      "card_name": "Choose Your Demise",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008168",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "b392fabc-51f2-4ae4-b21c-1c662e4c6953",
+      "card_name": "Verdant Mastery",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018430",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "b6265654-84c3-469b-9afa-f752fd64abe0",
+      "card_name": "Mwonvuli Beast Tracker",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00014110",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "b63dad39-4dd5-4340-953e-b05df1a3c776",
+      "card_name": "Congregation at Dawn",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026595",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "b64051c0-e791-4fcb-b79f-4287e1b06468",
+      "card_name": "Compass Gnome",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003604",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "ba13cbdb-8043-4c1b-8a85-084c86886ac8",
+      "card_name": "Descendants' Path",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025361",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "ba7a46f1-c2a5-42d3-93eb-4dcea7186e5e",
+      "card_name": "Navigation Orb",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015746",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "bdec14d1-1b38-4223-869e-a0ffc76b2b0c",
+      "card_name": "Brutalizer Exarch",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00010152",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "c35c39be-6db4-4a80-ace1-07932d1bb460",
+      "card_name": "Cabaretti Ascendancy",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008254",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 1
+    },
+    {
+      "oracle_id": "c5229c17-b7be-4b05-b683-f2277edc4849",
+      "card_name": "Enlightened Tutor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000675",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "cd3d79e9-c72e-4321-bca1-54505d51331a",
+      "card_name": "Conduit of Ruin",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00010088",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "d047a819-5196-4a16-8d67-a4edaf6fdef0",
+      "card_name": "Dwarven Recruiter",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018509",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "d1421070-a3cc-4af3-bf91-0f97372f4161",
+      "card_name": "Sunforger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022621",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "d1dfb359-d8f9-491e-88f7-95193b220200",
+      "card_name": "Long-Term Plans",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021887",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "d6458cf6-eb1f-448b-8205-1b5d887ff2bf",
+      "card_name": "Forerunner of the Coalition",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016608",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "d6585e30-4ca0-4701-b274-b24f3508dd97",
+      "card_name": "Flamekin Harbinger",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005155",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "d9353eb6-c7e7-4d85-a0c2-32b1d091881a",
+      "card_name": "Cruel Tutor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003696",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "dbe792f9-22be-4972-b418-99a6190c4421",
+      "card_name": "Transmute Artifact",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00023714",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "e06007cf-dc6e-4b50-93d5-9a7c8ee9c023",
+      "card_name": "Nine-Fingers Keene",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015884",
+      "external_construct": "ChangeZoneAll",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "e21c8fc6-d4ef-42b6-b11e-d9c931da1387",
+      "card_name": "Realms Uncharted",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00010278",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "e5f96482-4bae-4d1b-97b2-dcc09676eb6e",
+      "card_name": "Ainok Guide",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006425",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "e83236f8-1c45-4d31-8937-1c76db549955",
+      "card_name": "Nissa's Pilgrimage",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022081",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "e8863518-0bfa-49c3-8c6e-6c9116a81051",
+      "card_name": "Worldly Tutor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018983",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "ededbdae-d9dc-4206-9335-d7158f2d7700",
+      "card_name": "Vampiric Tutor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019771",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "f73d89ec-05c9-4998-a24b-bc675b04ec16",
+      "card_name": "Jackhammer",
+      "source": "xmage",
+      "source_record_identity": "xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00008584",
+      "external_construct": "DrawCardSourceControllerEffect",
+      "requirement": "draw",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "fb81f95c-70f8-4eb7-8d15-15d0ae23ec03",
+      "card_name": "Mystical Tutor",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019123",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "fbc7350c-d392-44bf-92f7-8dd4743a73b4",
+      "card_name": "Serum Snare",
+      "source": "xmage",
+      "source_record_identity": "xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00015657",
+      "external_construct": "CounterTargetEffect",
+      "requirement": "counter",
+      "occurrence_index": 0
+    },
+    {
+      "oracle_id": "fd68ae3c-52cd-4b20-b015-bd31378d972e",
+      "card_name": "Signal the Clans",
+      "source": "forge",
+      "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018775",
+      "external_construct": "ChangeZone",
+      "requirement": "zone_transition",
+      "occurrence_index": 0
+    }
+  ],
+  "added_occurrences": [],
+  "removed_occurrence_count": 104,
+  "added_occurrence_count": 0,
+  "removed_distinct_cards": 104,
+  "added_distinct_cards": 0,
+  "removed_distinct_oracle_ids": 104,
+  "added_distinct_oracle_ids": 0,
+  "removed_by_source": {
+    "forge": 98,
+    "xmage": 6
+  },
+  "removed_by_external_construct": {
+    "ChangeZone": 80,
+    "ChangeZoneAll": 18,
+    "CounterTargetEffect": 1,
+    "CreateTokenEffect": 1,
+    "DestroyTargetEffect": 1,
+    "DrawCardSourceControllerEffect": 1,
+    "ExileTargetEffect": 1,
+    "ReturnToHandSourceEffect": 1
+  },
+  "removed_by_requirement": {
+    "counter": 1,
+    "create_token": 1,
+    "destroy": 1,
+    "draw": 1,
+    "zone_transition": 100
+  },
+  "unexpected_removed_occurrences": [],
+  "unexpected_added_occurrences": [],
+  "unchanged_candidate_identity_count": 29182,
+  "unchanged_candidate_identity_sha256": "07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f",
+  "unchanged_candidate_identity_set_match": true,
+  "guard_census": {
+    "forge_same_zone_occurrences_seen": 103,
+    "forge_previously_mapped": 98,
+    "forge_now_suppressed": 98,
+    "forge_still_emitted": 0,
+    "xmage_imported_only_occurrences_seen": 6,
+    "xmage_non_executable_only_occurrences_seen": 6,
+    "xmage_previously_mapped": 6,
+    "xmage_now_suppressed": 6,
+    "xmage_still_emitted": 0
+  },
+  "review_regression": {
+    "samples_removed": 5,
+    "CORRECT_removed": 0,
+    "WRONG_removed": 5,
+    "affected_samples": [
+      {
+        "sample_id": "9e58403cc3d80c14b4c5a14c",
+        "card_name": "Invasion of New Capenna // Holy Frazzle-Cannon",
+        "pattern_id": "xmage.destroy_target_effect.v1",
+        "label": "WRONG",
+        "removed_evidence_paths": [
+          {
+            "source": "xmage",
+            "source_record_identity": "xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00007534",
+            "token": "DestroyTargetEffect",
+            "requirement": "destroy"
+          }
+        ]
+      },
+      {
+        "sample_id": "053d9fe47d105986611506c8",
+        "card_name": "Campus Guide",
+        "pattern_id": "forge.change_zone.v1",
+        "label": "WRONG",
+        "removed_evidence_paths": [
+          {
+            "source": "forge",
+            "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006322",
+            "token": "ChangeZone",
+            "requirement": "zone_transition"
+          }
+        ]
+      },
+      {
+        "sample_id": "80e88eda5a088379b9af218a",
+        "card_name": "Knowledge Exploitation",
+        "pattern_id": "forge.change_zone.v1",
+        "label": "WRONG",
+        "removed_evidence_paths": [
+          {
+            "source": "forge",
+            "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026347",
+            "token": "ChangeZone",
+            "requirement": "zone_transition"
+          }
+        ]
+      },
+      {
+        "sample_id": "532892f8dc083b10a99ec57d",
+        "card_name": "Aetherworks Marvel",
+        "pattern_id": "forge.change_zone_all.v1",
+        "label": "WRONG",
+        "removed_evidence_paths": [
+          {
+            "source": "forge",
+            "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009329",
+            "token": "ChangeZoneAll",
+            "requirement": "zone_transition"
+          }
+        ]
+      },
+      {
+        "sample_id": "23a6562a6e6a5c5879b55310",
+        "card_name": "Neera, Wild Mage",
+        "pattern_id": "forge.change_zone_all.v1",
+        "label": "WRONG",
+        "removed_evidence_paths": [
+          {
+            "source": "forge",
+            "source_record_identity": "forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015991",
+            "token": "ChangeZoneAll",
+            "requirement": "zone_transition"
+          }
+        ]
+      }
+    ]
+  },
+  "known_wrong": {
+    "total": 5,
+    "fixed": 5,
+    "still_emitted": 0,
+    "fixed_sample_ids": [
+      "053d9fe47d105986611506c8",
+      "23a6562a6e6a5c5879b55310",
+      "532892f8dc083b10a99ec57d",
+      "80e88eda5a088379b9af218a",
+      "9e58403cc3d80c14b4c5a14c"
+    ],
+    "still_emitted_sample_ids": []
+  },
+  "source_join_stability": {
+    "same_scryfall_rows": true,
+    "same_forge_matches": true,
+    "same_xmage_matches": true,
+    "same_both_matches": true,
+    "same_ambiguous_count": true,
+    "same_suspicious_join_count": true,
+    "same_join_audit_actions": true
+  },
+  "pipeline_determinism": {
+    "first_run": {
+      "requirement_candidates.jsonl": "b7a1092e8f40792329ef8a1ab872c74cca83417363fc6bebaf34ee48aefa29b7",
+      "matched_cards.jsonl": "33ecb0c069de88c485897d145257f3884d07eeb0c365610362440f0302846ae5",
+      "stats.json": "f5bda21a92e1c75ce6deededf7d1db1fe72874e69ccfcb63cdad5ea93e28a2c3",
+      "requirement_stats.json": "5ca03fc13e7a46d3f0cc316abeb68b6da8b186bac2cd66dc8a290611359c5762",
+      "mapping_coverage.json": "6844f5474278d1e36dab741e9a06935e562864c568baaa3019757fc980919176",
+      "join_audit_stats.json": "9afcc4fad94749801520d72d45a8b12946d481900e569e0a8cd5e2d99994ca11",
+      "suspicious_join_audit.json": "15162c0acd8c2ea07da81f6ca2c716b9d128dba2e6588764975340c7c10965c9",
+      "oracle_mismatch_audit.json": "0cafd826faa1c38d7f34169e56b6944ae752253f1a32810d35a0561a481706cd",
+      "unmatched_forge.jsonl": "ac815b26d70d66412ee9d7bdcfa04bd6fe37c399692543a3b21a6935e04ad691",
+      "unmatched_xmage.jsonl": "41ec8fc12769f416c0d7113b9fa871e7c14673caffc3f3c7511e14791495c337",
+      "ambiguous_matches.jsonl": "6ba2b94ba7938b06bbc9d8ac1bde1df2daa3a057fc05431b56b77d49b10d2fe7",
+      "inventory.semantic_sha256": "459ce6726223c3099ab54b29286fe00ba8fa360164bb7ec16443dad45908b945"
+    },
+    "second_run": {
+      "requirement_candidates.jsonl": "b7a1092e8f40792329ef8a1ab872c74cca83417363fc6bebaf34ee48aefa29b7",
+      "matched_cards.jsonl": "33ecb0c069de88c485897d145257f3884d07eeb0c365610362440f0302846ae5",
+      "stats.json": "f5bda21a92e1c75ce6deededf7d1db1fe72874e69ccfcb63cdad5ea93e28a2c3",
+      "requirement_stats.json": "5ca03fc13e7a46d3f0cc316abeb68b6da8b186bac2cd66dc8a290611359c5762",
+      "mapping_coverage.json": "6844f5474278d1e36dab741e9a06935e562864c568baaa3019757fc980919176",
+      "join_audit_stats.json": "9afcc4fad94749801520d72d45a8b12946d481900e569e0a8cd5e2d99994ca11",
+      "suspicious_join_audit.json": "15162c0acd8c2ea07da81f6ca2c716b9d128dba2e6588764975340c7c10965c9",
+      "oracle_mismatch_audit.json": "0cafd826faa1c38d7f34169e56b6944ae752253f1a32810d35a0561a481706cd",
+      "unmatched_forge.jsonl": "ac815b26d70d66412ee9d7bdcfa04bd6fe37c399692543a3b21a6935e04ad691",
+      "unmatched_xmage.jsonl": "41ec8fc12769f416c0d7113b9fa871e7c14673caffc3f3c7511e14791495c337",
+      "ambiguous_matches.jsonl": "6ba2b94ba7938b06bbc9d8ac1bde1df2daa3a057fc05431b56b77d49b10d2fe7",
+      "inventory.semantic_sha256": "459ce6726223c3099ab54b29286fe00ba8fa360164bb7ec16443dad45908b945"
+    },
+    "identical": true
+  }
+}

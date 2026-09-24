@@ -27,7 +27,7 @@ PINNED_REVISIONS = {
     "forge": "cef86f363d7f7d5b3293248a75f550a7c3404066",
     "xmage": "6212eb37907c1ce751d8a3fea8b3322056dc0264",
 }
-EXTRACTOR_VERSION = "0.2.0"
+EXTRACTOR_VERSION = "0.2.1"
 VALIDATION_EXTRACTOR_VERSION = "0.2.0"
 REVIEW_DECISIONS = {"CORRECT","TOO_BROAD","TOO_NARROW","CONTEXT_DEPENDENT","WRONG","AMBIGUOUS","SOURCE_EVIDENCE_INSUFFICIENT"}
 PHASE_0_2A_SAMPLE_IDS_SHA256 = "feeb4a19ef205df5cb61078e2df8f1ba11f4570b548ac238bd84f59447e93faf"
@@ -605,14 +605,18 @@ def resolution_bucket(has_external, mapped_count, unmapped_count, completeness_p
     return "COMPLETENESS_UNVERIFIED"
 
 
-def partition_tokens(source, tokens, mapping, match_method=None, record_index=None):
+def partition_tokens(source, tokens, mapping, match_method=None, record_index=None, occurrence_indices=None, include_occurrence_index=False):
     mapped=defaultdict(list); unmapped=[]
-    for token in tokens:
+    token_counts=Counter()
+    for index,token in enumerate(tokens):
         item={"source":source,"token":token}
         if match_method is not None: item["match_method"]=match_method
         if record_index is not None: item["source_record_index"]=record_index
+        if include_occurrence_index:
+            item["occurrence_index"] = occurrence_indices[index] if occurrence_indices is not None else token_counts[token]
         if token in mapping: mapped[mapping[token]].append(item)
         else: unmapped.append(item)
+        token_counts[token]+=1
     return mapped,unmapped
 
 
@@ -793,6 +797,49 @@ def forge_extract(source):
     return actions, attrs, snippets[:20]
 
 
+FORGE_ZONES = {"library", "graveyard", "exile", "hand", "battlefield", "command", "stack", "ante"}
+
+
+def forge_guard_filter(record, actions=None):
+    """Suppress only individual ChangeZone actions with equal singular known zones."""
+    text = str(record.get("output", all_strings(record))).replace("\\n", "\n")
+    parsed_actions=[]; eligible=[]; eligible_occurrence_indices=[]; suppressed=[]
+    per_token_index=Counter()
+    pattern=r"(?:^|[\n\r|:])\s*(?:(?:A:)?(?:AB|SP|DB)\$|[TS]:Mode\$)\s*([^|\r\n]+)([^\r\n]*)"
+    for match in re.finditer(pattern,text):
+        action=match.group(1).strip()
+        if not action or not re.fullmatch(r"[\w.-]+",action):
+            continue
+        occurrence_index=per_token_index[action]
+        per_token_index[action]+=1
+        line=match.group(0).strip()
+        fields=defaultdict(list)
+        for key,value in re.findall(r"\b([A-Za-z][\w]*)\$\s*([^|\r\n]+)",line):
+            fields[key].append(value.strip().strip('"').strip())
+        origin_values=fields.get("Origin",[])
+        destination_values=fields.get("Destination",[])
+        origin=(origin_values[0].split(",") if len(origin_values)==1 else origin_values)
+        destination=(destination_values[0].split(",") if len(destination_values)==1 else destination_values)
+        origin=[part.strip() for part in origin if part.strip()]
+        destination=[part.strip() for part in destination if part.strip()]
+        same_zone=(
+            action in {"ChangeZone","ChangeZoneAll"}
+            and len(origin)==1 and len(destination)==1
+            and " ".join(origin[0].casefold().split()) in FORGE_ZONES
+            and " ".join(destination[0].casefold().split()) in FORGE_ZONES
+            and " ".join(origin[0].casefold().split()) == " ".join(destination[0].casefold().split())
+        )
+        parsed_actions.append(action)
+        if same_zone:
+            suppressed.append({"token":action,"occurrence_index":occurrence_index,"origin":origin[0],"destination":destination[0],"raw_action_snippet":line})
+        else:
+            eligible.append(action)
+            eligible_occurrence_indices.append(occurrence_index)
+    if actions is not None and parsed_actions != list(actions):
+        raise ValueError("Forge guard action stream differs from extractor action stream")
+    return eligible,eligible_occurrence_indices,suppressed
+
+
 def java_extract(source):
     text = source if isinstance(source, str) else "\n".join(flatten_text(source))
     imports = re.findall(r"(?m)^\s*import\s+(?:static\s+)?([\w.*]+)\s*;", text)
@@ -803,6 +850,78 @@ def java_extract(source):
     lines = text.splitlines()
     relevant = [line for line in lines if re.search(r"\b(?:import\s+(?:mage\.(?:abilities|filter|target)|static\s+mage\.)|new\s+[A-Z]\w*(?:Effect|Ability|Cost|Target|Filter|Condition))", line)]
     return imports, sorted(classes), "\n".join(relevant[:25])[:1600]
+
+
+def strip_java_non_code(source, include_contexts=False):
+    """Mask comments and literals while preserving newlines and optional contexts."""
+    chars=list(source)
+    comments=["\n" if ch=="\n" else "\r" if ch=="\r" else " " for ch in source]
+    literals=comments.copy();i=0;state="code"
+    while i<len(chars):
+        ch=chars[i];nxt=chars[i+1] if i+1<len(chars) else ""
+        if state=="code":
+            if ch=="/" and nxt=="/":
+                comments[i]=comments[i+1]="/";chars[i]=chars[i+1]=" ";i+=2;state="line_comment";continue
+            if ch=="/" and nxt=="*":
+                comments[i]=comments[i+1]="/";chars[i]=chars[i+1]=" ";i+=2;state="block_comment";continue
+            if ch=='"': literals[i]='"';chars[i]=" ";state="string";i+=1;continue
+            if ch=="'": literals[i]="'";chars[i]=" ";state="char";i+=1;continue
+        elif state in {"line_comment","block_comment","string","char"}:
+            (comments if state in {"line_comment","block_comment"} else literals)[i]=ch
+            if ch not in "\r\n": chars[i]=" "
+            if state=="line_comment" and ch in "\r\n": state="code"
+            elif state=="block_comment" and ch=="*" and nxt=="/": chars[i+1]=" ";i+=1;state="code"
+            elif state in {"string","char"}:
+                if ch=="\\" and i+1<len(chars):
+                    if chars[i+1] not in "\r\n": chars[i+1]=" "
+                    i+=1
+                elif (state=="string" and ch=='"') or (state=="char" and ch=="'"):
+                    state="code"
+        i+=1
+    code="".join(chars)
+    return (code,"".join(comments),"".join(literals)) if include_contexts else code
+
+
+def classify_java_class_usage(source,class_name,non_code=None,imports=None,comment_mask=None,literal_mask=None):
+    """Classify mapped class references without treating imports/comments/literals as use."""
+    imports=imports if imports is not None else re.findall(r"(?m)^\s*import\s+(?:static\s+)?([\w.*]+)\s*;",source)
+    imported=any(path.rsplit(".",1)[-1]==class_name for path in imports)
+    package_mentions=len(re.findall(r"(?m)^\s*package\s+[^;]*\b"+re.escape(class_name)+r"\b[^;]*;",source))
+    if non_code is None or comment_mask is None or literal_mask is None:
+        generated=strip_java_non_code(source,include_contexts=True)
+        non_code=non_code if non_code is not None else generated[0]
+        comment_mask=comment_mask if comment_mask is not None else generated[1]
+        literal_mask=literal_mask if literal_mask is not None else generated[2]
+    executable=re.sub(r"(?m)^\s*(?:import\s+(?:static\s+)?[^;]+;|package\s+[^;]+;)","",non_code)
+    escaped=re.escape(class_name)
+    instantiated=bool(re.search(r"\bnew\s+(?:[\w$]+\.)*"+escaped+r"\s*\(",executable))
+    mentions=list(re.finditer(r"\b"+escaped+r"\b",executable))
+    if instantiated: classification="INSTANTIATED"
+    elif mentions: classification="USED_OTHER_EXECUTABLE_CONTEXT"
+    elif imported: classification="IMPORTED_ONLY"
+    else: classification="UNRESOLVED_USAGE"
+    comment_mentions=len(re.findall(r"\b"+escaped+r"\b",comment_mask or ""))
+    string_mentions=len(re.findall(r"\b"+escaped+r"\b",literal_mask or ""))
+    non_executable_only=not mentions and (imported or package_mentions>0 or comment_mentions+string_mentions>0)
+    return {"classification":classification,"imported":imported,"import_paths":[p for p in imports if p.rsplit(".",1)[-1]==class_name],"instantiated":instantiated,"executable_mentions":len(mentions),"comment_or_string_mentions":comment_mentions+string_mentions,"comment_mentions":comment_mentions,"string_literal_mentions":string_mentions,"package_mentions":package_mentions,"comment_or_string_only":not mentions and not imported and bool(comment_mentions+string_mentions),"non_executable_only":non_executable_only}
+
+
+def xmage_guard_filter(source,semantic_classes,mapping):
+    """Suppress mapped classes only when classifier proves non-executable-only usage."""
+    source=source if isinstance(source,str) else "\n".join(flatten_text(source))
+    imports=re.findall(r"(?m)^\s*import\s+(?:static\s+)?([\w.*]+)\s*;",source)
+    mapped=[token for token in semantic_classes if token in mapping]
+    if mapped:
+        code,comments,literals=strip_java_non_code(source,include_contexts=True)
+    else:
+        code=comments=literals=None
+    suppressed=[]
+    for token in mapped:
+        usage=classify_java_class_usage(source,token,code,imports,comments,literals)
+        if usage["classification"]=="IMPORTED_ONLY" or usage["non_executable_only"]:
+            suppressed.append({"token":token,"usage":usage})
+    suppressed_tokens={row["token"] for row in suppressed}
+    return [token for token in semantic_classes if token not in suppressed_tokens],suppressed
 
 
 def load_sources():
@@ -898,6 +1017,9 @@ def mine(rows):
     reviewed_decisions=load_join_decisions()
     forge_counts=Counter(); xmage_counts=Counter(); xmage_all_counts=Counter()
     forge_extracts=[]; xmage_extracts=[]
+    forge_eligible_by_record={}; forge_occurrence_indices_by_record={}; forge_suppressed_by_record={}
+    xmage_suppressed_by_record={}
+    guard_stats={"forge_same_zone":{"seen":0,"suppressed":0,"candidate_suppressed":0,"all_occurrences":[],"candidate_occurrences":[]},"xmage_import_only":{"seen":0,"suppressed":0,"candidate_suppressed":0,"all_occurrences":[],"candidate_occurrences":[]}}
     f_matches=defaultdict(list); x_matches=defaultdict(list)
     f_matches_before=defaultdict(list); x_matches_before=defaultdict(list)
     unmatched_f=[]; unmatched_x=[]; ambiguous=[]
@@ -907,6 +1029,15 @@ def mine(rows):
 
     for rec_index, rec in enumerate(forge):
         idx,method=match(rec); actions,attrs,snips=forge_extract(rec.get("output",all_strings(rec)))
+        eligible_actions,eligible_indices,suppressed=forge_guard_filter(rec,actions)
+        forge_eligible_by_record[rec_index]=eligible_actions
+        forge_occurrence_indices_by_record[rec_index]=eligible_indices
+        forge_suppressed_by_record[rec_index]=suppressed
+        rid=reviewable_record_identity("forge",PINNED_REVISIONS["forge"],rec_index)
+        guard_stats["forge_same_zone"]["seen"]+=len(suppressed)
+        guard_stats["forge_same_zone"]["suppressed"]+=len(suppressed)
+        for event in suppressed:
+            guard_stats["forge_same_zone"]["all_occurrences"].append({"source_record_identity":rid,"card_name":card_name(rec),"token":event["token"],"occurrence_index":event["occurrence_index"],"origin":event["origin"],"destination":event["destination"],"raw_action_snippet":event["raw_action_snippet"]})
         forge_counts.update(actions); forge_extracts.append((rec,actions,attrs,snips))
         if idx is not None:
             relation=oracle_text_relation(rec,sf[idx]); text_counts["forge"][relation]+=1
@@ -924,14 +1055,28 @@ def mine(rows):
             item=(rec,method,actions,attrs,snips,relation,diagnostic,rec_index)
             f_matches_before[idx].append(item)
             allowed,_=apply_join_review(idx,decision)
-            if allowed: f_matches[idx].append(item)
+            if allowed:
+                f_matches[idx].append(item)
+                for event in suppressed:
+                    if event["token"] in forge_map:
+                        row={"oracle_id":sf[idx].get("oracle_id"),"card_name":sf[idx].get("name"),"source_record_identity":rid,"token":event["token"],"occurrence_index":event["occurrence_index"],"requirement":forge_map[event["token"]],"raw_action_snippet":event["raw_action_snippet"]}
+                        guard_stats["forge_same_zone"]["candidate_suppressed"]+=1
+                        guard_stats["forge_same_zone"]["candidate_occurrences"].append(row)
             else: unmatched_f.append({"record":jsonable(rec),"name":card_name(rec),"reason":"reviewed_reject_join","join_review":join_review_metadata("forge",sf[idx].get("oracle_id"),reviewed_decisions)})
         elif method.startswith("ambiguous"): ambiguous.append({"source":"forge","method":method,"record":jsonable(rec)})
         else: unmatched_f.append({"record":jsonable(rec),"name":card_name(rec),"reason":method})
 
     for rec_index, rec in enumerate(xmage):
         idx,method=match(rec); imports,classes,snippet=java_extract(rec.get("completion",rec.get("output",all_strings(rec))))
-        semantic=xmage_semantic_classes(classes)
+        semantic_all=xmage_semantic_classes(classes)
+        source_java=rec.get("completion",rec.get("output",all_strings(rec)))
+        semantic,suppressed=xmage_guard_filter(source_java,semantic_all,xmage_map)
+        xmage_suppressed_by_record[rec_index]=suppressed
+        rid=reviewable_record_identity("xmage",PINNED_REVISIONS["xmage"],rec_index)
+        guard_stats["xmage_import_only"]["seen"]+=len(suppressed)
+        guard_stats["xmage_import_only"]["suppressed"]+=len(suppressed)
+        for event in suppressed:
+            guard_stats["xmage_import_only"]["all_occurrences"].append({"source_record_identity":rid,"card_name":card_name(rec),"token":event["token"],"classification":event["usage"]["classification"]})
         xmage_all_counts.update(classes); xmage_counts.update(semantic); xmage_extracts.append((rec,imports,classes,semantic,snippet))
         if idx is not None:
             relation=oracle_text_relation(rec,sf[idx]); text_counts["xmage"][relation]+=1
@@ -949,7 +1094,12 @@ def mine(rows):
             item=(rec,method,imports,classes,semantic,snippet,relation,diagnostic,rec_index)
             x_matches_before[idx].append(item)
             allowed,_=apply_join_review(idx,decision)
-            if allowed: x_matches[idx].append(item)
+            if allowed:
+                x_matches[idx].append(item)
+                for event in suppressed:
+                    row={"oracle_id":sf[idx].get("oracle_id"),"card_name":sf[idx].get("name"),"source_record_identity":rid,"token":event["token"],"occurrence_index":0,"requirement":xmage_map[event["token"]],"classification":event["usage"]["classification"]}
+                    guard_stats["xmage_import_only"]["candidate_suppressed"]+=1
+                    guard_stats["xmage_import_only"]["candidate_occurrences"].append(row)
             else: unmatched_x.append({"record":jsonable(rec),"name":card_name(rec),"reason":"reviewed_reject_join","join_review":join_review_metadata("xmage",sf[idx].get("oracle_id"),reviewed_decisions)})
         elif method.startswith("ambiguous"): ambiguous.append({"source":"xmage","method":method,"record":jsonable(rec)})
         else: unmatched_x.append({"record":jsonable(rec),"name":card_name(rec),"reason":method})
@@ -980,7 +1130,7 @@ def mine(rows):
         if not (f or x): continue
         mapped=defaultdict(list); unmapped=[]
         for rec,method,actions,attrs,snips,relation,diag,rec_index in f:
-            found,unknown=partition_tokens("forge",actions,forge_map,method,rec_index)
+            found,unknown=partition_tokens("forge",forge_eligible_by_record[rec_index],forge_map,method,rec_index,forge_occurrence_indices_by_record[rec_index],True)
             review_metadata=join_review_metadata("forge",card.get("oracle_id"),reviewed_decisions)
             for kind,items in found.items():
                 for item in items: item["oracle_text_comparison"]=relation; item.update(review_metadata)
@@ -989,7 +1139,7 @@ def mine(rows):
             unmapped.extend(unknown)
             unmapped_card_counts["forge"].update(item["token"] for item in unknown)
         for rec,method,imports,classes,semantic,snippet,relation,diag,rec_index in x:
-            found,unknown=partition_tokens("xmage",semantic,xmage_map,method,rec_index)
+            found,unknown=partition_tokens("xmage",semantic,xmage_map,method,rec_index,include_occurrence_index=True)
             review_metadata=join_review_metadata("xmage",card.get("oracle_id"),reviewed_decisions)
             for kind,items in found.items():
                 for item in items: item["oracle_text_comparison"]=relation; item.update(review_metadata)
@@ -1010,8 +1160,8 @@ def mine(rows):
         fa=sorted({a for _,_,actions,_,_,_,_,_ in f for a in actions})
         xc=sorted({c for _,_,_,classes,_,_,_,_,_ in x for c in classes})
         matched.append({"oracle_id":card.get("oracle_id"),"name":card.get("name"),"oracle_text":card.get("oracle_text"),
-            "forge":{"present":bool(f),"actions":fa,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"input":r.get("input"),"snippets":sn,**join_review_metadata("forge",card.get("oracle_id"),reviewed_decisions)} for r,m,_,_,sn,rel,diag,_ in f]},
-            "xmage":{"present":bool(x),"classes":xc,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"prompt":r.get("prompt"),"imports":im,"snippet":sn,**join_review_metadata("xmage",card.get("oracle_id"),reviewed_decisions)} for r,m,im,_,_,sn,rel,diag,_ in x]},
+            "forge":{"present":bool(f),"actions":fa,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"input":r.get("input"),"snippets":sn,"guard_suppressed_actions":forge_suppressed_by_record.get(rec_index,[]),**join_review_metadata("forge",card.get("oracle_id"),reviewed_decisions)} for r,m,_,_,sn,rel,diag,rec_index in f]},
+            "xmage":{"present":bool(x),"classes":xc,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"prompt":r.get("prompt"),"imports":im,"snippet":sn,"guard_suppressed_classes":xmage_suppressed_by_record.get(rec_index,[]),**join_review_metadata("xmage",card.get("oracle_id"),reviewed_decisions)} for r,m,im,_,_,sn,rel,diag,rec_index in x]},
             "match":{"forge":sorted({m for _,m,_,_,_,_,_,_ in f}),"xmage":sorted({m for _,m,_,_,_,_,_,_,_ in x})}})
 
     card_stats=summarize_card_resolution(len(sf),f_matches,x_matches,mapped_cards,unmapped_cards)
@@ -1031,6 +1181,9 @@ def mine(rows):
     unmapped_x_rows=unmapped_vocab_rows(xmage_unmapped,xmage_extracts,"xmage")
 
     inv=inventory(rows,source_revisions)
+    inv["extractor_version"]=EXTRACTOR_VERSION
+    inv["mapping_sha256"]=provenance["mapping_sha256"]
+    inv["guard_stats"]=guard_stats
     inv["remote_head_revisions"]=getattr(mine,"remote_revisions",{})
     field_counts=Counter(a for _,_,attrs,_ in forge_extracts for a in attrs)
     inv["datasets"]["forge"]["extraction_vocabulary"]={"actions":dict(forge_counts.most_common(50)),"fields":dict(field_counts.most_common(50))}
@@ -1052,8 +1205,13 @@ def mine(rows):
     write_jsonl(OUT/"matched_cards.jsonl",matched);write_jsonl(OUT/"unmatched_forge.jsonl",unmatched_f);write_jsonl(OUT/"unmatched_xmage.jsonl",unmatched_x);write_jsonl(OUT/"ambiguous_matches.jsonl",ambiguous);write_jsonl(OUT/"requirement_candidates.jsonl",candidates)
     stats={"scryfall":len(sf),"forge":len(forge),"xmage":len(xmage),"forge_matched_records":sum(map(len,f_matches.values())),"xmage_matched_records":sum(map(len,x_matches.values())),"forge_cards":len(f_matches),"xmage_cards":len(x_matches),"both_cards":len(set(f_matches)&set(x_matches)),"unmatched_forge":len(unmatched_f),"unmatched_xmage":len(unmatched_x),"ambiguous":len(ambiguous),"oracle_text_comparison":{source:dict(counts) for source,counts in text_counts.items()},"suspicious_joins":suspicious_total,"requirements":requirement_counts}
     write_json(OUT/"stats.json",stats)
-    mine.validation_inventory=generate_review_artifacts(sf,f_matches,x_matches,forge_extracts,xmage_extracts,forge_map,xmage_map,source_revisions,reviewed_decisions)
+    if EXTRACTOR_VERSION == VALIDATION_EXTRACTOR_VERSION:
+        mine.validation_inventory=generate_review_artifacts(sf,f_matches,x_matches,forge_extracts,xmage_extracts,forge_map,xmage_map,source_revisions,reviewed_decisions)
+    else:
+        # 0.2.1 has no reviewed pattern plan. Keep the historical 0.2.0 packet intact.
+        mine.validation_inventory=None
     mine.last_stats=stats
+    mine.guard_stats=guard_stats
     return stats
 
 
