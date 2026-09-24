@@ -1,4 +1,4 @@
-status: BLOCKED_INPUT_INCOMPLETE
+status: REVIEW_COMPLETE
 review_batch_id: phase-0.2a-batch-1
 validation_scope:
   extractor_version: 0.2.0
@@ -9,12 +9,12 @@ validation_scope:
     xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
 input_provenance:
   reviewer_a_files: &id001
-  - file: review_results_reviewer-a-300.yaml
-    sha256: b637d17324b8db7bd4ef3a5b6f41f6a41b8632eb70f318e4a2bc0095728c3615
-    rows: 300
+  - file: review_results_reviewer-a-460.yaml
+    sha256: 9b93e4fd9a9abf618807493f12924499e9c2037db16eb8b559769c7a824821a1
+    rows: 460
     review_scope:
       selection_basis: PROBABILITY_SAMPLE
-      sample_count: 300
+      sample_count: 460
       patterns_reviewed:
       - forge.draw.v1
       - forge.token.v1
@@ -27,23 +27,18 @@ input_provenance:
       - forge.put_counter.v1
       - xmage.add_counters_source_effect.v1
       - cross.create_token.token__create_token_effect.v1
-      note: 'Reviewer-A cumulative file: original 60 LOW-risk pilot + 90 damage-pattern
-        reviews + 150 remaining MEDIUM-risk reviews. Forced audit items remain separate.'
-  - file: review_results_reviewer-a-150.yaml
-    sha256: cea1b9340aa257605007adfd64fbf7a1eb46dcbf83b2e1d0adc30a90c3b40078
-    rows: 150
-    review_scope:
-      selection_basis: PROBABILITY_SAMPLE
-      patterns_reviewed:
-      - forge.draw.v1
-      - forge.token.v1
-      - xmage.gain_life_effect.v1
-      - forge.deal_damage.v1
-      - xmage.damage_target_effect.v1
-      - cross.damage.deal_damage__damage_target_effect.v1
-      sample_count: 150
-      note: Contains the original 60 LOW-risk pilot decisions plus 90 Damage-pattern
-        probability-sample decisions. Forced audit items are excluded.
+      - forge.change_zone.v1
+      - forge.change_zone_all.v1
+      - xmage.exile_target_effect.v1
+      - xmage.return_to_hand_source_effect.v1
+      sample_count_by_risk:
+        LOW: 60
+        MEDIUM: 240
+        HIGH: 160
+      note: Complete Reviewer-A probability-sample review. Forced audit items remain
+        in a separate results file. For zone-transition patterns, CORRECT means the
+        generic primitive is supported; origin, destination, selection/cardinality,
+        ownership, and timing remain required parameters rather than being discarded.
   reviewer_b_file: &id002
   - file: review_results_reviewer-b.yaml
     sha256: 4beafe9a94b50a35f95c5b52656cd0797f68e2f077ae0a8e56d917ef40207fb0
@@ -58,16 +53,16 @@ input_provenance:
 reviewer_counts:
   reviewer_a:
     files: *id001
-    raw_decision_rows: 450
-    unique_sample_ids: 300
-    duplicate_rows_deduplicated: 150
+    raw_decision_rows: 460
+    unique_sample_ids: 460
+    duplicate_rows_deduplicated: 0
     labels:
-      CORRECT: 299
+      CORRECT: 459
       WRONG: 1
     expected_unique: 460
-    missing_primary_ids: 160
-    disagreement_a_labels_missing_from_result_files: 4
-    other_missing_reviewer_a_ids: 156
+    missing_primary_ids: 0
+    disagreement_a_labels_missing_from_result_files: 0
+    other_missing_reviewer_a_ids: 0
   reviewer_b:
     files: *id002
     unique_sample_ids: 208
@@ -75,191 +70,25 @@ reviewer_counts:
       CORRECT: 204
       WRONG: 4
     expected_unique: 208
-    ids_in_a: 48
-    ids_missing_in_a: 160
+    ids_in_a: 208
+    ids_missing_in_a: 0
   double_review_subset:
     required_n: 208
     reviewer_b_n: 208
-    verified_n: 48
-    subset_valid: false
-    missing_from_a:
-    - 001a43d744909fed2cba801c
-    - 0034a044849ceeaa7192605c
-    - 004aea6cee8e3544b651fa68
-    - 0067ac830d92fe35a633b9c1
-    - 007036929966cc579b9a67f1
-    - 00794bcf111c0ed2f843d9e2
-    - 009d78a258f4e29668830557
-    - 00a67ccd637cdfafa624ed96
-    - 00f2e93cb4f34290360efbc0
-    - 0128378cd7de81f4825fed2e
-    - 013ee7ba771929dd8116b1db
-    - 01456d6a60021cd208dbfb07
-    - 021d0fec0390735ed80cac76
-    - 0249d2d5434003f4fb038940
-    - 027a419e8eb2e4772e7527a8
-    - 032f06138a17efb4da03d74b
-    - 0394320a0f72b6a90f23e179
-    - 03e2bdfa88d9a1a05f2481d1
-    - 0421045493bf62f0d6ebebb5
-    - 0433d1038a1ee5d02c18e892
-    - 043d45cf905759fd35af57e9
-    - 04acd6b9ae2342fbb0a18c70
-    - 050911a899e9a90c65f35746
-    - 053d9fe47d105986611506c8
-    - 0656c04d3563606eda9d2d38
-    - 068b30b3d05c77f1e6fd04fc
-    - 06a4f0fee07c7b2aa5b6e1ca
-    - 06ee82e18268c6da95ab8370
-    - 0790e176589eeeabead14cf3
-    - 07e0ff6ce9c5299ca8179ad4
-    - 08707b978b993191627ae2e3
-    - 08bf955609c1995b3c6c09a6
-    - 0982197b80cedad669168676
-    - 09b6ad1e8701753a4345deaa
-    - 0a5e61d666736ba2d27db7e4
-    - 0a72927de0059cfc72af24c2
-    - 0b72e97af4c4138b02842c5f
-    - 0bd3886672e66e1532494a78
-    - 0c5bfc32bd3a6803e7171d8f
-    - 0c79c0a9a21d4e0f309980b7
-    - 0d7299b914d7d139812dbdbd
-    - 0d9ef785fdf9f80112758930
-    - 0dbeb235548afcc943d9c5fb
-    - 0de50450f3f3cedeab0ad06e
-    - 0e65431edc449b9e0c6678c0
-    - 0e8795811cba63eed88b8f52
-    - 0eb67e6768954b78967312c2
-    - 0ed5d2eb93073399ca2c8536
-    - 0f1a95d8fbe42091f121fad1
-    - 0f4ee522b20c6dadfe904627
-    - 0f751d667f54896b89d3eb59
-    - 0fd769c644d8e752080ba206
-    - 1099608bb76c6dc740deaa48
-    - 10b50028e294e78118f8e122
-    - 115ad34b5300c10ed3d884ef
-    - 11670995912a93321340a867
-    - 128051b9d0f937ebd044d7cb
-    - 138fddfc47ee37c453b58fa0
-    - 13ef00a19fb46db3068106cc
-    - 149b9a4fbcc36ec608f067b2
-    - 16b16846ec01cece26cfd4b9
-    - 16bd8d8c308ac1c44f389321
-    - 180d5e33f84fd750d4e27841
-    - 1885e43606f4478de5891845
-    - 18a90d9977106dfb13f2f847
-    - 191e9cb85e99b594fad5b507
-    - 19c5f1ea09eb09d4d85f5290
-    - 1d691beac26be398f141f4e3
-    - 1ddb926c77b0bf83f8438aa7
-    - 1f75684a3eff1f50b4cf2b33
-    - 200405fe30894f0bd4277dda
-    - 2059ed2c381f0394142de296
-    - 2091ac22353681ca26cc4e0c
-    - 20aad65f0d38c936fc3d18a5
-    - 212887883cdc641baecf888d
-    - 2172f401d3e9b10c090821e9
-    - 22265d8a94263953c37b6e85
-    - 234c249ffb4ccd7a3690dd53
-    - 236a67351227010a95c130ec
-    - 23a6562a6e6a5c5879b55310
-    - 2f83171aae1e0b89e35282df
-    - 3677f9cbd728834e69700a90
-    - 3687885929400d217d81134e
-    - 39256c385adddd6c3d9974f7
-    - 410f5fb360b32071967049e2
-    - 4149cb78d89aa713f3dc7f94
-    - 4209c18c5fec2dfca822db1a
-    - 44d093612ba670d1fd5e7200
-    - 4644c6e75db6ce7d2ba208aa
-    - 4841ec912cb0188562ab3dbd
-    - 49f1313d0edacb501c23ce84
-    - 4b434b4fe4db3566a2bcfc25
-    - 4dbae9aa78b0af1a50346e65
-    - 4eafabb98de7948534139c33
-    - 500bb8fe5df477e090b1224b
-    - 51c98eeda0fae5325bce57d9
-    - 532892f8dc083b10a99ec57d
-    - 539b5fe42f1603cc232f32e6
-    - 5517d06908658207107db85b
-    - 569b8e392a93c07baa02d441
-    - 56d2dd7d04fdd5d38743de03
-    - 5d3d7210b6b2b77bd05d42ef
-    - 5ed2c1c58cdffac9673485b2
-    - 6679392b1730ba46387c7892
-    - 676e6dad020dddb4dfba7bda
-    - 6b214d793d45b19ebba372b0
-    - 6b24175a592d4794d9214d16
-    - 6c018bb2e44db68426e917d2
-    - 6d353fb34b66056d9249942a
-    - 71bb2b6f010f9a18c96555d6
-    - 745cb51ac0c38216510c12bd
-    - 758d48363e067a92e2be5077
-    - 7a1bc94783b28cd07e6b2dc6
-    - 7c3bb98461eb21ca8782b0e5
-    - 7c9e8ed1beb238f702525ce1
-    - 7ccfcbdbac12b0f788fca487
-    - 7df197834b5c0e5b695419f1
-    - 7fdbbdde3b63889ec13dbd0b
-    - 80e88eda5a088379b9af218a
-    - 80ef882eb7622d6e81c2dc21
-    - 819b67501997f8f7c7852f76
-    - 8371635f8892edfdd77ba771
-    - 840ac048f0ab700a4c8c9c1e
-    - 85303f65affbae11c46a5163
-    - 8b2b89da3a787413f7c05a97
-    - 8e04a8609d0da323a6bf9e44
-    - 8e5d84650950909535b75636
-    - 93b0633b15d146db5e23bfcb
-    - 9735b273ab79cb548866a516
-    - 9d3878aa0e6c3ebcb5d57b09
-    - a562b0c00aae7ace6d64b8bc
-    - a625fc4a5432ba19be354ea5
-    - a701190929f171d6cf5961a0
-    - a763ed263613efc9658dca35
-    - a786d007379063706b8ab3c0
-    - aa02ef093ff9041176a956c0
-    - aba9aa5fdd2d6a34719244c2
-    - ac190fd16d78ee6c822a757f
-    - b25864cbf06465bada38e616
-    - b28290958aa51fe93ec65808
-    - bfb405aae94e1f73e2eda007
-    - c2554abd50bd6adc30351148
-    - c4a804a8377aeadd80dc366f
-    - c57992746e85b113f8dbb46f
-    - c7c88de96f670efce9c201b8
-    - cca2b0039e837122b18bfbf3
-    - d14b6a1ea2800b4879ef0afc
-    - d295941d37a23a671bb68b5d
-    - d3ff0b454b2e94f2082d34ef
-    - d7716f5b64873e2e9ed50497
-    - d86c006598121401cf928577
-    - d96a7cc0b886b8c1610ef8d9
-    - daa95f19119e421e0e852d13
-    - dcef69b2688e6cbbe52b00cd
-    - e27b6e7d6ad746b6c393c4d1
-    - e5f6699a1ec3b071323fb6c7
-    - e87ba58b46919a0f871c823a
-    - f286484d0295e46e5b4958bc
-    - f2e1913493faf2fee991430a
-    - ffddf5b33fb1c5b31639f6f6
+    verified_n: 208
+    subset_valid: true
+    missing_from_a: []
 agreement:
-  status: NOT_AVAILABLE
-  n: 0
-  raw_agreement: null
-  cohen_kappa: null
-  gwet_ac1: null
-  reason: Requires all 208 blind B IDs to be present in A results.
-  provided_comparison_unverified:
-    double_reviewed_n: 208
-    agreements_n: 204
-    disagreements_n: 4
-    raw_agreement: 0.9807692307692307
-    cohen_kappa: 0.0
-    cohen_kappa_note: Reviewer A assigned CORRECT to all 208 double-reviewed items,
-      so marginal expected agreement equals observed agreement; kappa is therefore
-      0 despite 98.08% raw agreement.
-    gwet_ac1: 0.9803958529688972
+  n: 208
+  raw_agreement: 0.9807692307692307
+  cohen_kappa: 0.0
+  gwet_ac1: 0.9803958529688972
+  categories:
+  - CORRECT
+  - WRONG
+  cohen_kappa_denominator_zero: false
+  single_category_reviewer_a_marginal_warning: true
+  status: CALCULATED
 adjudication:
   count: 4
   unresolved: 0
@@ -273,11 +102,278 @@ expected_primary_final_counts:
   total: 460
   CORRECT: 455
   WRONG: 5
-primary_final_counts: null
-pattern_results: []
-blocking_issues:
-- Reviewer A has 300 unique result IDs, expected 460
-- Reviewer B has 160 IDs absent from Reviewer A; B must be an exact 208-item subset
-  of A
-- The disagreement artifact supplies Reviewer-A labels for 4 IDs absent from the Reviewer-A
-  result files
+primary_final_counts:
+  CORRECT: 455
+  WRONG: 5
+pattern_results:
+- pattern_id: forge.draw.v1
+  population_size: 2458
+  probability_sample_size: 20
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 20
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 20
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8388748419471806
+  upper: 1.0
+  validation_status: REVIEW_COMPLETE
+- pattern_id: forge.token.v1
+  population_size: 2230
+  probability_sample_size: 20
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 20
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 20
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8388748419471806
+  upper: 1.0
+  validation_status: REVIEW_COMPLETE
+- pattern_id: xmage.gain_life_effect.v1
+  population_size: 684
+  probability_sample_size: 20
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 20
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 20
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8388748419471806
+  upper: 1.0
+  validation_status: REVIEW_COMPLETE
+- pattern_id: forge.deal_damage.v1
+  population_size: 2070
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 30
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 30
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8864866068260312
+  upper: 0.9999999999999999
+  validation_status: REVIEW_COMPLETE
+- pattern_id: forge.destroy.v1
+  population_size: 1205
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 30
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 30
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8864866068260312
+  upper: 0.9999999999999999
+  validation_status: REVIEW_COMPLETE
+- pattern_id: forge.put_counter.v1
+  population_size: 1947
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 30
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 30
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8864866068260312
+  upper: 0.9999999999999999
+  validation_status: REVIEW_COMPLETE
+- pattern_id: xmage.damage_target_effect.v1
+  population_size: 921
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 30
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 30
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8864866068260312
+  upper: 0.9999999999999999
+  validation_status: REVIEW_COMPLETE
+- pattern_id: xmage.destroy_target_effect.v1
+  population_size: 705
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 29
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 1
+  decisive_n: 30
+  precision_estimate: 0.9666666666666667
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8332960900859082
+  upper: 0.9940914096183874
+  validation_status: REVIEW_COMPLETE
+- pattern_id: xmage.add_counters_source_effect.v1
+  population_size: 832
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 30
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 30
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8864866068260312
+  upper: 0.9999999999999999
+  validation_status: REVIEW_COMPLETE
+- pattern_id: forge.change_zone.v1
+  population_size: 4136
+  probability_sample_size: 40
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 38
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 2
+  decisive_n: 40
+  precision_estimate: 0.95
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8349612263085903
+  upper: 0.9861793326138516
+  validation_status: REVIEW_COMPLETE
+- pattern_id: forge.change_zone_all.v1
+  population_size: 467
+  probability_sample_size: 40
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 38
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 2
+  decisive_n: 40
+  precision_estimate: 0.95
+  confidence_level: 0.95
+  interval_method: FINITE_POPULATION_HYPERGEOMETRIC
+  lower: 0.8372591006423983
+  upper: 0.9914346895074947
+  validation_status: REVIEW_COMPLETE
+- pattern_id: xmage.exile_target_effect.v1
+  population_size: 243
+  probability_sample_size: 40
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 40
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 40
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: FINITE_POPULATION_HYPERGEOMETRIC
+  lower: 0.9218106995884774
+  upper: 1.0
+  validation_status: REVIEW_COMPLETE
+- pattern_id: xmage.return_to_hand_source_effect.v1
+  population_size: 117
+  probability_sample_size: 40
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 40
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 40
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: FINITE_POPULATION_HYPERGEOMETRIC
+  lower: 0.9316239316239316
+  upper: 1.0
+  validation_status: REVIEW_COMPLETE
+- pattern_id: cross.damage.deal_damage__damage_target_effect.v1
+  population_size: 869
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 30
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 30
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8864866068260312
+  upper: 0.9999999999999999
+  validation_status: REVIEW_COMPLETE
+- pattern_id: cross.create_token.token__create_token_effect.v1
+  population_size: 1196
+  probability_sample_size: 30
+  counts:
+    AMBIGUOUS: 0
+    CONTEXT_DEPENDENT: 0
+    CORRECT: 30
+    SOURCE_EVIDENCE_INSUFFICIENT: 0
+    TOO_BROAD: 0
+    TOO_NARROW: 0
+    WRONG: 0
+  decisive_n: 30
+  precision_estimate: 1.0
+  confidence_level: 0.95
+  interval_method: WILSON_BINOMIAL
+  lower: 0.8864866068260312
+  upper: 0.9999999999999999
+  validation_status: REVIEW_COMPLETE
+blocking_issues: []

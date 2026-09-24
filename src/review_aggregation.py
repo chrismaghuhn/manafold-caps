@@ -232,14 +232,14 @@ def write_aggregation_report(validation,adjudications,provided_comparison):
     a_counts=counts["reviewer_a"]["labels"]
     a_unique=counts["reviewer_a"]["unique_sample_ids"]
     lines=["# Phase 0.2B — Review Aggregation, Adjudication & Pattern Precision","",f"Status: **{validation['status']}**. Pinned validation scope: `{validation['validation_scope']}`.","", "## Review coverage", "",f"Reviewer A inputs contain {counts['reviewer_a']['raw_decision_rows']} raw rows and {counts['reviewer_a']['unique_sample_ids']} unique IDs (expected {EXPECTED_A}); duplicate rows deduplicated: {counts['reviewer_a']['duplicate_rows_deduplicated']}. Available unique Reviewer-A labels: `{a_counts}`.",f"Reviewer B supplied {counts['reviewer_b']['unique_sample_ids']} IDs (expected {EXPECTED_B}); {counts['double_review_subset']['verified_n']} match the A files and {counts['reviewer_b']['ids_missing_in_a']} are absent. Exact-subset validation: **{counts['double_review_subset']['subset_valid']}**.",f"Forced audit: {validation['forced_audit_summary']['items']} separate item(s), labels `{validation['forced_audit_summary']['counts']}`; excluded from primary counts and all precision calculations.","", "## Agreement", ""]
-    lines += [f"Available Reviewer-A labels: `{a_counts}`; expected when complete: 459 CORRECT and 1 WRONG.",f"The supplied A-150 file duplicates the 150-item pilot contained in the cumulative A-300 file. Of {EXPECTED_A-a_unique} missing A IDs, {counts['reviewer_a']['disagreement_a_labels_missing_from_result_files']} have an A label only in the disagreement artifact; {counts['reviewer_a']['other_missing_reviewer_a_ids']} have no A label in any supplied result file."]
+    lines += [f"Reviewer-A labels: `{a_counts}`. Reviewer-A file rows and unique IDs are reported above; this aggregation uses only the supplied authoritative result file(s)."]
     if agreement["status"]=="CALCULATED":
         lines += [f"Pre-adjudication agreement on all {agreement['n']} blind items: raw {agreement['raw_agreement']:.6f}; Cohen's κ {agreement['cohen_kappa']}; Gwet's AC1 {agreement['gwet_ac1']:.6f}."]
         if agreement.get("single_category_reviewer_a_marginal_warning"):
             lines += ["Reviewer A used one label category on this double-reviewed subset. Cohen's κ is degenerate under these marginals and is not interpreted as poor agreement; raw agreement and AC1 are reported alongside it."]
     else:
         lines += ["Agreement metrics were not calculated because the supplied Reviewer-A files are incomplete and Reviewer B's IDs are not an exact subset of A. The disagreement YAML contains a precomputed comparison, but it cannot be independently verified and is not reported as an aggregation result.",f"Provided comparison artifact (unverified): {provided_comparison}."]
-    lines += ["", "## Adjudication", "",f"Accepted the four supplied recommendations as `WRONG`; {len(adjudications)} decisions are written to `adjudication_results.yaml`. The four A labels appear in the disagreement artifact but are absent from the Reviewer-A result files.",""]
+    lines += ["", "## Adjudication", "",f"Accepted the four supplied recommendations as `WRONG`; {len(adjudications)} decisions are written to `adjudication_results.yaml`. Reviewer labels were checked against the supplied result files.",""]
     lines += [f"- `{a['sample_id']}` — `{a['card_name']}` / `{a['pattern_id']}`: Reviewer A `{a['reviewer_a_label']}`, Reviewer B `{a['reviewer_b_label']}`, final `{a['final_label']}`. {a['rationale']}" for a in adjudications]
     lines += ["", "## Final primary results", ""]
     if validation["primary_final_counts"] is None:
@@ -254,8 +254,11 @@ def write_aggregation_report(validation,adjudications,provided_comparison):
             lines.append(f"| `{p['pattern_id']}` | {p['population_size']} | {p['probability_sample_size']} | {p['counts']['CORRECT']} | {p['counts']['TOO_BROAD']} | {p['counts']['TOO_NARROW']} | {p['counts']['CONTEXT_DEPENDENT']} | {p['counts']['WRONG']} | {p['counts']['AMBIGUOUS']} | {p['counts']['SOURCE_EVIDENCE_INSUFFICIENT']} | {p['decisive_n']} | {p['precision_estimate']} | `{p['interval_method']}` | {p['lower']} | {p['upper']} |")
     else: lines += ["Unavailable until the missing Reviewer-A reviews are supplied and all 208 B IDs are verified as an exact subset."]
     lines += ["", "## Validation findings", "", "The four supplied adjudications identify Forge `ChangeZone` / `ChangeZoneAll` occurrences with `Origin=Library` and `Destination=Library`; those occurrences reposition cards within the library and do not support a zone-boundary transition. The existing XMage unused-import lexical false positive is Reviewer A's `xmage.destroy_target_effect.v1` WRONG result in the supplied unique-ID subset. These findings do not change mappings or extractor behavior.","", "## Requirement-level status", "", "No Requirement-level precision is calculated or combined. `requirement_evidence_projection.yaml` remains unchanged; source-specific pattern paths and cross corroboration are separate.","", "## Next-step blockers/findings", ""]
-    lines += [f"- {issue}" for issue in issues]
-    lines += ["",f"Supply the missing {counts['reviewer_a']['missing_primary_ids']} Reviewer-A primary decisions, including A labels for all 208 B double-review IDs (the current A files are missing 160 of those IDs; four A labels appear only in the disagreement artifact). Then rerun aggregation; the original reviewer files will remain untouched.",""]
+    if issues:
+        lines += [f"- {issue}" for issue in issues]
+    else:
+        lines += ["No input or adjudication blockers remain for this aggregation. The two findings above should be addressed as extractor guard candidates before expanding mappings; mappings and extractor behavior were left unchanged in this phase."]
+    lines += [""]
     (ROOT/"REVIEW_AGGREGATION_REPORT.md").write_text("\n".join(lines),encoding="utf-8")
 
 
