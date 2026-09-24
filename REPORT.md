@@ -1,6 +1,6 @@
-# Manafold CAP miner — Phase 0.1.1 Evidence Calibration
+# Manafold CAP miner — Phase 0.1.2 Suspicious Join Audit
 
-Generated: 2026-09-24T06:54:52.471211+00:00 UTC
+Generated: 2026-09-24T07:16:56.872191+00:00 UTC
 
 ## Dataset inventory
 
@@ -19,13 +19,13 @@ Columns: `instruction`, `input`, `output`, `text`
 Revision: `6212eb37907c1ce751d8a3fea8b3322056dc0264` (pinned snapshot). Rows: **18,985**. Splits: `{'train': 18985}`.
 Columns: `prompt`, `completion`
 
-Python package versions: `{'datasets': '5.0.1', 'huggingface_hub': '1.32.0', 'PyYAML': '6.0.3'}`. Cache/materialization timestamp: `2026-09-24T06:54:49.886439+00:00` UTC. Mining is pinned to the Phase 0.1.0 revisions listed above; if the current Hub head has moved, it is recorded but not substituted.
+Python package versions: `{'datasets': '5.0.1', 'huggingface_hub': '1.32.0', 'PyYAML': '6.0.3'}`. Cache/materialization timestamp: `2026-09-24T07:16:54.402510+00:00` UTC. Mining is pinned to the Phase 0.1.0 revisions listed above; if the current Hub head has moved, it is recorded but not substituted.
 
 ## Calibration summary
 
 Exact-identity matching: Forge 26,384/36,923 (71.46%); XMage 18,252/36,923 (49.43%); both 17,270 (46.77%). Ambiguous records: 1,520.
 Cards with implementation evidence and at least one mapped requirement: 16,341/27,366 (59.71%).
-Seed mapping SHA-256: `3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a`. Extractor version: `0.1.1`.
+Seed mapping SHA-256: `3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a`. Extractor version: `0.1.2`.
 
 ## Card-level resolution
 
@@ -72,7 +72,7 @@ Calibration found that some XMage multiface prompts contain a separate `Oracle T
 
 ### forge
 
-Mismatches: 12,380; assigned a diagnostic category: 12,342 (99.69%); `UNCLASSIFIED`: 38; suspicious joins requiring manual review: 38.
+Mismatches: 12,380; assigned a diagnostic category: 12,342 (99.69%); text-diagnostic `UNCLASSIFIED`: 38; sent to the Phase 0.1.2 identity audit: 38.
 
 | category | count | % of mismatches |
 |---|---:|---:|
@@ -84,7 +84,7 @@ Mismatches: 12,380; assigned a diagnostic category: 12,342 (99.69%); `UNCLASSIFI
 
 ### xmage
 
-Mismatches: 9,639; assigned a diagnostic category: 9,619 (99.79%); `UNCLASSIFIED`: 20; suspicious joins requiring manual review: 20.
+Mismatches: 9,639; assigned a diagnostic category: 9,619 (99.79%); text-diagnostic `UNCLASSIFIED`: 20; sent to the Phase 0.1.2 identity audit: 20.
 
 | category | count | % of mismatches |
 |---|---:|---:|
@@ -96,7 +96,7 @@ Mismatches: 9,639; assigned a diagnostic category: 9,619 (99.79%); `UNCLASSIFIED
 | `MULTIFACE_REPRESENTATION_DIFFERENCE` | 262 | 2.72% |
 | `UNCLASSIFIED` | 20 | 0.21% |
 
-Exact diagnostic normalization explains 12,260/22,019 mismatches (55.68%): equality after reminder-text removal, card-name/self-template normalization, or face-text comparison. Another 9,701 receive a heuristic diagnostic such as likely stale wording or possible bad join. In total 21,961/22,019 (99.74%) have a non-`UNCLASSIFIED` category; **58** remain unclassified. Heuristic categories are not confirmed root causes. Categories and up to 20 sorted examples per category are in `data/output/oracle_mismatch_audit.json`.
+Exact diagnostic normalization explains 12,260/22,019 mismatches (55.68%): equality after reminder-text removal, card-name/self-template normalization, or face-text comparison. Another 9,701 receive a heuristic diagnostic such as likely stale wording or possible bad join. In total 21,961/22,019 (99.74%) have a non-`UNCLASSIFIED` category; **58** remain unclassified by that text heuristic. All 58 exact-identity cases were then individually classified in `JOIN_AUDIT.md` and `data/output/suspicious_join_audit.json`. Categories and up to 20 sorted examples per category are in `data/output/oracle_mismatch_audit.json`.
 
 ## Top unmapped vocabulary
 
@@ -152,13 +152,14 @@ Examples are the first five distinct names in normalized alphabetical order; tok
 | ConditionalContinuousEffect | 461 | Abaddon the Despoiler; Aboshan's Desire; Abzan Kin-Guard; Abzan Runemark; Ace's Baseball Bat |
 | FirstStrikeAbility | 459 | Abandon Reason; Abattoir Ghoul; Ace's Baseball Bat; Advance Scout; Aerial Maneuver |
 
-## Vocabulary overview
+## Phase 0.1.2 join decisions
 
-Forge action and `$` field counts are in `forge_tokens.csv`; XMage class counts (including structural classes) are in `xmage_classes.csv`. No fuzzy match was used as identity evidence.
+The pinned suspicious set contains 58 individually reviewed records: {'KEEP_JOIN': 49, 'KEEP_WITH_FLAG': 9, 'REJECT_JOIN': 0}. No join was rejected. 0 decisions remain unresolved. Nine XMage records are retained with warnings because their type-line dash is mojibake; warning metadata is attached to their matched evidence.
+Identity counts and mapped candidate counts did not change: before/after Forge 26384/26384, XMage 18252/18252, both 17270/17270; mapped candidates 21251/21251.
 
 ## Interpretation and next decision
 
-The new seed mappings changed candidate-level cross-engine agreement from the 0.1.0 baseline of 2,962 to 5,828 (+2,866; +96.8%). This is a count of mapped candidate pairs, not a correctness score.
-Exact-name joins with text mismatches flagged for review total 58 across both sources. `oracle_mismatch_audit.json` retains raw current/source text for inspection.
+The 0.1.1 seed mappings changed candidate-level cross-engine agreement from the 0.1.0 baseline of 2,962 to 5,828. This is a count of mapped candidate pairs, not a correctness score.
+All audited identities were supported by an exact unique normalized card name and matching card context. Oracle wording variants are retained; nine encoding warnings remain visible on XMage evidence. No name collision, face collision, or matching-policy defect was found. The audited identity joins are suitable for Phase 0.2 while preserving those warnings.
 
-This pass only recalibrates deterministic extraction, evidence retention, and seed mappings. It does not fetch rules or official rulings and does not decide CAP eligibility. Forge and XMage remain implementation evidence, not semantic authority. No LLM or embeddings are used.
+No rules validation, eligibility policy, or CAP integration was added. Forge and XMage remain implementation evidence, not semantic authority. No LLM or embeddings are used.

@@ -3,7 +3,11 @@ import unittest
 from src.cap_miner import (
     forge_extract,
     implementation_status,
+    apply_join_review,
+    exact_oracle_id_match,
     java_extract,
+    load_join_decisions,
+    lookup_join_decision,
     mismatch_diagnostic,
     norm,
     oracle_text,
@@ -90,6 +94,30 @@ class MinerHelpersTest(unittest.TestCase):
     def test_broad_xmage_framework_classes_are_excluded(self):
         self.assertEqual(xmage_semantic_classes(["OneShotEffect","SimpleActivatedAbility","TargetPermanent","FilterPermanent"]),[])
         self.assertEqual(xmage_semantic_classes(["DamageTargetEffect"]),["DamageTargetEffect"])
+
+    def test_reviewed_reject_is_excluded_and_kept_join_stays_eligible(self):
+        rejected={"action":"REJECT_JOIN","result":"BAD_JOIN_NAME_COLLISION","reason":"two exact names collide"}
+        kept={"action":"KEEP_JOIN","result":"VALID_JOIN_STALE_WORDING","reason":"historical text"}
+        self.assertEqual(apply_join_review(12,rejected),(False,None))
+        self.assertEqual(apply_join_review(12,kept),(True,{"join_review_status":"KEEP_JOIN","join_review_result":"VALID_JOIN_STALE_WORDING","join_review_reason":"historical text"}))
+
+    def test_flagged_join_retains_warning_metadata(self):
+        decision={"action":"KEEP_WITH_FLAG","result":"SOURCE_RECORD_WRONG_OR_CORRUPT","reason":"prompt type dash is mojibake"}
+        allowed,metadata=apply_join_review(3,decision)
+        self.assertTrue(allowed)
+        self.assertEqual(metadata["join_review_status"],"KEEP_WITH_FLAG")
+        self.assertEqual(metadata["join_review_reason"],"prompt type dash is mojibake")
+
+    def test_review_lookup_is_deterministic(self):
+        decisions=load_join_decisions()
+        aid="xmage:1b6e0d65-202e-4fd3-861e-8d2eaffe3269"
+        self.assertEqual(len(decisions),58)
+        self.assertEqual(lookup_join_decision(decisions,aid),lookup_join_decision(decisions,aid))
+        self.assertEqual(decisions[aid]["action"],"KEEP_WITH_FLAG")
+
+    def test_oracle_id_precedes_name_or_text_similarity(self):
+        self.assertEqual(exact_oracle_id_match({"oracle_id":"oracle-exact","name":"Near Match"},{"oracle-exact":[7]}),(7,"oracle_id"))
+        self.assertIsNone(exact_oracle_id_match({"oracle_id":"near-match","name":"Exact Name"},{"other-id":[2]}))
 
 
 if __name__ == "__main__":

@@ -26,6 +26,8 @@ The datasets are third-party snapshots and can have stale text, malformed record
 
 ## Outputs
 
-Generated files go under ignored `data/output/`: inventory, vocabulary CSVs, matching samples, requirement candidates/statistics, mapping coverage, unmapped token lists, and the Oracle mismatch audit. Hugging Face cache files go under ignored `data/raw/`. Generated data is not committed.
+Generated files go under ignored `data/output/`: inventory, vocabulary CSVs, matching samples, requirement candidates/statistics, mapping coverage, unmapped token lists, the Oracle mismatch audit, and the suspicious-join audit. Hugging Face cache files go under ignored `data/raw/`. Generated data is not committed.
+
+The 0.1.2 suspicious-join review decisions are recorded in `reviewed_join_decisions.yaml`; the concise human audit is `JOIN_AUDIT.md`. Review flags concern identity/source quality only and do not validate requirement semantics.
 
 Requirement candidates separate extraction, implementation evidence, rules evidence, and review state. Agreement between Forge and XMage means corroboration only; it does not establish semantic correctness.

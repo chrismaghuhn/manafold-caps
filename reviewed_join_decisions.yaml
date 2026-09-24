@@ -1,0 +1,726 @@
+# Explicit Phase 0.1.2 decisions for the pinned 58-record suspicious-join set.
+- audit_id: forge:1b6e0d65-202e-4fd3-861e-8d2eaffe3269
+  source: forge
+  oracle_id: 1b6e0d65-202e-4fd3-861e-8d2eaffe3269
+  card_name: Expedition Skulker
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Expedition Skulker` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Vampire Rogue` and mana cost `{1}{B}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses the printed card name for self-reference where current Oracle
+    uses “this …”; reminder text is omitted or worded differently between the source and current Oracle text. The
+    source and current text retain the same card-specific ability/effect clauses and show no competing-card or face
+    signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: xmage:1b6e0d65-202e-4fd3-861e-8d2eaffe3269
+  source: xmage
+  oracle_id: 1b6e0d65-202e-4fd3-861e-8d2eaffe3269
+  card_name: Expedition Skulker
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Expedition Skulker` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Creature â€” Vampire Rogue` and mana cost `{1}{B}` matching Scryfall. The XMage type line
+    contains the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its type
+    words normalize to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity
+    join but flag the corrupt type-line field. The text variant is also historical: uses the printed card name for
+    self-reference where current Oracle uses “this …”; reminder text is omitted or worded differently between the
+    source and current Oracle text.'
+- audit_id: forge:1d705d77-4b1a-4a17-b3b7-e502f2f6f6e6
+  source: forge
+  oracle_id: 1d705d77-4b1a-4a17-b3b7-e502f2f6f6e6
+  card_name: Koma's Faithful
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Koma''s Faithful` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Elf Cleric` and mana cost `{2}{B}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses the printed card name for self-reference where current Oracle
+    uses “this …”; reminder text is omitted or worded differently between the source and current Oracle text. The
+    source and current text retain the same card-specific ability/effect clauses and show no competing-card or face
+    signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: xmage:1d705d77-4b1a-4a17-b3b7-e502f2f6f6e6
+  source: xmage
+  oracle_id: 1d705d77-4b1a-4a17-b3b7-e502f2f6f6e6
+  card_name: Koma's Faithful
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Koma''s Faithful` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Creature â€” Elf Cleric` and mana cost `{2}{B}` matching Scryfall. The XMage type line
+    contains the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its type
+    words normalize to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity
+    join but flag the corrupt type-line field. The text variant is also historical: uses the printed card name for
+    self-reference where current Oracle uses “this …”; reminder text is omitted or worded differently between the
+    source and current Oracle text.'
+- audit_id: forge:211add65-b63d-43ad-8d69-b0598e003fef
+  source: forge
+  oracle_id: 211add65-b63d-43ad-8d69-b0598e003fef
+  card_name: Mesa Lynx
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Mesa Lynx` has one candidate in the pinned Scryfall name index. Forge input
+    has type line `Creature — Cat` and mana cost `{1}{W}`, both matching the Scryfall row. The text difference is
+    historical Oracle wording: uses the printed card name for self-reference where current Oracle uses “this …”;
+    states “not your turn” rather than “turns other than yours”. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: forge:2acc1657-d716-41d7-aedf-9b080a58ec83
+  source: forge
+  oracle_id: 2acc1657-d716-41d7-aedf-9b080a58ec83
+  card_name: Shambling Ghoul
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Shambling Ghoul` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Zombie` and mana cost `{1}{B}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”. The source and current text
+    retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity
+    join and preserve both text versions unchanged.'
+- audit_id: forge:33b9b3bd-33ca-46f3-b8bb-a978bc3d1085
+  source: forge
+  oracle_id: 33b9b3bd-33ca-46f3-b8bb-a978bc3d1085
+  card_name: Temple of Deceit
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Deceit` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:33b9b3bd-33ca-46f3-b8bb-a978bc3d1085
+  source: xmage
+  oracle_id: 33b9b3bd-33ca-46f3-b8bb-a978bc3d1085
+  card_name: Temple of Deceit
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Deceit` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:373ccd23-5c98-4368-995a-e6503cd0dbd8
+  source: forge
+  oracle_id: 373ccd23-5c98-4368-995a-e6503cd0dbd8
+  card_name: Elturel Survivors
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Elturel Survivors` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Tiefling Peasant` and mana cost `{3}{R}`, both matching the Scryfall row. The
+    text difference is historical Oracle wording: uses the printed card name for self-reference where current Oracle
+    uses “this …”; reminder text is omitted or worded differently between the source and current Oracle text. The
+    source and current text retain the same card-specific ability/effect clauses and show no competing-card or face
+    signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:3baa8e38-ef93-435d-b63e-f781d5bfcc68
+  source: forge
+  oracle_id: 3baa8e38-ef93-435d-b63e-f781d5bfcc68
+  card_name: Temple of Abandon
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Abandon` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:3baa8e38-ef93-435d-b63e-f781d5bfcc68
+  source: xmage
+  oracle_id: 3baa8e38-ef93-435d-b63e-f781d5bfcc68
+  card_name: Temple of Abandon
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Abandon` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:41960d32-ddb5-42be-94b2-3a2e77ca148d
+  source: forge
+  oracle_id: 41960d32-ddb5-42be-94b2-3a2e77ca148d
+  card_name: Omen of the Sea
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Omen of the Sea` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Enchantment` and mana cost `{1}{U}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or
+    worded differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:41960d32-ddb5-42be-94b2-3a2e77ca148d
+  source: xmage
+  oracle_id: 41960d32-ddb5-42be-94b2-3a2e77ca148d
+  card_name: Omen of the Sea
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Omen of the Sea` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Enchantment` and mana cost `{1}{U}` matching Scryfall. The text difference is historical
+    Oracle wording: uses the printed card name for self-reference where current Oracle uses “this …”; reminder text
+    is omitted or worded differently between the source and current Oracle text. The source and current text retain
+    the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity join
+    and preserve both text versions unchanged.'
+- audit_id: forge:49b80368-d38a-4877-b1de-f3b5f3d40d4d
+  source: forge
+  oracle_id: 49b80368-d38a-4877-b1de-f3b5f3d40d4d
+  card_name: Wall of Lost Thoughts
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Wall of Lost Thoughts` has one candidate in the pinned Scryfall name index.
+    Forge input has type line `Creature — Wall` and mana cost `{1}{U}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters”
+    template; uses the printed card name for self-reference where current Oracle uses “this …”; reminder text is
+    omitted or worded differently between the source and current Oracle text. The source and current text retain
+    the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity join
+    and preserve both text versions unchanged.'
+- audit_id: xmage:49b80368-d38a-4877-b1de-f3b5f3d40d4d
+  source: xmage
+  oracle_id: 49b80368-d38a-4877-b1de-f3b5f3d40d4d
+  card_name: Wall of Lost Thoughts
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Wall of Lost Thoughts` has one candidate in the pinned Scryfall name index.
+    XMage prompt has type line `Creature â€” Wall` and mana cost `{1}{U}` matching Scryfall. The XMage type line
+    contains the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its type
+    words normalize to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity
+    join but flag the corrupt type-line field. The text variant is also historical: uses the printed card name for
+    self-reference where current Oracle uses “this …”; reminder text is omitted or worded differently between the
+    source and current Oracle text.'
+- audit_id: forge:4f7e7c59-e0a9-4b32-96b9-b1abf52f5ef7
+  source: forge
+  oracle_id: 4f7e7c59-e0a9-4b32-96b9-b1abf52f5ef7
+  card_name: Sunmane Pegasus
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Sunmane Pegasus` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Pegasus` and mana cost `{3}{W}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses the printed card name for self-reference where current Oracle uses “this
+    …”; reminder text is omitted or worded differently between the source and current Oracle text. The source and
+    current text retain the same card-specific ability/effect clauses and show no competing-card or face signal.
+    Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:6048fc70-0dcc-4b54-977d-16e240225f82
+  source: forge
+  oracle_id: 6048fc70-0dcc-4b54-977d-16e240225f82
+  card_name: Diregraf Ghoul
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Diregraf Ghoul` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Zombie` and mana cost `{B}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”. The source and current text
+    retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity
+    join and preserve both text versions unchanged.'
+- audit_id: forge:6ce24851-70d2-416c-8733-78928b4eee74
+  source: forge
+  oracle_id: 6ce24851-70d2-416c-8733-78928b4eee74
+  card_name: Wailing Ghoul
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Wailing Ghoul` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Zombie` and mana cost `{1}{B}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or
+    worded differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:6ce24851-70d2-416c-8733-78928b4eee74
+  source: xmage
+  oracle_id: 6ce24851-70d2-416c-8733-78928b4eee74
+  card_name: Wailing Ghoul
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Wailing Ghoul` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Creature â€” Zombie` and mana cost `{1}{B}` matching Scryfall. The XMage type line contains
+    the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its type words normalize
+    to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity join but flag the
+    corrupt type-line field. The text variant is also historical: uses the printed card name for self-reference
+    where current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text.'
+- audit_id: forge:6e5fd8b4-d81a-4ed6-b389-21445351bb43
+  source: forge
+  oracle_id: 6e5fd8b4-d81a-4ed6-b389-21445351bb43
+  card_name: Rotting Legion
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Rotting Legion` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Zombie` and mana cost `{4}{B}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”. The source and current text
+    retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity
+    join and preserve both text versions unchanged.'
+- audit_id: forge:6f0d94d9-64bb-4175-83bc-301e8f79f54f
+  source: forge
+  oracle_id: 6f0d94d9-64bb-4175-83bc-301e8f79f54f
+  card_name: Temple of Triumph
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Triumph` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:6f0d94d9-64bb-4175-83bc-301e8f79f54f
+  source: xmage
+  oracle_id: 6f0d94d9-64bb-4175-83bc-301e8f79f54f
+  card_name: Temple of Triumph
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Triumph` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:75d38954-6148-4d95-bf4b-cb82efcbe8df
+  source: forge
+  oracle_id: 75d38954-6148-4d95-bf4b-cb82efcbe8df
+  card_name: Territorial Scythecat
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Territorial Scythecat` has one candidate in the pinned Scryfall name index.
+    Forge input has type line `Creature — Cat` and mana cost `{2}{G}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters”
+    template; uses the printed card name for self-reference where current Oracle uses “this …”; reminder text is
+    omitted or worded differently between the source and current Oracle text. The source and current text retain
+    the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity join
+    and preserve both text versions unchanged.'
+- audit_id: forge:79f94050-d850-41ca-b1db-5ae0cf743f0a
+  source: forge
+  oracle_id: 79f94050-d850-41ca-b1db-5ae0cf743f0a
+  card_name: Temple of Epiphany
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Epiphany` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:79f94050-d850-41ca-b1db-5ae0cf743f0a
+  source: xmage
+  oracle_id: 79f94050-d850-41ca-b1db-5ae0cf743f0a
+  card_name: Temple of Epiphany
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Epiphany` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:7c0ef3b7-b368-4a5b-8cbe-bf1f47610f74
+  source: forge
+  oracle_id: 7c0ef3b7-b368-4a5b-8cbe-bf1f47610f74
+  card_name: Daggersail Aeronaut
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Daggersail Aeronaut` has one candidate in the pinned Scryfall name index.
+    Forge input has type line `Creature — Goblin` and mana cost `{3}{R}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses the printed card name for self-reference where current Oracle
+    uses “this …”; uses the older “as long as it’s your turn” condition template. The source and current text retain
+    the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity join
+    and preserve both text versions unchanged.'
+- audit_id: forge:7c439c18-31dc-41fe-b03d-3fca06e6fc0b
+  source: forge
+  oracle_id: 7c439c18-31dc-41fe-b03d-3fca06e6fc0b
+  card_name: Temple of Malice
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Malice` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:7c439c18-31dc-41fe-b03d-3fca06e6fc0b
+  source: xmage
+  oracle_id: 7c439c18-31dc-41fe-b03d-3fca06e6fc0b
+  card_name: Temple of Malice
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Malice` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:7e26f0b7-20e6-46d5-8130-d98c14d6aa29
+  source: forge
+  oracle_id: 7e26f0b7-20e6-46d5-8130-d98c14d6aa29
+  card_name: Temple of Mystery
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Mystery` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:7e26f0b7-20e6-46d5-8130-d98c14d6aa29
+  source: xmage
+  oracle_id: 7e26f0b7-20e6-46d5-8130-d98c14d6aa29
+  card_name: Temple of Mystery
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Mystery` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:7fd61a18-6e4f-40c5-aa00-3d101ec1ec82
+  source: forge
+  oracle_id: 7fd61a18-6e4f-40c5-aa00-3d101ec1ec82
+  card_name: Stitcher's Supplier
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Stitcher''s Supplier` has one candidate in the pinned Scryfall name index.
+    Forge input has type line `Creature — Zombie` and mana cost `{B}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters”
+    template; uses the printed card name for self-reference where current Oracle uses “this …”; reminder text is
+    omitted or worded differently between the source and current Oracle text. The source and current text retain
+    the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity join
+    and preserve both text versions unchanged.'
+- audit_id: forge:874b944a-8d08-4143-b477-685087396a88
+  source: forge
+  oracle_id: 874b944a-8d08-4143-b477-685087396a88
+  card_name: Scarwood Treefolk
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Scarwood Treefolk` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Treefolk` and mana cost `{3}{G}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”. The source and current text
+    retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity
+    join and preserve both text versions unchanged.'
+- audit_id: forge:89f43e27-790b-4ca1-8ba7-0882b31e0783
+  source: forge
+  oracle_id: 89f43e27-790b-4ca1-8ba7-0882b31e0783
+  card_name: Temple of Enlightenment
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Enlightenment` has one candidate in the pinned Scryfall name index.
+    Forge input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:89f43e27-790b-4ca1-8ba7-0882b31e0783
+  source: xmage
+  oracle_id: 89f43e27-790b-4ca1-8ba7-0882b31e0783
+  card_name: Temple of Enlightenment
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Enlightenment` has one candidate in the pinned Scryfall name index.
+    XMage prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match
+    the Scryfall land. The text difference is historical Oracle wording: uses the printed card name for self-reference
+    where current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:94c98a3b-9c3e-497f-b954-8f2248ca01ac
+  source: forge
+  oracle_id: 94c98a3b-9c3e-497f-b954-8f2248ca01ac
+  card_name: Unhallowed Phalanx
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Unhallowed Phalanx` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Zombie Soldier` and mana cost `{4}{B}`, both matching the Scryfall row. The
+    text difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current
+    “enters” template; uses the printed card name for self-reference where current Oracle uses “this …”. The source
+    and current text retain the same card-specific ability/effect clauses and show no competing-card or face signal.
+    Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:9bd4a0bd-d10c-434a-8254-89f38740aafd
+  source: forge
+  oracle_id: 9bd4a0bd-d10c-434a-8254-89f38740aafd
+  card_name: Forgotten Sentinel
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Forgotten Sentinel` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Artifact Creature — Golem` and mana cost `{4}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters”
+    template; uses the printed card name for self-reference where current Oracle uses “this …”. The source and current
+    text retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the
+    identity join and preserve both text versions unchanged.'
+- audit_id: forge:9c39bc53-52d3-4610-920e-5607a625b01f
+  source: forge
+  oracle_id: 9c39bc53-52d3-4610-920e-5607a625b01f
+  card_name: Crooked Custodian
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Crooked Custodian` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Ogre Rogue` and mana cost `{1}{B}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters”
+    template; uses the printed card name for self-reference where current Oracle uses “this …”. The source and current
+    text retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the
+    identity join and preserve both text versions unchanged.'
+- audit_id: forge:9fb4aa2d-6414-4176-9070-e5230e100c6a
+  source: forge
+  oracle_id: 9fb4aa2d-6414-4176-9070-e5230e100c6a
+  card_name: Wildwood Geist
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Wildwood Geist` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Spirit` and mana cost `{4}{G}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses the printed card name for self-reference where current Oracle uses “this
+    …”; uses the older “as long as it’s your turn” condition template. The source and current text retain the same
+    card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve
+    both text versions unchanged.'
+- audit_id: forge:aa254e74-583d-4681-8169-5ac0dbdb10e5
+  source: forge
+  oracle_id: aa254e74-583d-4681-8169-5ac0dbdb10e5
+  card_name: Gobhobbler Rats
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Gobhobbler Rats` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Rat` and mana cost `{B}{R}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses the printed card name for self-reference where current Oracle uses “this
+    …”; reminder text is omitted or worded differently between the source and current Oracle text. The source and
+    current text retain the same card-specific ability/effect clauses and show no competing-card or face signal.
+    Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:b2e65e8b-5f08-4cc2-ab1d-00f8903dbea2
+  source: forge
+  oracle_id: b2e65e8b-5f08-4cc2-ab1d-00f8903dbea2
+  card_name: Faerie Seer
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Faerie Seer` has one candidate in the pinned Scryfall name index. Forge input
+    has type line `Creature — Faerie Wizard` and mana cost `{U}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or
+    worded differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:b2e65e8b-5f08-4cc2-ab1d-00f8903dbea2
+  source: xmage
+  oracle_id: b2e65e8b-5f08-4cc2-ab1d-00f8903dbea2
+  card_name: Faerie Seer
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Faerie Seer` has one candidate in the pinned Scryfall name index. XMage prompt
+    has type line `Creature â€” Faerie Wizard` and mana cost `{U}` matching Scryfall. The XMage type line contains
+    the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its type words normalize
+    to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity join but flag the
+    corrupt type-line field. The text variant is also historical: uses the printed card name for self-reference
+    where current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text.'
+- audit_id: forge:bab28608-b388-4c48-92a4-689943bbbf4a
+  source: forge
+  oracle_id: bab28608-b388-4c48-92a4-689943bbbf4a
+  card_name: Rusted Sentinel
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Rusted Sentinel` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Artifact Creature — Golem` and mana cost `{4}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters”
+    template; uses the printed card name for self-reference where current Oracle uses “this …”. The source and current
+    text retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the
+    identity join and preserve both text versions unchanged.'
+- audit_id: forge:d36075c2-de66-4202-9217-b1102a2bc14b
+  source: forge
+  oracle_id: d36075c2-de66-4202-9217-b1102a2bc14b
+  card_name: Pelakka Wurm
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Pelakka Wurm` has one candidate in the pinned Scryfall name index. Forge input
+    has type line `Creature — Wurm` and mana cost `{4}{G}{G}{G}`, both matching the Scryfall row. The text difference
+    is historical Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template;
+    uses the printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or
+    worded differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:d36075c2-de66-4202-9217-b1102a2bc14b
+  source: xmage
+  oracle_id: d36075c2-de66-4202-9217-b1102a2bc14b
+  card_name: Pelakka Wurm
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Pelakka Wurm` has one candidate in the pinned Scryfall name index. XMage prompt
+    has type line `Creature â€” Wurm` and mana cost `{4}{G}{G}{G}` matching Scryfall. The XMage type line contains
+    the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its type words normalize
+    to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity join but flag the
+    corrupt type-line field. The text variant is also historical: uses the printed card name for self-reference
+    where current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text.'
+- audit_id: forge:d36e11f1-6ab3-4273-8114-a8fbbe21c1c3
+  source: forge
+  oracle_id: d36e11f1-6ab3-4273-8114-a8fbbe21c1c3
+  card_name: Fanatical Firebrand
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Fanatical Firebrand` has one candidate in the pinned Scryfall name index.
+    Forge input has type line `Creature — Goblin Pirate` and mana cost `{R}`, both matching the Scryfall row. The
+    text difference is historical Oracle wording: uses the printed card name for self-reference where current Oracle
+    uses “this …”; reminder text is omitted or worded differently between the source and current Oracle text. The
+    source and current text retain the same card-specific ability/effect clauses and show no competing-card or face
+    signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: xmage:d36e11f1-6ab3-4273-8114-a8fbbe21c1c3
+  source: xmage
+  oracle_id: d36e11f1-6ab3-4273-8114-a8fbbe21c1c3
+  card_name: Fanatical Firebrand
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Fanatical Firebrand` has one candidate in the pinned Scryfall name index.
+    XMage prompt has type line `Creature â€” Goblin Pirate` and mana cost `{R}` matching Scryfall. The XMage type
+    line contains the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its
+    type words normalize to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity
+    join but flag the corrupt type-line field. The text variant is also historical: uses the printed card name for
+    self-reference where current Oracle uses “this …”; reminder text is omitted or worded differently between the
+    source and current Oracle text.'
+- audit_id: forge:dc55421f-dee8-4263-9df0-2365df5f14bb
+  source: forge
+  oracle_id: dc55421f-dee8-4263-9df0-2365df5f14bb
+  card_name: Temple of Malady
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Malady` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:dc55421f-dee8-4263-9df0-2365df5f14bb
+  source: xmage
+  oracle_id: dc55421f-dee8-4263-9df0-2365df5f14bb
+  card_name: Temple of Malady
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Malady` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:df366871-8ed7-4183-8b0c-414ca361a711
+  source: forge
+  oracle_id: df366871-8ed7-4183-8b0c-414ca361a711
+  card_name: Kargan Dragonrider
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Kargan Dragonrider` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Human Warrior` and mana cost `{1}{R}`, both matching the Scryfall row. The text
+    difference is historical Oracle wording: uses the printed card name for self-reference where current Oracle
+    uses “this …”; reminder text is omitted or worded differently between the source and current Oracle text. The
+    source and current text retain the same card-specific ability/effect clauses and show no competing-card or face
+    signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: xmage:df366871-8ed7-4183-8b0c-414ca361a711
+  source: xmage
+  oracle_id: df366871-8ed7-4183-8b0c-414ca361a711
+  card_name: Kargan Dragonrider
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Kargan Dragonrider` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Creature â€” Human Warrior` and mana cost `{1}{R}` matching Scryfall. The XMage type line
+    contains the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its type
+    words normalize to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity
+    join but flag the corrupt type-line field. The text variant is also historical: uses the printed card name for
+    self-reference where current Oracle uses “this …”; reminder text is omitted or worded differently between the
+    source and current Oracle text.'
+- audit_id: forge:e235d1ca-3099-46c1-8f33-798286292d71
+  source: forge
+  oracle_id: e235d1ca-3099-46c1-8f33-798286292d71
+  card_name: Venomous Hierophant
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Venomous Hierophant` has one candidate in the pinned Scryfall name index.
+    Forge input has type line `Creature — Gorgon Cleric` and mana cost `{3}{B}`, both matching the Scryfall row.
+    The text difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current
+    “enters” template; uses the printed card name for self-reference where current Oracle uses “this …”; reminder
+    text is omitted or worded differently between the source and current Oracle text. The source and current text
+    retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity
+    join and preserve both text versions unchanged.'
+- audit_id: forge:e521322b-0e83-458c-8936-7021a80ee279
+  source: forge
+  oracle_id: e521322b-0e83-458c-8936-7021a80ee279
+  card_name: Temple of Plenty
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Plenty` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:e521322b-0e83-458c-8936-7021a80ee279
+  source: xmage
+  oracle_id: e521322b-0e83-458c-8936-7021a80ee279
+  card_name: Temple of Plenty
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Plenty` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:e6e6fce8-0f6a-4b84-865e-d4e4a4182f9f
+  source: forge
+  oracle_id: e6e6fce8-0f6a-4b84-865e-d4e4a4182f9f
+  card_name: Temple of Silence
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Silence` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: xmage:e6e6fce8-0f6a-4b84-865e-d4e4a4182f9f
+  source: xmage
+  oracle_id: e6e6fce8-0f6a-4b84-865e-d4e4a4182f9f
+  card_name: Temple of Silence
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Temple of Silence` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Land`; its land prompt omits mana cost and its color/produced-mana fields match the Scryfall
+    land. The text difference is historical Oracle wording: uses the printed card name for self-reference where
+    current Oracle uses “this …”; reminder text is omitted or worded differently between the source and current
+    Oracle text. The source and current text retain the same card-specific ability/effect clauses and show no competing-card
+    or face signal. Keep the identity join and preserve both text versions unchanged.'
+- audit_id: forge:f15fb0cc-8e96-4f03-94d0-b51410415afd
+  source: forge
+  oracle_id: f15fb0cc-8e96-4f03-94d0-b51410415afd
+  card_name: Crystal Grotto
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Crystal Grotto` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Land` and mana cost ``, both matching the Scryfall row. The text difference is historical
+    Oracle wording: uses old “enters the battlefield” wording instead of the current “enters” template; uses the
+    printed card name for self-reference where current Oracle uses “this …”; reminder text is omitted or worded
+    differently between the source and current Oracle text. The source and current text retain the same card-specific
+    ability/effect clauses and show no competing-card or face signal. Keep the identity join and preserve both text
+    versions unchanged.'
+- audit_id: forge:ff12dfee-7140-44bd-a62e-5f8ab98e93c6
+  source: forge
+  oracle_id: ff12dfee-7140-44bd-a62e-5f8ab98e93c6
+  card_name: Undersea Invader
+  result: VALID_JOIN_STALE_WORDING
+  action: KEEP_JOIN
+  reason: 'The exact normalized name `Undersea Invader` has one candidate in the pinned Scryfall name index. Forge
+    input has type line `Creature — Giant Rogue` and mana cost `{4}{U}{U}`, both matching the Scryfall row. The
+    text difference is historical Oracle wording: uses old “enters the battlefield” wording instead of the current
+    “enters” template; uses the printed card name for self-reference where current Oracle uses “this …”; reminder
+    text is omitted or worded differently between the source and current Oracle text. The source and current text
+    retain the same card-specific ability/effect clauses and show no competing-card or face signal. Keep the identity
+    join and preserve both text versions unchanged.'
+- audit_id: xmage:ff12dfee-7140-44bd-a62e-5f8ab98e93c6
+  source: xmage
+  oracle_id: ff12dfee-7140-44bd-a62e-5f8ab98e93c6
+  card_name: Undersea Invader
+  result: SOURCE_RECORD_WRONG_OR_CORRUPT
+  action: KEEP_WITH_FLAG
+  reason: 'The exact normalized name `Undersea Invader` has one candidate in the pinned Scryfall name index. XMage
+    prompt has type line `Creature â€” Giant Rogue` and mana cost `{4}{U}{U}` matching Scryfall. The XMage type
+    line contains the mojibake sequence U+00E2 U+20AC U+201D (UTF-8 em dash decoded as Windows-1252/Latin-1); its
+    type words normalize to the Scryfall type line, and the prompt mana cost and rules text agree. Keep the identity
+    join but flag the corrupt type-line field. The text variant is also historical: uses the printed card name for
+    self-reference where current Oracle uses “this …”; reminder text is omitted or worded differently between the
+    source and current Oracle text.'

@@ -26,7 +26,7 @@ PINNED_REVISIONS = {
     "forge": "cef86f363d7f7d5b3293248a75f550a7c3404066",
     "xmage": "6212eb37907c1ce751d8a3fea8b3322056dc0264",
 }
-EXTRACTOR_VERSION = "0.1.1"
+EXTRACTOR_VERSION = "0.1.2"
 GENERIC_XMAGE_CLASSES = {
     "Ability", "Effect", "Cost", "Target", "Filter", "Condition",
     "OneShotEffect", "ContinuousEffect", "SimpleActivatedAbility",
@@ -53,6 +53,67 @@ def implementation_status(sources):
     if sources=={"forge"}: return "FORGE_ONLY"
     if sources=={"xmage"}: return "XMAGE_ONLY"
     return "NONE"
+
+
+def exact_oracle_id_match(record, by_id):
+    oid=record.get("oracle_id") or record.get("oracleId")
+    if not oid or str(oid) not in by_id: return None
+    indexes=by_id[str(oid)]
+    return (indexes[0],"oracle_id") if len(indexes)==1 else (None,"ambiguous_oracle_id")
+
+
+def join_audit_id(source, oracle_id):
+    return f"{source}:{oracle_id}"
+
+
+def lookup_join_decision(decisions, audit_id):
+    return decisions.get(audit_id)
+
+
+def apply_join_review(candidate, decision):
+    """Return whether evidence may be used and optional review metadata."""
+    if candidate is None: return False,None
+    if not decision: return True,None
+    if decision["action"]=="REJECT_JOIN": return False,None
+    return True,{"join_review_status":decision["action"],"join_review_result":decision["result"],"join_review_reason":decision["reason"]}
+
+
+def join_review_metadata(source, oracle_id, decisions):
+    decision=lookup_join_decision(decisions,join_audit_id(source,oracle_id))
+    if not decision: return {}
+    _,metadata=apply_join_review(0,decision)
+    return metadata or {}
+
+
+def candidate_status_counts(sf, forge_matches, xmage_matches, forge_map, xmage_map):
+    counts=Counter()
+    for index in set(forge_matches)|set(xmage_matches):
+        kinds=defaultdict(set)
+        for _,_,actions,_,_,_,_,_ in forge_matches.get(index,[]):
+            for token in actions:
+                if token in forge_map: kinds[forge_map[token]].add("forge")
+        for _,_,_,_,semantic,_,_,_,_ in xmage_matches.get(index,[]):
+            for token in semantic:
+                if token in xmage_map: kinds[xmage_map[token]].add("xmage")
+        for sources in kinds.values():
+            counts[implementation_status(sources)]+=1
+    return {"total_mapped_candidates":sum(counts.values()),"multi_implementation_agreement":counts["MULTI_IMPLEMENTATION_AGREEMENT"],"forge_only":counts["FORGE_ONLY"],"xmage_only":counts["XMAGE_ONLY"]}
+
+
+def load_join_decisions():
+    import yaml
+    path=ROOT/"reviewed_join_decisions.yaml"
+    raw=yaml.safe_load(path.read_text(encoding="utf-8")) or []
+    result={}
+    allowed_results={"VALID_JOIN_STALE_WORDING","VALID_JOIN_FORMATTING_VARIANT","VALID_JOIN_MULTIFACE_VARIANT","VALID_JOIN_TEMPLATE_VARIANT","VALID_JOIN_OTHER","SOURCE_RECORD_WRONG_OR_CORRUPT","SOURCE_RECORD_NONSTANDARD_OR_CUSTOM","SOURCE_RECORD_INCOMPLETE","BAD_JOIN_NAME_COLLISION","BAD_JOIN_FACE_COLLISION","BAD_JOIN_OTHER","UNRESOLVED"}
+    allowed_actions={"KEEP_JOIN","KEEP_WITH_FLAG","REJECT_JOIN"}
+    for decision in raw:
+        aid=decision["audit_id"]
+        if aid in result: raise ValueError(f"Duplicate reviewed join decision: {aid}")
+        if decision.get("result") not in allowed_results or decision.get("action") not in allowed_actions or not decision.get("reason"):
+            raise ValueError(f"Invalid reviewed join decision: {aid}")
+        result[aid]=decision
+    return result
 
 
 def jsonable(value):
@@ -234,11 +295,48 @@ def mismatch_diagnostic(source, source_record, card):
     return {"category":category,"join_status":join,"similarity":round(similarity,4),"token_overlap":round(overlap,4),"notes":notes}
 
 
-def mismatch_sample(source, record, card, method, diagnostic):
+def mismatch_sample(source, record, card, method, diagnostic, record_index=None):
     return {"source":source,"card_name":card.get("name"),"oracle_id":card.get("oracle_id"),"match_method":method,
             "current_scryfall_text":scryfall_text(card),"source_text":oracle_text(record),
             "category":diagnostic["category"],"join_status":diagnostic["join_status"],"similarity":diagnostic.get("similarity"),
-            "token_overlap":diagnostic.get("token_overlap"),"notes":diagnostic["notes"]}
+            "token_overlap":diagnostic.get("token_overlap"),"notes":diagnostic["notes"],"source_record_index":record_index,
+            "audit_id":join_audit_id(source,card.get("oracle_id"))}
+
+
+def source_join_context(source, record):
+    if source=="forge":
+        try: obj=json.loads(record.get("input", "{}"))
+        except Exception: obj={}
+        return {k:obj.get(k) for k in ("name","type_line","mana_cost","oracle_text") if obj.get(k) is not None}
+    prompt=record.get("prompt","")
+    result={}
+    for field in ("Layout","Name","Mana Cost","Cmc","Type Line","Colors","Color Identity","Keywords","Produced Mana","Rarity"):
+        m=re.search(rf"(?im)^\s*{re.escape(field)}:\s*(.*?)\s*$",prompt)
+        if m: result[field.casefold().replace(" ","_")]=m.group(1)
+    return result
+
+
+def build_join_audit_record(sample, source_record, card, decision, name_match_count):
+    context=source_join_context(sample["source"],source_record)
+    face_names=[f.get("name") for f in (card.get("card_faces") or []) if isinstance(f,dict) and f.get("name")]
+    source_name=context.get("name") or context.get("prompt_name") or sample["card_name"]
+    type_value=context.get("type_line")
+    sf_type=card.get("type_line") or ""
+    mojibake_dash="".join(chr(i) for i in (0xe2,0x20ac,0x201d))
+    raw_type=context.get("type_line") or ""
+    type_encoding_artifact=mojibake_dash in raw_type
+    normalize_type=lambda value: norm(str(value or "").replace(mojibake_dash,"—").replace("\ufffd","—"))
+    mana=context.get("mana_cost")
+    sf_mana=card.get("mana_cost")
+    alias=bool(face_names and norm(source_name) in {norm(n) for n in face_names})
+    return {
+        "audit_id":sample["audit_id"],"source":sample["source"],"oracle_id":sample["oracle_id"],"card_name":sample["card_name"],"match_method":sample["match_method"],
+        "source_text":sample["source_text"],"scryfall_text":sample["current_scryfall_text"],"source_type_or_context":context,
+        "scryfall_type_line":sf_type,"layout":card.get("layout"),
+        "diagnostics":{"normalized_similarity":sample.get("similarity"),"token_overlap":sample.get("token_overlap"),"face_names":face_names,"possible_alias_or_face_match":alias,"normalized_name_candidate_count":name_match_count,"type_line_match":normalize_type(type_value)==normalize_type(sf_type) if type_value else None,"type_line_encoding_artifact":type_encoding_artifact,"mana_cost_match":norm(mana)==norm(sf_mana) if mana is not None else None},
+        "audit_result":decision["result"],"reason":decision["reason"],"action":decision["action"],"source_record_index":sample.get("source_record_index"),
+        "review_provenance":{"file":"reviewed_join_decisions.yaml","decision_applied":True},
+    }
 
 
 def scryfall_text(card):
@@ -382,10 +480,8 @@ def mine(rows):
             if fn: by_name[fn].append(i)
 
     def match(record):
-        oid = record.get("oracle_id") or record.get("oracleId")
-        if oid and str(oid) in by_id:
-            inds = by_id[str(oid)]
-            return (inds[0], "oracle_id") if len(inds) == 1 else (None, "ambiguous_oracle_id")
+        id_match=exact_oracle_id_match(record,by_id)
+        if id_match is not None: return id_match
         name = norm(card_name(record))
         if not name: return None, "unmatched"
         cand = list(dict.fromkeys(by_name.get(name, [])))
@@ -406,12 +502,15 @@ def mine(rows):
         return None, "unmatched"
 
     mapping=read_mapping(); forge_map=mapping.get("forge",{}); xmage_map=mapping.get("xmage",{})
+    reviewed_decisions=load_join_decisions()
     forge_counts=Counter(); xmage_counts=Counter(); xmage_all_counts=Counter()
     forge_extracts=[]; xmage_extracts=[]
     f_matches=defaultdict(list); x_matches=defaultdict(list)
+    f_matches_before=defaultdict(list); x_matches_before=defaultdict(list)
     unmatched_f=[]; unmatched_x=[]; ambiguous=[]
     mismatch_records={"forge":[],"xmage":[]}; text_counts={"forge":Counter(),"xmage":Counter()}
     suspicious=Counter()
+    join_audit_records=[]; applied_decisions={}
 
     for rec_index, rec in enumerate(forge):
         idx,method=match(rec); actions,attrs,snips=forge_extract(rec.get("output",all_strings(rec)))
@@ -419,9 +518,21 @@ def mine(rows):
         if idx is not None:
             relation=oracle_text_relation(rec,sf[idx]); text_counts["forge"][relation]+=1
             diagnostic=mismatch_diagnostic("forge",rec,sf[idx]) if relation=="MISMATCH" else {"category":None,"join_status":"JOIN_TEXT_MATCH" if relation=="MATCH" else "JOIN_TEXT_MISSING","similarity":1.0 if relation=="MATCH" else None,"notes":"Exact normalized match." if relation=="MATCH" else "Source Oracle text missing."}
-            if relation=="MISMATCH": mismatch_records["forge"].append(mismatch_sample("forge",rec,sf[idx],method,diagnostic))
+            decision=None
+            if relation=="MISMATCH":
+                sample=mismatch_sample("forge",rec,sf[idx],method,diagnostic,rec_index)
+                mismatch_records["forge"].append(sample)
+                if diagnostic["join_status"]=="JOIN_TEXT_MISMATCH_REVIEW":
+                    decision=lookup_join_decision(reviewed_decisions,sample["audit_id"])
+                    if not decision: raise RuntimeError(f"No reviewed decision for suspicious join {sample['audit_id']}")
+                    applied_decisions[sample["audit_id"]]=decision
+                    join_audit_records.append(build_join_audit_record(sample,rec,sf[idx],decision,len(dict.fromkeys(by_name.get(norm(card_name(rec)),[])))))
             suspicious["forge"]+=diagnostic["join_status"]=="JOIN_TEXT_MISMATCH_REVIEW"
-            f_matches[idx].append((rec,method,actions,attrs,snips,relation,diagnostic,rec_index))
+            item=(rec,method,actions,attrs,snips,relation,diagnostic,rec_index)
+            f_matches_before[idx].append(item)
+            allowed,_=apply_join_review(idx,decision)
+            if allowed: f_matches[idx].append(item)
+            else: unmatched_f.append({"record":jsonable(rec),"name":card_name(rec),"reason":"reviewed_reject_join","join_review":join_review_metadata("forge",sf[idx].get("oracle_id"),reviewed_decisions)})
         elif method.startswith("ambiguous"): ambiguous.append({"source":"forge","method":method,"record":jsonable(rec)})
         else: unmatched_f.append({"record":jsonable(rec),"name":card_name(rec),"reason":method})
 
@@ -432,11 +543,29 @@ def mine(rows):
         if idx is not None:
             relation=oracle_text_relation(rec,sf[idx]); text_counts["xmage"][relation]+=1
             diagnostic=mismatch_diagnostic("xmage",rec,sf[idx]) if relation=="MISMATCH" else {"category":None,"join_status":"JOIN_TEXT_MATCH" if relation=="MATCH" else "JOIN_TEXT_MISSING","similarity":1.0 if relation=="MATCH" else None,"notes":"Exact normalized match." if relation=="MATCH" else "Source Oracle text missing."}
-            if relation=="MISMATCH": mismatch_records["xmage"].append(mismatch_sample("xmage",rec,sf[idx],method,diagnostic))
+            decision=None
+            if relation=="MISMATCH":
+                sample=mismatch_sample("xmage",rec,sf[idx],method,diagnostic,rec_index)
+                mismatch_records["xmage"].append(sample)
+                if diagnostic["join_status"]=="JOIN_TEXT_MISMATCH_REVIEW":
+                    decision=lookup_join_decision(reviewed_decisions,sample["audit_id"])
+                    if not decision: raise RuntimeError(f"No reviewed decision for suspicious join {sample['audit_id']}")
+                    applied_decisions[sample["audit_id"]]=decision
+                    join_audit_records.append(build_join_audit_record(sample,rec,sf[idx],decision,len(dict.fromkeys(by_name.get(norm(card_name(rec)),[])))))
             suspicious["xmage"]+=diagnostic["join_status"]=="JOIN_TEXT_MISMATCH_REVIEW"
-            x_matches[idx].append((rec,method,imports,classes,semantic,snippet,relation,diagnostic,rec_index))
+            item=(rec,method,imports,classes,semantic,snippet,relation,diagnostic,rec_index)
+            x_matches_before[idx].append(item)
+            allowed,_=apply_join_review(idx,decision)
+            if allowed: x_matches[idx].append(item)
+            else: unmatched_x.append({"record":jsonable(rec),"name":card_name(rec),"reason":"reviewed_reject_join","join_review":join_review_metadata("xmage",sf[idx].get("oracle_id"),reviewed_decisions)})
         elif method.startswith("ambiguous"): ambiguous.append({"source":"xmage","method":method,"record":jsonable(rec)})
         else: unmatched_x.append({"record":jsonable(rec),"name":card_name(rec),"reason":method})
+
+    expected_audit_ids=set(reviewed_decisions)
+    actual_audit_ids={row["audit_id"] for row in join_audit_records}
+    if len(join_audit_records)!=58 or actual_audit_ids!=expected_audit_ids:
+        missing=sorted(expected_audit_ids-actual_audit_ids); extra=sorted(actual_audit_ids-expected_audit_ids)
+        raise RuntimeError(f"Pinned suspicious join set differs from reviewed decisions: audited={len(join_audit_records)}, missing={missing}, extra={extra}")
 
     forge_mapped=Counter({t:n for t,n in forge_counts.items() if t in forge_map})
     forge_unmapped=Counter({t:n for t,n in forge_counts.items() if t not in forge_map})
@@ -451,7 +580,7 @@ def mine(rows):
     mapped_cards=set(); unmapped_cards=set()
     unmapped_card_counts={"forge":Counter(),"xmage":Counter()}
     source_revisions=getattr(mine,"revisions",PINNED_REVISIONS)
-    provenance={"extractor_version":EXTRACTOR_VERSION,"mapping_sha256":hashlib.sha256((ROOT/"mappings.yaml").read_bytes()).hexdigest(),"source_set":{"scryfall":source_revisions.get("scryfall"),"forge":source_revisions.get("forge"),"xmage":source_revisions.get("xmage"),"rules":None}}
+    provenance={"extractor_version":EXTRACTOR_VERSION,"mapping_sha256":hashlib.sha256((ROOT/"mappings.yaml").read_bytes()).hexdigest(),"join_review_sha256":hashlib.sha256((ROOT/"reviewed_join_decisions.yaml").read_bytes()).hexdigest(),"source_set":{"scryfall":source_revisions.get("scryfall"),"forge":source_revisions.get("forge"),"xmage":source_revisions.get("xmage"),"rules":None}}
 
     for i,card in enumerate(sf):
         f=f_matches.get(i,[]); x=x_matches.get(i,[])
@@ -459,16 +588,20 @@ def mine(rows):
         mapped=defaultdict(list); unmapped=[]
         for rec,method,actions,attrs,snips,relation,diag,rec_index in f:
             found,unknown=partition_tokens("forge",actions,forge_map,method,rec_index)
+            review_metadata=join_review_metadata("forge",card.get("oracle_id"),reviewed_decisions)
             for kind,items in found.items():
-                for item in items: item["oracle_text_comparison"]=relation
+                for item in items: item["oracle_text_comparison"]=relation; item.update(review_metadata)
                 mapped[kind].extend(items)
+            for item in unknown: item.update(review_metadata)
             unmapped.extend(unknown)
             unmapped_card_counts["forge"].update(item["token"] for item in unknown)
         for rec,method,imports,classes,semantic,snippet,relation,diag,rec_index in x:
             found,unknown=partition_tokens("xmage",semantic,xmage_map,method,rec_index)
+            review_metadata=join_review_metadata("xmage",card.get("oracle_id"),reviewed_decisions)
             for kind,items in found.items():
-                for item in items: item["oracle_text_comparison"]=relation
+                for item in items: item["oracle_text_comparison"]=relation; item.update(review_metadata)
                 mapped[kind].extend(items)
+            for item in unknown: item.update(review_metadata)
             unmapped.extend(unknown)
             unmapped_card_counts["xmage"].update(item["token"] for item in unknown)
         mapped_req=[]
@@ -484,17 +617,23 @@ def mine(rows):
         fa=sorted({a for _,_,actions,_,_,_,_,_ in f for a in actions})
         xc=sorted({c for _,_,_,classes,_,_,_,_,_ in x for c in classes})
         matched.append({"oracle_id":card.get("oracle_id"),"name":card.get("name"),"oracle_text":card.get("oracle_text"),
-            "forge":{"present":bool(f),"actions":fa,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"input":r.get("input"),"snippets":sn} for r,m,_,_,sn,rel,diag,_ in f]},
-            "xmage":{"present":bool(x),"classes":xc,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"prompt":r.get("prompt"),"imports":im,"snippet":sn} for r,m,im,_,_,sn,rel,diag,_ in x]},
+            "forge":{"present":bool(f),"actions":fa,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"input":r.get("input"),"snippets":sn,**join_review_metadata("forge",card.get("oracle_id"),reviewed_decisions)} for r,m,_,_,sn,rel,diag,_ in f]},
+            "xmage":{"present":bool(x),"classes":xc,"evidence":[{"match_method":m,"oracle_text_comparison":rel,"join_diagnostic":diag,"prompt":r.get("prompt"),"imports":im,"snippet":sn,**join_review_metadata("xmage",card.get("oracle_id"),reviewed_decisions)} for r,m,im,_,_,sn,rel,diag,_ in x]},
             "match":{"forge":sorted({m for _,m,_,_,_,_,_,_ in f}),"xmage":sorted({m for _,m,_,_,_,_,_,_,_ in x})}})
 
     card_stats=summarize_card_resolution(len(sf),f_matches,x_matches,mapped_cards,unmapped_cards)
     req_stats={"total_mapped_candidates":sum(requirement_counts.values()),"multi_implementation_agreement":requirement_counts["MULTI_IMPLEMENTATION_AGREEMENT"],"forge_only":requirement_counts["FORGE_ONLY"],"xmage_only":requirement_counts["XMAGE_ONLY"]}
     req_stats["total_mapped_candidates"]=sum(req_stats[k] for k in ("multi_implementation_agreement","forge_only","xmage_only"))
+    candidate_before=candidate_status_counts(sf,f_matches_before,x_matches_before,forge_map,xmage_map)
+    candidate_after={"total_mapped_candidates":req_stats["total_mapped_candidates"],"multi_implementation_agreement":req_stats["multi_implementation_agreement"],"forge_only":req_stats["forge_only"],"xmage_only":req_stats["xmage_only"]}
     requirement_stats={"cards":card_stats,"requirements":req_stats,"unmapped_evidence":{"forge_tokens":sum(unmapped_card_counts["forge"].values()),"xmage_tokens":sum(unmapped_card_counts["xmage"].values()),"cards_with_unmapped_evidence":len(unmapped_cards)},"definitions":{"fully_unresolved":"External evidence is joined to a Scryfall card, but no extracted semantic token/class has a seed mapping.","partially_resolved":"At least one mapped requirement and at least one unmapped extracted semantic token/class.","fully_resolved":"No cards declared fully resolved because lexical extraction cannot prove that all semantic evidence was captured.","resolution_completeness_unverified":"At least one mapped requirement and no observed unmapped semantic token/class; completeness remains unproven."}}
 
     mismatch_audit=build_mismatch_audit(mismatch_records,text_counts)
     suspicious_total=sum(suspicious.values())
+    action_counts=Counter(d["action"] for d in applied_decisions.values())
+    result_counts=Counter(d["result"] for d in applied_decisions.values())
+    result_types=("VALID_JOIN_STALE_WORDING","VALID_JOIN_FORMATTING_VARIANT","VALID_JOIN_MULTIFACE_VARIANT","VALID_JOIN_TEMPLATE_VARIANT","VALID_JOIN_OTHER","SOURCE_RECORD_WRONG_OR_CORRUPT","SOURCE_RECORD_NONSTANDARD_OR_CUSTOM","SOURCE_RECORD_INCOMPLETE","BAD_JOIN_NAME_COLLISION","BAD_JOIN_FACE_COLLISION","BAD_JOIN_OTHER","UNRESOLVED")
+    join_audit_stats={"total_audited":len(join_audit_records),"by_source":{"forge":sum(r["source"]=="forge" for r in join_audit_records),"xmage":sum(r["source"]=="xmage" for r in join_audit_records)},"actions":{"KEEP_JOIN":action_counts["KEEP_JOIN"],"KEEP_WITH_FLAG":action_counts["KEEP_WITH_FLAG"],"REJECT_JOIN":action_counts["REJECT_JOIN"]},"results":{key:result_counts[key] for key in result_types},"unresolved":result_counts["UNRESOLVED"],"matching_before":{"forge_identities":len(f_matches_before),"xmage_identities":len(x_matches_before),"both_identities":len(set(f_matches_before)&set(x_matches_before))},"matching_after":{"forge_identities":len(f_matches),"xmage_identities":len(x_matches),"both_identities":len(set(f_matches)&set(x_matches))},"candidate_impact":{"before":candidate_before,"after":candidate_after}}
     unmapped_f_rows=unmapped_vocab_rows(forge_unmapped,forge_extracts,"forge")
     unmapped_x_rows=unmapped_vocab_rows(xmage_unmapped,xmage_extracts,"xmage")
 
@@ -513,6 +652,8 @@ def mine(rows):
     csv_counts(OUT/"unmapped_forge_tokens.csv",["token","count","example_card_names"],unmapped_f_rows)
     csv_counts(OUT/"unmapped_xmage_classes.csv",["class","count","example_card_names"],unmapped_x_rows)
     write_json(OUT/"requirement_stats.json",requirement_stats)
+    write_json(OUT/"suspicious_join_audit.json",{"source_set":source_revisions,"decision_file_sha256":provenance["join_review_sha256"],"records":sorted(join_audit_records,key=lambda r:(r["source"],r["card_name"].casefold(),r["oracle_id"]))})
+    write_json(OUT/"join_audit_stats.json",join_audit_stats)
     write_json(OUT/"mapping_coverage.json",mapping_occurrences)
     write_json(OUT/"oracle_mismatch_audit.json",mismatch_audit)
     write_jsonl(OUT/"matched_cards.jsonl",matched);write_jsonl(OUT/"unmatched_forge.jsonl",unmatched_f);write_jsonl(OUT/"unmatched_xmage.jsonl",unmatched_x);write_jsonl(OUT/"ambiguous_matches.jsonl",ambiguous);write_jsonl(OUT/"requirement_candidates.jsonl",candidates)
@@ -552,7 +693,7 @@ def report(stats=None):
     audit=json.loads((OUT/"oracle_mismatch_audit.json").read_text(encoding="utf-8"))
     import importlib.metadata as md
     versions={p:md.version(p) for p in ("datasets","huggingface_hub","PyYAML")}
-    lines=["# Manafold CAP miner — Phase 0.1.1 Evidence Calibration","",f"Generated: {dt.datetime.now(dt.timezone.utc).isoformat()} UTC","", "## Dataset inventory", ""]
+    lines=["# Manafold CAP miner — Phase 0.1.2 Suspicious Join Audit","",f"Generated: {dt.datetime.now(dt.timezone.utc).isoformat()} UTC","", "## Dataset inventory", ""]
     for key,d in inv["datasets"].items():
         latest=inv.get("remote_head_revisions",{}).get(key)
         state="pinned snapshot" if latest in (None,d.get("revision")) else f"pinned snapshot; current Hub head differs (`{latest}`)"
@@ -564,19 +705,36 @@ def report(stats=None):
     lines += ["## Oracle mismatch audit","", "Identity matching remains exact and deterministic. Text similarity is used only after an exact-name/Oracle-ID join to label diagnostics; it never establishes identity. Classifier categories are hypotheses or exact-normalization diagnostics, not text repairs.","", "Calibration found that some XMage multiface prompts contain a separate `Oracle Text:` block after a second face's `Name:` and other fields. The earlier extractor could absorb that metadata into the first face's text. The 0.1.1 parser now stops at prompt field boundaries and combines all face text blocks. In this pinned run, the prior 80 `LIKELY_PROMPT_EXTRACTION_ARTIFACT` records disappear; 144 source texts now exactly match the combined face representation. No dataset text was changed.",""]
     for source in ("forge","xmage"):
         a=audit["sources"][source]
-        lines += [f"### {source}","",f"Mismatches: {a['matched_text_mismatches']:,}; assigned a diagnostic category: {a['classified_count']:,} ({a['classified_percentage']:.2f}%); `UNCLASSIFIED`: {a['unclassified_count']:,}; suspicious joins requiring manual review: {a['suspicious_joins']:,}.","","| category | count | % of mismatches |","|---|---:|---:|"]
+        lines += [f"### {source}","",f"Mismatches: {a['matched_text_mismatches']:,}; assigned a diagnostic category: {a['classified_count']:,} ({a['classified_percentage']:.2f}%); text-diagnostic `UNCLASSIFIED`: {a['unclassified_count']:,}; sent to the Phase 0.1.2 identity audit: {a['suspicious_joins']:,}.","","| category | count | % of mismatches |","|---|---:|---:|"]
         lines += [f"| `{category}` | {v['count']:,} | {v['percentage_of_mismatches']:.2f}% |" for category,v in a["categories"].items()]
         lines += [""]
     mismatch_total=sum(audit["sources"][s]["matched_text_mismatches"] for s in ("forge","xmage"))
     unclassified_total=sum(audit["sources"][s]["unclassified_count"] for s in ("forge","xmage"))
     explained=mismatch_total-unclassified_total
     exact_explained=sum(audit["sources"][s]["exactly_explained_count"] for s in ("forge","xmage"))
-    lines += [f"Exact diagnostic normalization explains {exact_explained:,}/{mismatch_total:,} mismatches ({pct(exact_explained,mismatch_total)}): equality after reminder-text removal, card-name/self-template normalization, or face-text comparison. Another {explained-exact_explained:,} receive a heuristic diagnostic such as likely stale wording or possible bad join. In total {explained:,}/{mismatch_total:,} ({pct(explained,mismatch_total)}) have a non-`UNCLASSIFIED` category; **{unclassified_total:,}** remain unclassified. Heuristic categories are not confirmed root causes. Categories and up to 20 sorted examples per category are in `data/output/oracle_mismatch_audit.json`.","", "## Top unmapped vocabulary", "", "Examples are the first five distinct names in normalized alphabetical order; token counts are deterministic corpus occurrence counts.","", "### Forge actions", ""]
+    lines += [f"Exact diagnostic normalization explains {exact_explained:,}/{mismatch_total:,} mismatches ({pct(exact_explained,mismatch_total)}): equality after reminder-text removal, card-name/self-template normalization, or face-text comparison. Another {explained-exact_explained:,} receive a heuristic diagnostic such as likely stale wording or possible bad join. In total {explained:,}/{mismatch_total:,} ({pct(explained,mismatch_total)}) have a non-`UNCLASSIFIED` category; **{unclassified_total:,}** remain unclassified by that text heuristic. All 58 exact-identity cases were then individually classified in `JOIN_AUDIT.md` and `data/output/suspicious_join_audit.json`. Categories and up to 20 sorted examples per category are in `data/output/oracle_mismatch_audit.json`.","", "## Top unmapped vocabulary", "", "Examples are the first five distinct names in normalized alphabetical order; token counts are deterministic corpus occurrence counts.","", "### Forge actions", ""]
     lines += csv_markdown(OUT/"unmapped_forge_tokens.csv",20)
     lines += ["", "### XMage semantic classes", ""]
     lines += csv_markdown(OUT/"unmapped_xmage_classes.csv",20)
-    lines += ["", "## Vocabulary overview", "", "Forge action and `$` field counts are in `forge_tokens.csv`; XMage class counts (including structural classes) are in `xmage_classes.csv`. No fuzzy match was used as identity evidence.","", "## Interpretation and next decision", "",f"The new seed mappings changed candidate-level cross-engine agreement from the 0.1.0 baseline of 2,962 to {card['requirements']['multi_implementation_agreement']:,} ({card['requirements']['multi_implementation_agreement']-2962:+,}; {(100*(card['requirements']['multi_implementation_agreement']/2962-1)) if 2962 else 0:+.1f}%). This is a count of mapped candidate pairs, not a correctness score.",f"Exact-name joins with text mismatches flagged for review total {stats.get('suspicious_joins',0):,} across both sources. `oracle_mismatch_audit.json` retains raw current/source text for inspection.","", "This pass only recalibrates deterministic extraction, evidence retention, and seed mappings. It does not fetch rules or official rulings and does not decide CAP eligibility. Forge and XMage remain implementation evidence, not semantic authority. No LLM or embeddings are used.",""]
+    join_stats=json.loads((OUT/"join_audit_stats.json").read_text(encoding="utf-8"))
+    lines += ["", "## Phase 0.1.2 join decisions", "",f"The pinned suspicious set contains {join_stats['total_audited']} individually reviewed records: {join_stats['actions']}. No join was rejected. {join_stats['unresolved']} decisions remain unresolved. Nine XMage records are retained with warnings because their type-line dash is mojibake; warning metadata is attached to their matched evidence.",f"Identity counts and mapped candidate counts did not change: before/after Forge {join_stats['matching_before']['forge_identities']}/{join_stats['matching_after']['forge_identities']}, XMage {join_stats['matching_before']['xmage_identities']}/{join_stats['matching_after']['xmage_identities']}, both {join_stats['matching_before']['both_identities']}/{join_stats['matching_after']['both_identities']}; mapped candidates {join_stats['candidate_impact']['before']['total_mapped_candidates']}/{join_stats['candidate_impact']['after']['total_mapped_candidates']}.","", "## Interpretation and next decision", "",f"The 0.1.1 seed mappings changed candidate-level cross-engine agreement from the 0.1.0 baseline of 2,962 to {card['requirements']['multi_implementation_agreement']:,}. This is a count of mapped candidate pairs, not a correctness score.","All audited identities were supported by an exact unique normalized card name and matching card context. Oracle wording variants are retained; nine encoding warnings remain visible on XMage evidence. No name collision, face collision, or matching-policy defect was found. The audited identity joins are suitable for Phase 0.2 while preserving those warnings.","", "No rules validation, eligibility policy, or CAP integration was added. Forge and XMage remain implementation evidence, not semantic authority. No LLM or embeddings are used.",""]
     (ROOT/"REPORT.md").write_text("\n".join(lines),encoding="utf-8")
+    write_join_audit_report(join_stats)
+
+
+def write_join_audit_report(stats):
+    rows=json.loads((OUT/"suspicious_join_audit.json").read_text(encoding="utf-8"))["records"]
+    stale=[r for r in rows if r["audit_result"]=="VALID_JOIN_STALE_WORDING"]
+    flagged=[r for r in rows if r["action"]=="KEEP_WITH_FLAG"]
+    rejected=[r for r in rows if r["action"]=="REJECT_JOIN"]
+    lines=["# Phase 0.1.2 — Suspicious Join Audit","",f"Pinned input revisions: Scryfall `{PINNED_REVISIONS['scryfall']}`, Forge `{PINNED_REVISIONS['forge']}`, XMage `{PINNED_REVISIONS['xmage']}`.","", "## Summary", "",f"Audited {stats['total_audited']} records: Forge {stats['by_source']['forge']}, XMage {stats['by_source']['xmage']}. Decisions: `{stats['actions']}`. Results: `{ {k:v for k,v in stats['results'].items() if v} }`. Unresolved: {stats['unresolved']}.","", "All 58 audit candidates had an exact normalized name that selected one Scryfall identity. Text similarity was diagnostic only. No record was rejected; join review is not validation of requirement semantics.","", "## Rejected joins", ""]
+    lines += [f"- `{r['source']}` `{r['card_name']}` (`{r['oracle_id']}`): {r['reason']}" for r in rejected] or ["None."]
+    lines += ["", "## Flagged joins", ""]
+    lines += [f"- `{r['source']}` `{r['card_name']}` (`{r['oracle_id']}`): {r['reason']}" for r in flagged] or ["None."]
+    lines += ["", "## Valid stale/variant joins", "",f"{len(stale)} records were retained as `VALID_JOIN_STALE_WORDING`. The source records use historical Oracle wording such as printed card names for self-reference, “enters the battlefield,” or reminder-text variants. Exact unique names and the available type/mana context agree with the pinned Scryfall identity. Representative records:",""]
+    lines += [f"- `{r['source']}` `{r['card_name']}` — {r['reason']}" for r in stale[:8]]
+    lines += ["", "## Systematic issues found", "", "No normalized-name collision or multiface collision occurred among the 58. All were `normalized_name` joins; the name index resolved each to one Scryfall row, and no Oracle ID was available in the external records. All source type lines match Scryfall except nine XMage prompts whose em dash is encoded as the mojibake sequence U+00E2 U+20AC U+201D. Those nine have matching type words after that known encoding normalization and retain matching names/mana context; they are `SOURCE_RECORD_WRONG_OR_CORRUPT` with `KEEP_WITH_FLAG`. No bug was found in card-name extraction, Oracle-text extraction, face indexing, ambiguity detection, or Oracle-ID precedence.","", "## Matching changes", "",f"Before / after distinct identities — Forge: {stats['matching_before']['forge_identities']} / {stats['matching_after']['forge_identities']}; XMage: {stats['matching_before']['xmage_identities']} / {stats['matching_after']['xmage_identities']}; both: {stats['matching_before']['both_identities']} / {stats['matching_after']['both_identities']}.",f"Mapped candidates — total {stats['candidate_impact']['before']['total_mapped_candidates']} / {stats['candidate_impact']['after']['total_mapped_candidates']}; multi-implementation {stats['candidate_impact']['before']['multi_implementation_agreement']} / {stats['candidate_impact']['after']['multi_implementation_agreement']}. No rejected joins means downstream counts are unchanged. `KEEP_WITH_FLAG` metadata is attached to the affected matched evidence and requirement evidence.","", "## Recommendation for Phase 0.2", "", "READY. The exact-name joins in this narrowly audited set are supported by unique identity and card context; none should be excluded. Carry the nine XMage encoding warnings forward. This decision is about identity only and does not assert that source Oracle wording or extracted implementation semantics are correct.",""]
+    (ROOT/"JOIN_AUDIT.md").write_text("\n".join(lines),encoding="utf-8")
 
 
 def pct(n,d): return f"{(100*n/d if d else 0):.2f}%"
