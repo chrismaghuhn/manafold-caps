@@ -1,0 +1,81 @@
+review_batch_id: phase-0.2a-batch-1
+decision_count: 4
+unresolved: 0
+decisions:
+- sample_id: 053d9fe47d105986611506c8
+  card_name: Campus Guide
+  pattern_id: forge.change_zone.v1
+  reviewer_a_label: CORRECT
+  reviewer_b_label: WRONG
+  final_label: WRONG
+  rationale: The sampled Forge occurrence has Origin=Library and Destination=Library.
+    It performs within-library selection or repositioning rather than crossing a zone
+    boundary, so this occurrence does not support zone_transition.
+  evidence:
+    forge_constructs:
+    - ChangeZone
+    origin:
+    - Any
+    - Library
+    destination:
+    - Battlefield
+    - Library
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006322
+  decision_source: review_disagreements_a_vs_b.yaml; recommendation accepted per task
+- sample_id: 80e88eda5a088379b9af218a
+  card_name: Knowledge Exploitation
+  pattern_id: forge.change_zone.v1
+  reviewer_a_label: CORRECT
+  reviewer_b_label: WRONG
+  final_label: WRONG
+  rationale: The sampled Forge occurrence has Origin=Library and Destination=Library.
+    It performs within-library selection or repositioning rather than crossing a zone
+    boundary, so this occurrence does not support zone_transition.
+  evidence:
+    forge_constructs:
+    - ChangeZone
+    origin:
+    - Library
+    destination:
+    - Library
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026347
+  decision_source: review_disagreements_a_vs_b.yaml; recommendation accepted per task
+- sample_id: 23a6562a6e6a5c5879b55310
+  card_name: Neera, Wild Mage
+  pattern_id: forge.change_zone_all.v1
+  reviewer_a_label: CORRECT
+  reviewer_b_label: WRONG
+  final_label: WRONG
+  rationale: The sampled Forge occurrence has Origin=Library and Destination=Library.
+    It performs within-library selection or repositioning rather than crossing a zone
+    boundary, so this occurrence does not support zone_transition.
+  evidence:
+    forge_constructs:
+    - ChangeZoneAll
+    origin:
+    - Stack
+    - Library
+    destination:
+    - Library
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015991
+  decision_source: review_disagreements_a_vs_b.yaml; recommendation accepted per task
+- sample_id: 532892f8dc083b10a99ec57d
+  card_name: Aetherworks Marvel
+  pattern_id: forge.change_zone_all.v1
+  reviewer_a_label: CORRECT
+  reviewer_b_label: WRONG
+  final_label: WRONG
+  rationale: The sampled Forge occurrence has Origin=Library and Destination=Library.
+    It performs within-library selection or repositioning rather than crossing a zone
+    boundary, so this occurrence does not support zone_transition.
+  evidence:
+    forge_constructs:
+    - ChangeZoneAll
+    origin:
+    - Battlefield
+    - Library
+    destination:
+    - Graveyard
+    - Library
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009329
+  decision_source: review_disagreements_a_vs_b.yaml; recommendation accepted per task

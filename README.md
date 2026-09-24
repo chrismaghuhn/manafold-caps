@@ -34,4 +34,17 @@ Phase 0.2A.1 keeps the 460 Phase 0.2A probability sample IDs stable and can appe
 
 `requirement_evidence_projection.yaml` describes separate Forge and XMage validation paths. It does not combine pattern precision or make CAP eligibility decisions.
 
+Phase 0.2B aggregation reads reviewer result files without modifying them:
+
+```powershell
+python -m src.review_aggregation `
+  --reviewer-a path\to\review_results_reviewer-a-part1.yaml `
+  --reviewer-a path\to\review_results_reviewer-a-part2.yaml `
+  --reviewer-b path\to\review_results_reviewer-b.yaml `
+  --disagreements path\to\review_disagreements_a_vs_b.yaml `
+  --forced-audit path\to\forced_audit_results_reviewer-a.yaml
+```
+
+The command stops with `BLOCKED_INPUT_INCOMPLETE` if the reviewer IDs or counts fail validation; it does not emit pattern precision from incomplete inputs.
+
 Requirement candidates separate extraction, implementation evidence, rules evidence, and review state. Agreement between Forge and XMage means corroboration only; it does not establish semantic correctness.
