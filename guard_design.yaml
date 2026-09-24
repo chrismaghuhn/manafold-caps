@@ -1,0 +1,334 @@
+guard_design_version: 1
+validation_scope:
+  extractor_version: 0.2.0
+  mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+  source_set:
+    scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+    forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+    xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+review_input_provenance:
+  reviewer_a_sha256: 9b93e4fd9a9abf618807493f12924499e9c2037db16eb8b559769c7a824821a1
+  reviewer_b_sha256: 4beafe9a94b50a35f95c5b52656cd0797f68e2f077ae0a8e56d917ef40207fb0
+  adjudication_sha256: d4d1110d6ee6e49d28eecd390e4b18541b58e19a9ff1d0c3e5cd668c7b44d8bc
+forge_same_zone:
+  status: CANDIDATE
+  observed_failure_shape:
+    action_types:
+    - ChangeZone
+    - ChangeZoneAll
+    predicate:
+      origin_equals_destination: true
+  census:
+    source_records_scanned: 27286
+    action_occurrences:
+      ChangeZone: 5242
+      ChangeZoneAll: 575
+    same_zone_occurrences_total: 103
+    same_zone_occurrences_mapped_to_zone_transition: 98
+    distinct_cards_affected: 98
+    distinct_oracle_ids_affected: 98
+    same_zone_by_action:
+      ChangeZone: 81
+      ChangeZoneAll: 22
+    same_zone_pairs:
+    - action_type: ChangeZone
+      origin: Library
+      destination: Library
+      count: 81
+    - action_type: ChangeZoneAll
+      origin: Library
+      destination: Library
+      count: 22
+    same_zone_semantic_subgroups:
+      BOTTOM_OF_LIBRARY_REPOSITIONING: 11
+      LIBRARY_SEARCH_OR_REVEAL_STAGING: 3
+      RANDOM_ORDER_REINSERTION: 17
+      REMEMBERED_CARD_CLEANUP: 29
+      TOP_OF_LIBRARY_REPOSITIONING: 43
+    classification_counts:
+      CROSS_ZONE: 5445
+      ORIGIN_MISSING: 15
+      ORIGIN_OR_DESTINATION_MULTI_VALUED: 96
+      OTHER_UNRESOLVED: 158
+      SAME_ZONE: 103
+    all_extracted_action_counts:
+      ChangeZone: 5242
+      ChangeZoneAll: 575
+    reviewed_failure_membership:
+      053d9fe47d105986611506c8:
+        captured: true
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006322
+        card_name: Campus Guide
+      23a6562a6e6a5c5879b55310:
+        captured: true
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015991
+        card_name: Neera, Wild Mage
+      532892f8dc083b10a99ec57d:
+        captured: true
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009329
+        card_name: Aetherworks Marvel
+      80e88eda5a088379b9af218a:
+        captured: true
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026347
+        card_name: Knowledge Exploitation
+    hypothetical_guard_impact: &id001
+      candidate_occurrences_removed: 98
+      distinct_cards_changed: 98
+      distinct_oracle_ids_changed: 98
+      patterns_affected:
+      - forge.change_zone.v1
+      - forge.change_zone_all.v1
+    reviewed_sample_impact: &id002
+      samples_changed: 4
+      CORRECT: 0
+      WRONG: 4
+      affected_samples:
+      - sample_id: 053d9fe47d105986611506c8
+        pattern_id: forge.change_zone.v1
+        label: WRONG
+        card_name: Campus Guide
+      - sample_id: 80e88eda5a088379b9af218a
+        pattern_id: forge.change_zone.v1
+        label: WRONG
+        card_name: Knowledge Exploitation
+      - sample_id: 532892f8dc083b10a99ec57d
+        pattern_id: forge.change_zone_all.v1
+        label: WRONG
+        card_name: Aetherworks Marvel
+      - sample_id: 23a6562a6e6a5c5879b55310
+        pattern_id: forge.change_zone_all.v1
+        label: WRONG
+        card_name: Neera, Wild Mage
+  hypothetical_impact: *id001
+  reviewed_sample_impact: *id002
+  implementation_recommendation: Use only individual action occurrences whose origin
+    and destination are singular recognized zones and equal. Keep multi-valued, missing,
+    dynamic, or unrecognized endpoints unresolved; do not infer a pair from card-level
+    parameter lists. Candidate status requires no reviewed CORRECT sample occurrence
+    to be eliminated.
+xmage_import_only:
+  status: CANDIDATE
+  observed_failure_shape:
+    only_non_executable_reference: true
+  census:
+    source_records_scanned: 18985
+    mapped_classes_scanned: 13
+    classes:
+      AddCountersSourceEffect:
+        mapped_requirement: counter_change
+        source_records_mentioning_class: 874
+        extracted_by_v0_2_0_records: 873
+        IMPORTED_ONLY: 0
+        INSTANTIATED: 873
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 0
+        distinct_oracle_ids_affected_by_import_only: 0
+      CounterTargetEffect:
+        mapped_requirement: counter
+        source_records_mentioning_class: 154
+        extracted_by_v0_2_0_records: 153
+        IMPORTED_ONLY: 1
+        INSTANTIATED: 151
+        USED_OTHER_EXECUTABLE_CONTEXT: 1
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 1
+        distinct_oracle_ids_affected_by_import_only: 1
+      CreateTokenEffect:
+        mapped_requirement: create_token
+        source_records_mentioning_class: 1441
+        extracted_by_v0_2_0_records: 1441
+        IMPORTED_ONLY: 1
+        INSTANTIATED: 1438
+        USED_OTHER_EXECUTABLE_CONTEXT: 2
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 1
+        distinct_oracle_ids_affected_by_import_only: 1
+      DamageAllEffect:
+        mapped_requirement: damage
+        source_records_mentioning_class: 130
+        extracted_by_v0_2_0_records: 130
+        IMPORTED_ONLY: 0
+        INSTANTIATED: 130
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 0
+        distinct_oracle_ids_affected_by_import_only: 0
+      DamageTargetEffect:
+        mapped_requirement: damage
+        source_records_mentioning_class: 955
+        extracted_by_v0_2_0_records: 955
+        IMPORTED_ONLY: 0
+        INSTANTIATED: 954
+        USED_OTHER_EXECUTABLE_CONTEXT: 1
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 0
+        distinct_oracle_ids_affected_by_import_only: 0
+      DestroyAllEffect:
+        mapped_requirement: destroy
+        source_records_mentioning_class: 121
+        extracted_by_v0_2_0_records: 121
+        IMPORTED_ONLY: 0
+        INSTANTIATED: 121
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 0
+        distinct_oracle_ids_affected_by_import_only: 0
+      DestroyTargetEffect:
+        mapped_requirement: destroy
+        source_records_mentioning_class: 728
+        extracted_by_v0_2_0_records: 728
+        IMPORTED_ONLY: 1
+        INSTANTIATED: 725
+        USED_OTHER_EXECUTABLE_CONTEXT: 2
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 1
+        distinct_oracle_ids_affected_by_import_only: 1
+      DrawCardSourceControllerEffect:
+        mapped_requirement: draw
+        source_records_mentioning_class: 1277
+        extracted_by_v0_2_0_records: 1277
+        IMPORTED_ONLY: 1
+        INSTANTIATED: 1276
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 1
+        distinct_oracle_ids_affected_by_import_only: 1
+      ExileTargetEffect:
+        mapped_requirement: zone_transition
+        source_records_mentioning_class: 255
+        extracted_by_v0_2_0_records: 255
+        IMPORTED_ONLY: 1
+        INSTANTIATED: 254
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 1
+        distinct_oracle_ids_affected_by_import_only: 1
+      GainLifeEffect:
+        mapped_requirement: gain_life
+        source_records_mentioning_class: 717
+        extracted_by_v0_2_0_records: 717
+        IMPORTED_ONLY: 0
+        INSTANTIATED: 717
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 0
+        distinct_oracle_ids_affected_by_import_only: 0
+      LoseLifeTargetEffect:
+        mapped_requirement: lose_life
+        source_records_mentioning_class: 174
+        extracted_by_v0_2_0_records: 174
+        IMPORTED_ONLY: 0
+        INSTANTIATED: 174
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 0
+        distinct_oracle_ids_affected_by_import_only: 0
+      ReturnToHandSourceEffect:
+        mapped_requirement: zone_transition
+        source_records_mentioning_class: 122
+        extracted_by_v0_2_0_records: 122
+        IMPORTED_ONLY: 1
+        INSTANTIATED: 121
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 1
+        distinct_oracle_ids_affected_by_import_only: 1
+      UntapLandsEffect:
+        mapped_requirement: untap
+        source_records_mentioning_class: 7
+        extracted_by_v0_2_0_records: 7
+        IMPORTED_ONLY: 0
+        INSTANTIATED: 7
+        USED_OTHER_EXECUTABLE_CONTEXT: 0
+        UNRESOLVED_USAGE: 0
+        distinct_cards_affected_by_import_only: 0
+        distinct_oracle_ids_affected_by_import_only: 0
+    dataset_imported_only_occurrences: 6
+    imported_only_occurrences: 6
+    imported_only_distinct_cards: 6
+    imported_only_distinct_oracle_ids: 6
+    mappings_with_import_only_cases:
+    - CounterTargetEffect
+    - CreateTokenEffect
+    - DestroyTargetEffect
+    - DrawCardSourceControllerEffect
+    - ExileTargetEffect
+    - ReturnToHandSourceEffect
+    hypothetical_guard_impact: &id003
+      occurrences_removed: 6
+      distinct_cards_changed: 6
+      distinct_oracle_ids_changed: 6
+      mapping_paths_affected:
+      - xmage:CounterTargetEffect -> counter
+      - xmage:CreateTokenEffect -> create_token
+      - xmage:DestroyTargetEffect -> destroy
+      - xmage:DrawCardSourceControllerEffect -> draw
+      - xmage:ExileTargetEffect -> zone_transition
+      - xmage:ReturnToHandSourceEffect -> zone_transition
+      patterns_affected:
+      - cross.create_token.token__create_token_effect.v1
+      - xmage.destroy_target_effect.v1
+      - xmage.exile_target_effect.v1
+      - xmage.return_to_hand_source_effect.v1
+    reviewed_sample_impact: &id004
+      samples_changed: 1
+      CORRECT: 0
+      WRONG: 1
+      affected_samples:
+      - sample_id: 9e58403cc3d80c14b4c5a14c
+        pattern_id: xmage.destroy_target_effect.v1
+        label: WRONG
+        card_name: Invasion of New Capenna // Holy Frazzle-Cannon
+    known_false_positive:
+    - sample_id: 9e58403cc3d80c14b4c5a14c
+      card_name: Invasion of New Capenna // Holy Frazzle-Cannon
+      oracle_id: 530dc119-e266-4525-abe9-7fab599e9de2
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00007534
+      mapped_class: DestroyTargetEffect
+      classification: IMPORTED_ONLY
+      captured: true
+    non_executable_context_mentions:
+      comment_occurrences: 1
+      string_literal_occurrences: 0
+      comment_or_string_only_records: 1
+      import_only_records: 6
+      package_mentions: 0
+  hypothetical_impact: *id003
+  reviewed_sample_impact: *id004
+  implementation_recommendation: Use lexical Java masking for comments and string/char
+    literals, remove import/package declarations, and require a constructor or executable
+    code reference for mapped evidence. Keep unresolved lexical cases visible for
+    review.
+combined_counterfactual:
+  mapped_occurrences_changed: 104
+  distinct_cards_changed: 104
+  distinct_oracle_ids_changed: 104
+  requirements_affected:
+  - counter
+  - create_token
+  - destroy
+  - draw
+  - zone_transition
+  patterns_affected:
+  - cross.create_token.token__create_token_effect.v1
+  - forge.change_zone.v1
+  - forge.change_zone_all.v1
+  - xmage.destroy_target_effect.v1
+  - xmage.exile_target_effect.v1
+  - xmage.return_to_hand_source_effect.v1
+  mapping_paths_affected:
+  - forge:ChangeZone -> zone_transition
+  - forge:ChangeZoneAll -> zone_transition
+  - xmage:CounterTargetEffect -> counter
+  - xmage:CreateTokenEffect -> create_token
+  - xmage:DestroyTargetEffect -> destroy
+  - xmage:DrawCardSourceControllerEffect -> draw
+  - xmage:ExileTargetEffect -> zone_transition
+  - xmage:ReturnToHandSourceEffect -> zone_transition
+  reviewed_sample_impact:
+    samples_changed_union: 5
+    CORRECT: 0
+    WRONG: 5
+    forge: *id002
+    xmage: *id004
