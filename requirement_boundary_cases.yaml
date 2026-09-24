@@ -1,0 +1,4439 @@
+review_version: 1
+scope:
+  extractor_version: 0.2.1
+  source_set:
+    scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+    forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+    xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+requirements:
+  counter:
+    positive_examples:
+    - oracle_id: 3b6d773b-e2f7-4e74-9e77-f2e0d369a31e
+      card_name: Familiar's Ruse
+      type_line: Instant
+      layout: normal
+      oracle_text: 'As an additional cost to cast this spell, return a creature you control to its owner''s hand.
+
+        Counter target spell.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00005026
+      external_construct: CounterTargetEffect
+      requirement_id: counter
+      evidence_path_id: xmage:CounterTargetEffect->counter
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:15863cdde6a68b7630d6daeb84e0182ecd2ca5c066d08ae1f606a2d63f2e03c7
+        components:
+          oracle_id: 3b6d773b-e2f7-4e74-9e77-f2e0d369a31e
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00005026
+          external_construct: CounterTargetEffect
+          requirement_id: counter
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import java.util.UUID;\nimport mage.abilities.costs.common.ReturnToHandChosenControlledPermanentCost;\n\
+        import mage.abilities.effects.common.CounterTargetEffect;\nimport mage.cards.CardImpl;\nimport mage.cards.CardSetInfo;\n\
+        \                new TargetControlledCreaturePermanent(1, 1, new FilterControlledCreaturePermanent(\"creature\"\
+        ), true)));\n        // Counter target spell.\n        this.getSpellAbility().addEffect(new CounterTargetEffect());\n\
+        \        this.getSpellAbility().addTarget(new TargetSpell());\n    }"
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: ecd6587c-3548-4bc1-89e4-9f7fbbc2d2ad
+      card_name: Cerulean Drake
+      type_line: Creature — Drake
+      layout: normal
+      oracle_text: 'Flying
+
+        Protection from red (This creature can''t be blocked, targeted, dealt damage, enchanted, or equipped by
+        anything red.)
+
+        Sacrifice this creature: Counter target spell that targets you.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00002456
+      external_construct: CounterTargetEffect
+      requirement_id: counter
+      evidence_path_id: xmage:CounterTargetEffect->counter
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:0e839063f42390e745e7759536f4b1e9d02ac76e2072d622ed565e258a8c0ca2
+        components:
+          oracle_id: ecd6587c-3548-4bc1-89e4-9f7fbbc2d2ad
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00002456
+          external_construct: CounterTargetEffect
+          requirement_id: counter
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.common.SimpleActivatedAbility;\nimport mage.abilities.costs.common.SacrificeSourceCost;\n\
+        import mage.abilities.effects.common.CounterTargetEffect;\nimport mage.abilities.keyword.FlyingAbility;\n\
+        import mage.abilities.keyword.ProtectionAbility;\n        this.addAbility(ProtectionAbility.from(ObjectColor.RED));\n\
+        \        // Sacrifice Cerulean Drake: Counter target spell that targets you.\n        Ability ability =\
+        \ new SimpleActivatedAbility(new CounterTargetEffect(), new SacrificeSourceCost());\n        ability.addTarget(new\
+        \ TargetSpell(filter));\n        this.addAbility(ability);"
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  counter_change:
+    positive_examples:
+    - oracle_id: ba7cc6be-e575-4592-ada7-bbad3ae2225b
+      card_name: Crazed Firecat
+      type_line: Creature — Elemental Cat
+      layout: normal
+      oracle_text: When this creature enters, flip a coin until you lose a flip. Put a +1/+1 counter on this creature
+        for each flip you won.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004555
+      external_construct: PutCounter
+      requirement_id: counter_change
+      evidence_path_id: forge:PutCounter->counter_change
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:d12c0cd18799db2c8497fed338fbf828d0e73ab8137ebfb66b7b3bcaca094e3b
+        components:
+          oracle_id: ba7cc6be-e575-4592-ada7-bbad3ae2225b
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004555
+          external_construct: PutCounter
+          requirement_id: counter_change
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.put_counter.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - PutCounter
+        Defined:
+        - Self
+        CounterType:
+        - P1P1
+        CounterNum:
+        - X
+      java_usage_classification: null
+      evidence_excerpt: :DB$ PutCounter | Defined$ Self | CounterType$ P1P1 | CounterNum$ X
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 5daac63a-1534-4194-8cb7-506508e364f4
+      card_name: Invigorating Surge
+      type_line: Instant
+      layout: normal
+      oracle_text: Put a +1/+1 counter on target creature you control, then double the number of +1/+1 counters
+        on that creature.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016745
+      external_construct: PutCounter
+      requirement_id: counter_change
+      evidence_path_id: forge:PutCounter->counter_change
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:214309a6b05a2f788f899751a109a7bd5c868c7cdd925831d87f216f3d7c513f
+        components:
+          oracle_id: 5daac63a-1534-4194-8cb7-506508e364f4
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016745
+          external_construct: PutCounter
+          requirement_id: counter_change
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.put_counter.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        SP:
+        - PutCounter
+        Cost:
+        - 2 G
+        ValidTgts:
+        - Creature.YouCtrl
+        TgtPrompt:
+        - Select target creature to distribute counters to
+        CounterType:
+        - P1P1
+        SubAbility:
+        - DBPump
+        SpellDescription:
+        - Put a +1/+1 counter on target creature you control, then double the number of +1/+1 counters on that creature.
+      java_usage_classification: null
+      evidence_excerpt: A:SP$ PutCounter | Cost$ 2 G | ValidTgts$ Creature.YouCtrl | TgtPrompt$ Select target creature
+        to distribute counters to | CounterType$ P1P1 | SubAbility$ DBPump | SpellDescription$ Put a +1/+1 counter
+        on target creature you control, then double the number of +1/+1 counters on that creature.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 83f1408e-8270-49b4-9d3f-eacfd3645543
+      card_name: Hero of Bretagard
+      type_line: Creature — Human Warrior
+      layout: normal
+      oracle_text: 'Whenever one or more cards are put into exile from your hand or a spell or ability you control
+        exiles one or more permanents from the battlefield, put that many +1/+1 counters on this creature.
+
+        As long as this creature has five or more counters on it, it has flying and is an Angel in addition to its
+        other types.
+
+        As long as this creature has ten or more counters on it, it has indestructible and is a God in addition
+        to its other types.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00007327
+      external_construct: AddCountersSourceEffect
+      requirement_id: counter_change
+      evidence_path_id: xmage:AddCountersSourceEffect->counter_change
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:cebacbc9cf9601b60df274fa2897d884905b3906fcd91671a2121ee20d4754a3
+        components:
+          oracle_id: 83f1408e-8270-49b4-9d3f-eacfd3645543
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00007327
+          external_construct: AddCountersSourceEffect
+          requirement_id: counter_change
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - xmage.add_counters_source_effect.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.effects.common.continuous.AddCardSubTypeSourceEffect;\nimport mage.abilities.effects.common.continuous.GainAbilitySourceEffect;\n\
+        import mage.abilities.effects.common.counter.AddCountersSourceEffect;\nimport mage.abilities.keyword.FlyingAbility;\n\
+        import mage.abilities.keyword.IndestructibleAbility;\n        if (exiledCount > 0) {\n            this.getEffects().clear();\n\
+        \            this.getEffects().add(new AddCountersSourceEffect(CounterType.P1P1.createInstance(exiledCount)));\n\
+        \            return true;\n        }"
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: a51ec70d-1356-4403-a858-b99445bac54a
+      card_name: Predator Ooze
+      type_line: Creature — Ooze
+      layout: normal
+      oracle_text: 'Indestructible (Damage and effects that say "destroy" don''t destroy this creature.)
+
+        Whenever this creature attacks, put a +1/+1 counter on it.
+
+        Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00013467
+      external_construct: AddCountersSourceEffect
+      requirement_id: counter_change
+      evidence_path_id: xmage:AddCountersSourceEffect->counter_change
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:bbcd6e6bfa64ff81d603dc7430ed4f6e6268764e1cccd6fb43fc4eeb1e4b0040
+        components:
+          oracle_id: a51ec70d-1356-4403-a858-b99445bac54a
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00013467
+          external_construct: AddCountersSourceEffect
+          requirement_id: counter_change
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - xmage.add_counters_source_effect.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.common.AttacksTriggeredAbility;\nimport mage.abilities.common.DealtDamageAndDiedTriggeredAbility;\n\
+        import mage.abilities.effects.common.counter.AddCountersSourceEffect;\nimport mage.abilities.keyword.IndestructibleAbility;\n\
+        import mage.cards.CardImpl;\n        this.addAbility(IndestructibleAbility.getInstance());\n        // Whenever\
+        \ Predator Ooze attacks, put a +1/+1 counter on it.\n       this.addAbility(new AttacksTriggeredAbility(new\
+        \ AddCountersSourceEffect(CounterType.P1P1.createInstance()).setText(\"put a +1/+1 counter on it\"), false));\n\
+        \        // Whenever a creature dealt damage by Predator Ooze this turn dies, put a +1/+1 counter on Predator\
+        \ Ooze.\n        this.addAbility(new DealtDamageAndDiedTriggeredAbility(new AddCountersSourceEffect(CounterType.P1P1.createInstance())));\n\
+        \    }\n    private PredatorOoze(final PredatorOoze card) {"
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  create_token:
+    positive_examples:
+    - oracle_id: 13a4d0a2-211b-41a9-809f-30025326ac51
+      card_name: Murgish Cemetery
+      type_line: Enchantment
+      layout: normal
+      oracle_text: '{3}{B}, Discard a card: Create an X/X black Zombie creature token, where X is a number from
+        2 to 6 chosen at random.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004840
+      external_construct: Token
+      requirement_id: create_token
+      evidence_path_id: forge:Token->create_token
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:03c4692eab7c4e18249f0dbf42e411604593a5c78b8bdd331e6c6e63eb42f9c4
+        components:
+          oracle_id: 13a4d0a2-211b-41a9-809f-30025326ac51
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004840
+          external_construct: Token
+          requirement_id: create_token
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.token.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Token
+        TokenScript:
+        - b_x_x_zombie
+        TokenPower:
+        - X
+        TokenToughness:
+        - X
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Token | TokenScript$ b_x_x_zombie | TokenPower$ X | TokenToughness$ X
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 8443b8c2-d0ab-4fb1-ad35-7e5e4cb345b6
+      card_name: Baku Altar
+      type_line: Artifact
+      layout: normal
+      oracle_text: 'Whenever you cast a Spirit or Arcane spell, you may put a ki counter on this artifact.
+
+        {2}, {T}, Remove a ki counter from this artifact: Create a 1/1 colorless Spirit creature token.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005561
+      external_construct: Token
+      requirement_id: create_token
+      evidence_path_id: forge:Token->create_token
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:6dae14eccb1847ed3de760d9adc4ca9417e6aa3f6780fe72d5c0632dae5dbaac
+        components:
+          oracle_id: 8443b8c2-d0ab-4fb1-ad35-7e5e4cb345b6
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005561
+          external_construct: Token
+          requirement_id: create_token
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.token.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - Token
+        Cost:
+        - 2 T SubCounter<1/KI>
+        TokenAmount:
+        - '1'
+        TokenScript:
+        - c_1_1_spirit
+        TokenOwner:
+        - You
+        SpellDescription:
+        - Create a 1/1 colorless Spirit creature token.
+      java_usage_classification: null
+      evidence_excerpt: A:AB$ Token | Cost$ 2 T SubCounter<1/KI> | TokenAmount$ 1 | TokenScript$ c_1_1_spirit |
+        TokenOwner$ You | SpellDescription$ Create a 1/1 colorless Spirit creature token.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 49d64ecb-3a4f-4013-9a34-8b1539a91e96
+      card_name: Tezzeret the Schemer
+      type_line: Legendary Planeswalker — Tezzeret
+      layout: normal
+      oracle_text: '+1: Create a colorless artifact token named Etherium Cell with "{T}, Sacrifice this token: Add
+        one mana of any color."
+
+        −2: Target creature gets +X/-X until end of turn, where X is the number of artifacts you control.
+
+        −7: You get an emblem with "At the beginning of combat on your turn, target artifact you control becomes
+        an artifact creature with base power and toughness 5/5."'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00016177
+      external_construct: CreateTokenEffect
+      requirement_id: create_token
+      evidence_path_id: xmage:CreateTokenEffect->create_token
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:cba165af6e6dcff0f0a97ab99bb36be439e95b38c5bb6838c10cdcadca045877
+        components:
+          oracle_id: 49d64ecb-3a4f-4013-9a34-8b1539a91e96
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00016177
+          external_construct: CreateTokenEffect
+          requirement_id: create_token
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.dynamicvalue.common.PermanentsOnBattlefieldCount;\nimport mage.abilities.dynamicvalue.common.SignInversionDynamicValue;\n\
+        import mage.abilities.effects.common.CreateTokenEffect;\nimport mage.abilities.effects.common.GetEmblemEffect;\n\
+        import mage.abilities.effects.common.continuous.BoostTargetEffect;\n        this.setStartingLoyalty(5);\n\
+        \        // +1: Create a colorless artifact token named Etherium Cell which has \"{T}, Sacrifice this artifact:\
+        \ Add one mana of any color.\"\n        this.addAbility(new LoyaltyAbility(new CreateTokenEffect(new EtheriumCellToken()),\
+        \ 1));\n        // -2: Target creature gets +X/-X until end of turn, where X is the number of artifacts\
+        \ you control.\n        Ability ability = new LoyaltyAbility(new BoostTargetEffect(xValue, xValue2, Duration.EndOfTurn),\
+        \ -2);"
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 422aca0b-8e8f-4774-9a20-6f7a1cae967e
+      card_name: Scout the Wilderness
+      type_line: Sorcery
+      layout: normal
+      oracle_text: 'Kicker {1}{W} (You may pay an additional {1}{W} as you cast this spell.)
+
+        Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. If this spell
+        was kicked, create two 1/1 white Soldier creature tokens.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00015226
+      external_construct: CreateTokenEffect
+      requirement_id: create_token
+      evidence_path_id: xmage:CreateTokenEffect->create_token
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:6c357ed1bde0d69595d7c93b595fac27ea8f15c1c74b1c396deb1a3ebe04e8fc
+        components:
+          oracle_id: 422aca0b-8e8f-4774-9a20-6f7a1cae967e
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00015226
+          external_construct: CreateTokenEffect
+          requirement_id: create_token
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.condition.common.KickedCondition;\nimport mage.abilities.decorator.ConditionalOneShotEffect;\n\
+        import mage.abilities.effects.common.CreateTokenEffect;\nimport mage.abilities.effects.common.search.SearchLibraryPutInPlayEffect;\n\
+        import mage.abilities.keyword.KickerAbility;\n        ));\n        this.getSpellAbility().addEffect(new\
+        \ ConditionalOneShotEffect(\n                new CreateTokenEffect(new SoldierToken(), 2), KickedCondition.ONCE,\n\
+        \                \"If this spell was kicked, create two 1/1 white Soldier creature tokens\"\n        ));"
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  damage:
+    positive_examples:
+    - oracle_id: 3256029f-6558-4fcc-9fa1-74ceba3e5c92
+      card_name: Harbinger of the Hunt
+      type_line: Creature — Dragon
+      layout: normal
+      oracle_text: 'Flying
+
+        {2}{R}: This creature deals 1 damage to each creature without flying.
+
+        {2}{G}: This creature deals 1 damage to each other creature with flying.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004080
+      external_construct: DamageAll
+      requirement_id: damage
+      evidence_path_id: forge:DamageAll->damage
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:34f9ca474b443e25a921cbbab9c129eca58c0a147eb6e1551ac10a450a1aeb9b
+        components:
+          oracle_id: 3256029f-6558-4fcc-9fa1-74ceba3e5c92
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004080
+          external_construct: DamageAll
+          requirement_id: damage
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - DamageAll
+        Cost:
+        - 2 R
+        NumDmg:
+        - '1'
+        ValidCards:
+        - Creature.withoutFlying
+        ValidDescription:
+        - each creature without flying.
+        SpellDescription:
+        - CARDNAME deals 1 damage to each creature without flying.
+      java_usage_classification: null
+      evidence_excerpt: A:AB$ DamageAll | Cost$ 2 R | NumDmg$ 1 | ValidCards$ Creature.withoutFlying | ValidDescription$
+        each creature without flying. | SpellDescription$ CARDNAME deals 1 damage to each creature without flying.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 11e50e35-bf4b-4089-b0c9-360d9c014584
+      card_name: Blockbuster
+      type_line: Enchantment
+      layout: normal
+      oracle_text: '{1}{R}, Sacrifice this enchantment: It deals 3 damage to each tapped creature and each player.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024613
+      external_construct: DamageAll
+      requirement_id: damage
+      evidence_path_id: forge:DamageAll->damage
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:5b85fc1ae6c3828f83f939a01a3ac5308599203ce8de9118ec82ad9f230f85b5
+        components:
+          oracle_id: 11e50e35-bf4b-4089-b0c9-360d9c014584
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024613
+          external_construct: DamageAll
+          requirement_id: damage
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - DamageAll
+        Cost:
+        - 1 R Sac<1/CARDNAME>
+        ValidCards:
+        - Creature.tapped
+        ValidPlayers:
+        - Player
+        NumDmg:
+        - '3'
+        ValidDescription:
+        - each tapped creature and each player.
+        SpellDescription:
+        - CARDNAME deals 3 damage to each tapped creature and each player.
+      java_usage_classification: null
+      evidence_excerpt: A:AB$ DamageAll | Cost$ 1 R Sac<1/CARDNAME> | ValidCards$ Creature.tapped | ValidPlayers$
+        Player | NumDmg$ 3 | ValidDescription$ each tapped creature and each player. | SpellDescription$ CARDNAME
+        deals 3 damage to each tapped creature and each player.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 1aa8fdc3-efeb-450d-9540-2ef0efaf270d
+      card_name: Aura Barbs
+      type_line: Instant — Arcane
+      layout: normal
+      oracle_text: Each enchantment deals 2 damage to its controller, then each Aura attached to a creature deals
+        2 damage to the creature it's attached to.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022229
+      external_construct: DealDamage
+      requirement_id: damage
+      evidence_path_id: forge:DealDamage->damage
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:4a07c58ebf71f3ae51b7b81016b238620dc87ada1588632062761c1119e9033c
+        components:
+          oracle_id: 1aa8fdc3-efeb-450d-9540-2ef0efaf270d
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022229
+          external_construct: DealDamage
+          requirement_id: damage
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.deal_damage.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        SP:
+        - DealDamage
+        Cost:
+        - 2 R
+        NumDmg:
+        - '2'
+        DamageSource:
+        - Valid Enchantment
+        Defined:
+        - CardController
+        RelativeTarget:
+        - 'True'
+        SubAbility:
+        - DBAuraDmg
+        StackDescription:
+        - SpellDescription
+        SpellDescription:
+        - Each enchantment deals 2 damage to its controller, then each Aura attached to a creature deals 2 damage
+          to the creature it's attached to.
+      java_usage_classification: null
+      evidence_excerpt: A:SP$ DealDamage | Cost$ 2 R | NumDmg$ 2 | DamageSource$ Valid Enchantment | Defined$ CardController
+        | RelativeTarget$ True | SubAbility$ DBAuraDmg | StackDescription$ SpellDescription | SpellDescription$
+        Each enchantment deals 2 damage to its controller, then each Aura attached to a creature deals 2 damage
+        to the creature it's attached to.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 1d569df1-23cf-4e01-8ef9-a1a8b815f11e
+      card_name: Fervent Paincaster
+      type_line: Creature — Human Wizard
+      layout: normal
+      oracle_text: '{T}: This creature deals 1 damage to target player or planeswalker.
+
+        {T}, Exert this creature: It deals 1 damage to target creature. (An exerted creature won''t untap during
+        your next untap step.)'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005121
+      external_construct: DealDamage
+      requirement_id: damage
+      evidence_path_id: forge:DealDamage->damage
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:df2a25c4a813fee393520d366661cb181e8759d74e127bd5e1029671700c9ab6
+        components:
+          oracle_id: 1d569df1-23cf-4e01-8ef9-a1a8b815f11e
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005121
+          external_construct: DealDamage
+          requirement_id: damage
+          occurrence_index: 1
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.deal_damage.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - DealDamage
+        Cost:
+        - T Exert<1/CARDNAME>
+        ValidTgts:
+        - Creature
+        TgtPrompt:
+        - Select target creature
+        NumDmg:
+        - '1'
+        SpellDescription:
+        - CARDNAME deals 1 damage to target creature. (An exerted creature won't untap during your next untap step.)
+      java_usage_classification: null
+      evidence_excerpt: A:AB$ DealDamage | Cost$ T Exert<1/CARDNAME> | ValidTgts$ Creature | TgtPrompt$ Select target
+        creature | NumDmg$ 1 | SpellDescription$ CARDNAME deals 1 damage to target creature. (An exerted creature
+        won't untap during your next untap step.)
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  destroy:
+    positive_examples:
+    - oracle_id: c13955b8-bad3-4f79-ad9f-11e214a1cab2
+      card_name: Smash to Dust
+      type_line: Sorcery
+      layout: normal
+      oracle_text: 'Choose one —
+
+        • Destroy target artifact.
+
+        • Destroy target creature with defender.
+
+        • Smash to Dust deals 1 damage to each creature your opponents control.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026696
+      external_construct: Destroy
+      requirement_id: destroy
+      evidence_path_id: forge:Destroy->destroy
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:913bd5b7cc845806d941c0ba6696c572fb85c86a4cbb2ac1939d66f94ddc9e5b
+        components:
+          oracle_id: c13955b8-bad3-4f79-ad9f-11e214a1cab2
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026696
+          external_construct: Destroy
+          requirement_id: destroy
+          occurrence_index: 1
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.destroy.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Destroy
+        ValidTgts:
+        - Creature.withDefender
+        TgtPrompt:
+        - Select target creature with defender.
+        SpellDescription:
+        - Destroy target creature with defender.
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Destroy | ValidTgts$ Creature.withDefender | TgtPrompt$ Select target creature with
+        defender. | SpellDescription$ Destroy target creature with defender.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: e0256da6-21f3-4019-9da0-75962b7f295c
+      card_name: Cruel Deceiver
+      type_line: Creature — Spirit
+      layout: normal
+      oracle_text: '{1}: Look at the top card of your library.
+
+        {2}: Reveal the top card of your library. If it''s a land card, this creature gains "Whenever this creature
+        deals damage to a creature, destroy that creature" until end of turn. Activate only once each turn.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015428
+      external_construct: Destroy
+      requirement_id: destroy
+      evidence_path_id: forge:Destroy->destroy
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:8501448e47aeb95021efb69615ccab3af9cb8cee2bc70333e1393f0a0e4a356b
+        components:
+          oracle_id: e0256da6-21f3-4019-9da0-75962b7f295c
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015428
+          external_construct: Destroy
+          requirement_id: destroy
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.destroy.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Destroy
+        Defined:
+        - TriggeredTargetLKICopy
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Destroy | Defined$ TriggeredTargetLKICopy
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 9e0c66e9-7d2b-46bd-890e-886d0c029d1d
+      card_name: Sublime Exhalation
+      type_line: Sorcery
+      layout: normal
+      oracle_text: 'Undaunted (This spell costs {1} less to cast for each opponent.)
+
+        Destroy all creatures.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00007167
+      external_construct: DestroyAll
+      requirement_id: destroy
+      evidence_path_id: forge:DestroyAll->destroy
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:17751ae0c308c94b48ba91e5d818fb31795e50378a7ef9dc496288a72410c44a
+        components:
+          oracle_id: 9e0c66e9-7d2b-46bd-890e-886d0c029d1d
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00007167
+          external_construct: DestroyAll
+          requirement_id: destroy
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        SP:
+        - DestroyAll
+        Cost:
+        - 6 W
+        ValidCards:
+        - Creature
+        SpellDescription:
+        - Destroy all creatures.
+      java_usage_classification: null
+      evidence_excerpt: A:SP$ DestroyAll | Cost$ 6 W | ValidCards$ Creature | SpellDescription$ Destroy all creatures.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 206539a6-0e60-4986-bc57-c2b89e08b9f2
+      card_name: Siege Dragon
+      type_line: Creature — Dragon
+      layout: normal
+      oracle_text: 'Flying
+
+        When this creature enters, destroy all Walls your opponents control.
+
+        Whenever this creature attacks, if defending player controls no Walls, it deals 2 damage to each creature
+        without flying that player controls.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004087
+      external_construct: DestroyAll
+      requirement_id: destroy
+      evidence_path_id: forge:DestroyAll->destroy
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:801251c19ba31c65936a17024d261793c02ce2871ffdc8037111f5849ca4128b
+        components:
+          oracle_id: 206539a6-0e60-4986-bc57-c2b89e08b9f2
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004087
+          external_construct: DestroyAll
+          requirement_id: destroy
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - DestroyAll
+        ValidCards:
+        - Wall.OppCtrl
+      java_usage_classification: null
+      evidence_excerpt: :DB$ DestroyAll | ValidCards$ Wall.OppCtrl
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  discard:
+    positive_examples:
+    - oracle_id: ec5dc165-c760-4060-99fb-ec50f87374cb
+      card_name: Thought Gorger
+      type_line: Creature — Horror
+      layout: normal
+      oracle_text: 'Trample
+
+        When this creature enters, put a +1/+1 counter on it for each card in your hand. If you do, discard your
+        hand.
+
+        When this creature leaves the battlefield, draw a card for each +1/+1 counter on it.'
+      faces: &id001 []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008762
+      external_construct: Discard
+      requirement_id: discard
+      evidence_path_id: forge:Discard->discard
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:4fc2a9e42e1c5c3373242bb80055cb0ed5b837d4485e8e996b9de649a975a808
+        components:
+          oracle_id: ec5dc165-c760-4060-99fb-ec50f87374cb
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008762
+          external_construct: Discard
+          requirement_id: discard
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Discard
+        Mode:
+        - Hand
+        Defined:
+        - You
+        ConditionDescription:
+        - If you do,
+        ConditionDefined:
+        - Remembered
+        ConditionPresent:
+        - Card
+        SubAbility:
+        - DBCleanup
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Discard | Mode$ Hand | Defined$ You | ConditionDescription$ If you do, | ConditionDefined$
+        Remembered | ConditionPresent$ Card | SubAbility$ DBCleanup
+      join_warning: null
+      card_source_warnings: &id002 []
+    - oracle_id: 6eaa343d-0097-4f05-80ab-deb016d4e15e
+      card_name: Shreds of Sanity
+      type_line: Sorcery
+      layout: normal
+      oracle_text: Return up to one target instant card and up to one target sorcery card from your graveyard to
+        your hand, then discard a card. Exile Shreds of Sanity.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019423
+      external_construct: Discard
+      requirement_id: discard
+      evidence_path_id: forge:Discard->discard
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:9e82e7e40ce353c014759ad9ae7f8337270e8f67cf167c002e64d7c34ec48664
+        components:
+          oracle_id: 6eaa343d-0097-4f05-80ab-deb016d4e15e
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019423
+          external_construct: Discard
+          requirement_id: discard
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Discard
+        Defined:
+        - You
+        NumCards:
+        - '1'
+        Mode:
+        - TgtChoose
+        SubAbility:
+        - DBExile
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Discard | Defined$ You | NumCards$ 1 | Mode$ TgtChoose | SubAbility$ DBExile
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  draw:
+    positive_examples:
+    - oracle_id: ec5dc165-c760-4060-99fb-ec50f87374cb
+      card_name: Thought Gorger
+      type_line: Creature — Horror
+      layout: normal
+      oracle_text: 'Trample
+
+        When this creature enters, put a +1/+1 counter on it for each card in your hand. If you do, discard your
+        hand.
+
+        When this creature leaves the battlefield, draw a card for each +1/+1 counter on it.'
+      faces: *id001
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008762
+      external_construct: Draw
+      requirement_id: draw
+      evidence_path_id: forge:Draw->draw
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:23ef4d73ac6d8abd2ce48878070c0645139e57a99dbcb53a7ac882ce462b7aa0
+        components:
+          oracle_id: ec5dc165-c760-4060-99fb-ec50f87374cb
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008762
+          external_construct: Draw
+          requirement_id: draw
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.draw.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Draw
+        NumCards:
+        - Disgorge
+        Defined:
+        - TriggeredCardController
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Draw | NumCards$ Disgorge | Defined$ TriggeredCardController
+      join_warning: null
+      card_source_warnings: *id002
+    - oracle_id: 0efbf29c-09a0-4472-83ad-8d692c0232a5
+      card_name: Lost Isle Calling
+      type_line: Enchantment
+      layout: normal
+      oracle_text: 'Whenever you scry, put a verse counter on this enchantment.
+
+        {4}{U}{U}, Exile this enchantment: Draw a card for each verse counter on this enchantment. If it had seven
+        or more verse counters on it, take an extra turn after this one. Activate only as a sorcery.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00007157
+      external_construct: Draw
+      requirement_id: draw
+      evidence_path_id: forge:Draw->draw
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:8552e1fa70ff916e2ad92fe13bd8a9f3d07644687083b36d92454cc736e1bb22
+        components:
+          oracle_id: 0efbf29c-09a0-4472-83ad-8d692c0232a5
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00007157
+          external_construct: Draw
+          requirement_id: draw
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.draw.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - Draw
+        Cost:
+        - 4 U U Exile<1/CARDNAME>
+        NumCards:
+        - X
+        SubAbility:
+        - DBExtraTurn
+        SorcerySpeed:
+        - 'True'
+        SpellDescription:
+        - Draw a card for each verse counter on CARDNAME. If it had seven or more verse counters on it, take an
+          extra turn after this one. Activate only as a sorcery.
+      java_usage_classification: null
+      evidence_excerpt: A:AB$ Draw | Cost$ 4 U U Exile<1/CARDNAME> | NumCards$ X | SubAbility$ DBExtraTurn | SorcerySpeed$
+        True | SpellDescription$ Draw a card for each verse counter on CARDNAME. If it had seven or more verse counters
+        on it, take an extra turn after this one. Activate only as a sorcery.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 09ee1332-741f-4c55-abc3-8bcff9031cd9
+      card_name: Benalish Heralds
+      type_line: Creature — Human Soldier
+      layout: normal
+      oracle_text: '{3}{U}, {T}: Draw a card.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00001416
+      external_construct: DrawCardSourceControllerEffect
+      requirement_id: draw
+      evidence_path_id: xmage:DrawCardSourceControllerEffect->draw
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:2992a42e5b1050e6a8b59765037c4157fcaf9735d6ff601031ed6474f3f085a8
+        components:
+          oracle_id: 09ee1332-741f-4c55-abc3-8bcff9031cd9
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00001416
+          external_construct: DrawCardSourceControllerEffect
+          requirement_id: draw
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.costs.common.TapSourceCost;\nimport mage.abilities.costs.mana.ManaCostsImpl;\n\
+        import mage.abilities.effects.common.DrawCardSourceControllerEffect;\nimport mage.cards.CardImpl;\nimport\
+        \ mage.cards.CardSetInfo;\n        this.toughness = new MageInt(4);\n        // {3}{U}, {tap}: Draw a card.\n\
+        \        Ability ability = new SimpleActivatedAbility(Zone.BATTLEFIELD, new DrawCardSourceControllerEffect(1),\
+        \ new ManaCostsImpl<>(\"{3}{U}\"));\n        ability.addCost(new TapSourceCost());\n        this.addAbility(ability);"
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: fc3e48c9-e303-435c-bdb1-7dc7881a9858
+      card_name: Karametra's Favor
+      type_line: Enchantment — Aura
+      layout: normal
+      oracle_text: 'Enchant creature
+
+        When this Aura enters, draw a card.
+
+        Enchanted creature has "{T}: Add one mana of any color."'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00008950
+      external_construct: DrawCardSourceControllerEffect
+      requirement_id: draw
+      evidence_path_id: xmage:DrawCardSourceControllerEffect->draw
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:1a406f5ad6a3558c6eca5e3b21a2ffd78c22db99d65f9fd5a0bed7bd4d830b51
+        components:
+          oracle_id: fc3e48c9-e303-435c-bdb1-7dc7881a9858
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00008950
+          external_construct: DrawCardSourceControllerEffect
+          requirement_id: draw
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.effects.Effect;\nimport mage.abilities.effects.common.AttachEffect;\n\
+        import mage.abilities.effects.common.DrawCardSourceControllerEffect;\nimport mage.abilities.effects.common.continuous.GainAbilityAttachedEffect;\n\
+        import mage.abilities.keyword.EnchantAbility;\n        this.addAbility(ability);\n        // When Karametra's\
+        \ Favor enters the battlefield, draw a card.\n        this.addAbility(new EntersBattlefieldTriggeredAbility(new\
+        \ DrawCardSourceControllerEffect(1), false));\n        // Enchanted creature has \"{T}: Add one mana of\
+        \ any color.\"\n        Effect effect = new GainAbilityAttachedEffect(new AnyColorManaAbility(), AttachmentType.AURA,\
+        \ Duration.WhileOnBattlefield);"
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  gain_life:
+    positive_examples:
+    - oracle_id: b9d9d118-a073-4e73-90fe-026462d1d895
+      card_name: Grisly Sigil
+      type_line: Sorcery
+      layout: normal
+      oracle_text: 'Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When
+        you do, copy this spell and you may choose a new target for the copy.)
+
+        Choose target creature or planeswalker. If it was dealt noncombat damage this turn, Grisly Sigil deals 3
+        damage to it and you gain 3 life. Otherwise, Grisly Sigil deals 1 damage to it and you gain 1 life.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015475
+      external_construct: GainLife
+      requirement_id: gain_life
+      evidence_path_id: forge:GainLife->gain_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:91e7242722b04dbe96ad1bf641b0de8ac6628674fb9b1a67b494f3c4da6c56da
+        components:
+          oracle_id: b9d9d118-a073-4e73-90fe-026462d1d895
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015475
+          external_construct: GainLife
+          requirement_id: gain_life
+          occurrence_index: 1
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - GainLife
+        LifeAmount:
+        - '1'
+      java_usage_classification: null
+      evidence_excerpt: :DB$ GainLife | LifeAmount$ 1
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 2dd3a6f7-65a9-4157-9ad9-13a885ebe927
+      card_name: Bloodrite Invoker
+      type_line: Creature — Vampire Shaman
+      layout: normal
+      oracle_text: '{8}: Target player loses 3 life and you gain 3 life.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001030
+      external_construct: GainLife
+      requirement_id: gain_life
+      evidence_path_id: forge:GainLife->gain_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:aba8ece7d4e83640b8d1210f720452239e728bdc23f81aecf60f4cebc7efb09f
+        components:
+          oracle_id: 2dd3a6f7-65a9-4157-9ad9-13a885ebe927
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001030
+          external_construct: GainLife
+          requirement_id: gain_life
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - GainLife
+        Defined:
+        - You
+        LifeAmount:
+        - '3'
+      java_usage_classification: null
+      evidence_excerpt: :DB$ GainLife | Defined$ You | LifeAmount$ 3
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: cce081eb-8820-415a-a7b2-3c5b9d4a2601
+      card_name: Gala Greeters
+      type_line: Creature — Elf Druid
+      layout: normal
+      oracle_text: 'Alliance — Whenever another creature you control enters, choose one that hasn''t been chosen
+        this turn —
+
+        • Put a +1/+1 counter on this creature.
+
+        • Create a tapped Treasure token.
+
+        • You gain 2 life.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00005895
+      external_construct: GainLifeEffect
+      requirement_id: gain_life
+      evidence_path_id: xmage:GainLifeEffect->gain_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:f8f617b97bbf1fa72c6d6b96fe860392473db7f249a9b1558b2ce60d150d8390
+        components:
+          oracle_id: cce081eb-8820-415a-a7b2-3c5b9d4a2601
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00005895
+          external_construct: GainLifeEffect
+          requirement_id: gain_life
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - xmage.gain_life_effect.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.common.AllianceAbility;\nimport mage.abilities.effects.common.CreateTokenEffect;\n\
+        import mage.abilities.effects.common.GainLifeEffect;\nimport mage.abilities.effects.common.counter.AddCountersSourceEffect;\n\
+        import mage.abilities.hint.common.ModesAlreadyUsedHint;\n        );\n        // • You gain 2 life.\n   \
+        \     ability.addMode(new Mode(new GainLifeEffect(2)).setModeTag(\"gain life\"));\n        ability.addHint(ModesAlreadyUsedHint.instance);\n\
+        \        this.addAbility(ability);"
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 0870e9f8-9e02-4997-9554-41a4e8eec4cb
+      card_name: Ephara's Radiance
+      type_line: Enchantment — Aura
+      layout: normal
+      oracle_text: 'Enchant creature
+
+        Enchanted creature has "{1}{W}, {T}: You gain 3 life."'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00004497
+      external_construct: GainLifeEffect
+      requirement_id: gain_life
+      evidence_path_id: xmage:GainLifeEffect->gain_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:47687d7c1c5217d62922b15655a72c93176b5c6670f4544668c09238c8df96a6
+        components:
+          oracle_id: 0870e9f8-9e02-4997-9554-41a4e8eec4cb
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00004497
+          external_construct: GainLifeEffect
+          requirement_id: gain_life
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - xmage.gain_life_effect.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.costs.mana.ManaCostsImpl;\nimport mage.abilities.effects.common.AttachEffect;\n\
+        import mage.abilities.effects.common.GainLifeEffect;\nimport mage.abilities.effects.common.continuous.GainAbilityAttachedEffect;\n\
+        import mage.abilities.keyword.EnchantAbility;\n        this.addAbility(ability);\n        // Enchanted creature\
+        \ has \"{1}{W}, {T}: You gain 3 life.\"\n        ability = new SimpleActivatedAbility(Zone.BATTLEFIELD,\
+        \ new GainLifeEffect(3), new ManaCostsImpl<>(\"{1}{W}\"));\n        ability.addCost(new TapSourceCost());\n\
+        \        this.addAbility(new SimpleStaticAbility(Zone.BATTLEFIELD, new GainAbilityAttachedEffect(ability,\
+        \ AttachmentType.AURA, Duration.WhileOnBattlefield)));"
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  lose_life:
+    positive_examples:
+    - oracle_id: 2013a774-e6ab-4f2d-a84f-fd277a637d7e
+      card_name: Alms of the Vein
+      type_line: Sorcery
+      layout: normal
+      oracle_text: 'Target opponent loses 3 life and you gain 3 life.
+
+        Madness {B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost
+        or put it into your graveyard.)'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025389
+      external_construct: LoseLife
+      requirement_id: lose_life
+      evidence_path_id: forge:LoseLife->lose_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:3dc585b568a9e65c88d9deb99a200935e753148e17e114e5d14cf883f0a10f0e
+        components:
+          oracle_id: 2013a774-e6ab-4f2d-a84f-fd277a637d7e
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025389
+          external_construct: LoseLife
+          requirement_id: lose_life
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        SP:
+        - LoseLife
+        Cost:
+        - 2 B
+        ValidTgts:
+        - Opponent
+        LifeAmount:
+        - '3'
+        SubAbility:
+        - DBGainLife
+        SpellDescription:
+        - Target opponent loses 3 life and you gain 3 life.
+      java_usage_classification: null
+      evidence_excerpt: A:SP$ LoseLife | Cost$ 2 B | ValidTgts$ Opponent | LifeAmount$ 3 | SubAbility$ DBGainLife
+        | SpellDescription$ Target opponent loses 3 life and you gain 3 life.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 54731e3f-a84a-4fc9-8c02-2f769133c71c
+      card_name: Diregraf Scavenger
+      type_line: Creature — Zombie Bear
+      layout: normal
+      oracle_text: 'Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)
+
+        When this creature enters, exile up to one target card from a graveyard. If a creature card was exiled this
+        way, each opponent loses 2 life and you gain 2 life.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019182
+      external_construct: LoseLife
+      requirement_id: lose_life
+      evidence_path_id: forge:LoseLife->lose_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:e540d11e4010d88a9c0bf5e51d209ba9034b22a57dbe2ba464d9ead1601386b2
+        components:
+          oracle_id: 54731e3f-a84a-4fc9-8c02-2f769133c71c
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019182
+          external_construct: LoseLife
+          requirement_id: lose_life
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - LoseLife
+        ConditionDefined:
+        - Remembered
+        ConditionPresent:
+        - Creature
+        Defined:
+        - Player.Opponent
+        LifeAmount:
+        - '2'
+        SubAbility:
+        - DBGainLife
+      java_usage_classification: null
+      evidence_excerpt: :DB$ LoseLife | ConditionDefined$ Remembered | ConditionPresent$ Creature | Defined$ Player.Opponent
+        | LifeAmount$ 2 | SubAbility$ DBGainLife
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: d5fd3060-358c-4a5b-aee9-1afcf6c506ba
+      card_name: Raiders' Wake
+      type_line: Enchantment
+      layout: normal
+      oracle_text: 'Whenever an opponent discards a card, that player loses 2 life.
+
+        Raid — At the beginning of your end step, if you attacked this turn, target opponent discards a card.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00013828
+      external_construct: LoseLifeTargetEffect
+      requirement_id: lose_life
+      evidence_path_id: xmage:LoseLifeTargetEffect->lose_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:15d1d6a629393822a92a86781d65d23a79b3dd6c124487a0d52afa9ec86e6f99
+        components:
+          oracle_id: d5fd3060-358c-4a5b-aee9-1afcf6c506ba
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00013828
+          external_construct: LoseLifeTargetEffect
+          requirement_id: lose_life
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.condition.common.RaidCondition;\nimport mage.abilities.decorator.ConditionalInterveningIfTriggeredAbility;\n\
+        import mage.abilities.effects.common.LoseLifeTargetEffect;\nimport mage.abilities.effects.common.discard.DiscardTargetEffect;\n\
+        import mage.abilities.hint.common.RaidHint;\n        super(ownerId, setInfo, new CardType[]{CardType.ENCHANTMENT},\
+        \ \"{3}{B}\");\n        // Whenever an opponent discards a card, that player loses 2 life.\n        this.addAbility(new\
+        \ DiscardsACardOpponentTriggeredAbility(new LoseLifeTargetEffect(2), false, SetTargetPointer.PLAYER));\n\
+        \        // Raid — At the beginning of your end step, if you attacked this turn, target opponent discards\
+        \ a card.\n        Ability ability = new ConditionalInterveningIfTriggeredAbility("
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: c961373a-be0e-467c-92e0-33a0c953736a
+      card_name: Scroll of Griselbrand
+      type_line: Artifact
+      layout: normal
+      oracle_text: '{1}, Sacrifice this artifact: Target opponent discards a card. If you control a Demon, that
+        player loses 3 life.'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00015278
+      external_construct: LoseLifeTargetEffect
+      requirement_id: lose_life
+      evidence_path_id: xmage:LoseLifeTargetEffect->lose_life
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:b32731ebd95f136e5f072b3c4e857738302b57aa8ce6686c64b2ece3d916923b
+        components:
+          oracle_id: c961373a-be0e-467c-92e0-33a0c953736a
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00015278
+          external_construct: LoseLifeTargetEffect
+          requirement_id: lose_life
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import mage.abilities.costs.mana.GenericManaCost;\nimport mage.abilities.decorator.ConditionalOneShotEffect;\n\
+        import mage.abilities.effects.common.LoseLifeTargetEffect;\nimport mage.abilities.effects.common.discard.DiscardTargetEffect;\n\
+        import mage.cards.CardImpl;\n        Ability ability = new SimpleActivatedAbility(Zone.BATTLEFIELD, new\
+        \ DiscardTargetEffect(1), new GenericManaCost(1));\n        ability.addCost(new SacrificeSourceCost());\n\
+        \        ability.addEffect(new ConditionalOneShotEffect(new LoseLifeTargetEffect(3), new PermanentsOnTheBattlefieldCondition(filter),\
+        \ \"If you control a Demon, that player loses 3 life\"));\n        ability.addTarget(new TargetOpponent());\n\
+        \        this.addAbility(ability);"
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  mana_production:
+    positive_examples:
+    - oracle_id: 23f93411-f83c-4ed2-abed-99cf905f7d7f
+      card_name: Bog Initiate
+      type_line: Creature — Human Wizard
+      layout: normal
+      oracle_text: '{1}: Add {B}.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027049
+      external_construct: Mana
+      requirement_id: mana_production
+      evidence_path_id: forge:Mana->mana_production
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:c20f2c240287c6b85c833a8ec87184f255e4c3e72af62fb8bf90be26762449d5
+        components:
+          oracle_id: 23f93411-f83c-4ed2-abed-99cf905f7d7f
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027049
+          external_construct: Mana
+          requirement_id: mana_production
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - Mana
+        Cost:
+        - '1'
+        Produced:
+        - B
+        SpellDescription:
+        - Add {B}.
+      java_usage_classification: null
+      evidence_excerpt: A:AB$ Mana | Cost$ 1 | Produced$ B | SpellDescription$ Add {B}.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: c6eb2814-0021-4308-ad44-6c8cc59b0d1c
+      card_name: Drifting Meadow
+      type_line: Land
+      layout: normal
+      oracle_text: 'This land enters tapped.
+
+        {T}: Add {W}.
+
+        Cycling {2} ({2}, Discard this card: Draw a card.)'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025881
+      external_construct: Mana
+      requirement_id: mana_production
+      evidence_path_id: forge:Mana->mana_production
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:cef704eeecd77740c90420ed4cdf18c9aef5cc01d0bd8b32b4cae827c8ed3541
+        components:
+          oracle_id: c6eb2814-0021-4308-ad44-6c8cc59b0d1c
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025881
+          external_construct: Mana
+          requirement_id: mana_production
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - Mana
+        Cost:
+        - T
+        Produced:
+        - W
+        SpellDescription:
+        - Add {W}.
+      java_usage_classification: null
+      evidence_excerpt: A:AB$ Mana | Cost$ T | Produced$ W | SpellDescription$ Add {W}.
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  shuffle:
+    positive_examples:
+    - oracle_id: 6d23f074-d84c-429b-9322-adc731f54a5b
+      card_name: Dichotomancy
+      type_line: Sorcery
+      layout: normal
+      oracle_text: 'For each tapped nonland permanent target opponent controls, search that player''s library for
+        a card with the same name as that permanent. Put those cards onto the battlefield under your control, then
+        that player shuffles.
+
+        Suspend 3—{1}{U}{U} (Rather than cast this card from your hand, you may pay {1}{U}{U} and exile it with
+        three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed,
+        you may cast it without paying its mana cost.)'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027230
+      external_construct: Shuffle
+      requirement_id: shuffle
+      evidence_path_id: forge:Shuffle->shuffle
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:54f74ec7d5940f67bae8f8151c407006de7e10651fbd5d89f336fd51bfe3c8d0
+        components:
+          oracle_id: 6d23f074-d84c-429b-9322-adc731f54a5b
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027230
+          external_construct: Shuffle
+          requirement_id: shuffle
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Shuffle
+        Defined:
+        - ParentTarget
+        StackDescription:
+        - None
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Shuffle | Defined$ ParentTarget | StackDescription$ None
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 61ad3299-474a-400f-a1c1-b86024aca3e8
+      card_name: Knowledge Exploitation
+      type_line: Kindred Sorcery — Rogue
+      layout: normal
+      oracle_text: 'Prowl {3}{U} (You may cast this for its prowl cost if you dealt combat damage to a player this
+        turn with a Rogue.)
+
+        Search target opponent''s library for an instant or sorcery card. You may cast that card without paying
+        its mana cost. Then that player shuffles.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026347
+      external_construct: Shuffle
+      requirement_id: shuffle
+      evidence_path_id: forge:Shuffle->shuffle
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:34972284ae7683981f0e31fb4f779ccad7f816a3b159d4c6c05f17e21c4bc18d
+        components:
+          oracle_id: 61ad3299-474a-400f-a1c1-b86024aca3e8
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026347
+          external_construct: Shuffle
+          requirement_id: shuffle
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Shuffle
+        Defined:
+        - RememberedController
+        SubAbility:
+        - DBCleanup
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Shuffle | Defined$ RememberedController | SubAbility$ DBCleanup
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  tap:
+    positive_examples:
+    - oracle_id: c9f2f0ae-5869-43dc-a225-4dfe3d37c166
+      card_name: Urge to Feed
+      type_line: Instant
+      layout: normal
+      oracle_text: Target creature gets -3/-3 until end of turn. You may tap any number of untapped Vampire creatures
+        you control. If you do, put a +1/+1 counter on each of those Vampires.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026713
+      external_construct: Tap
+      requirement_id: tap
+      evidence_path_id: forge:Tap->tap
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:9986ac0b168b5e18bedfe4c0074f166ed1d6947b5839b0da94e485d552c12119
+        components:
+          oracle_id: c9f2f0ae-5869-43dc-a225-4dfe3d37c166
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026713
+          external_construct: Tap
+          requirement_id: tap
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Tap
+        CardChoices:
+        - Vampire.YouCtrl+untapped
+        AnyNumber:
+        - 'True'
+        ChoiceAmount:
+        - Count$Valid Vampire.YouCtrl+untapped
+        RememberTapped:
+        - 'True'
+        SubAbility:
+        - VampiricFeed
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Tap | CardChoices$ Vampire.YouCtrl+untapped | AnyNumber$ True | ChoiceAmount$ Count$Valid
+        Vampire.YouCtrl+untapped | RememberTapped$ True | SubAbility$ VampiricFeed
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: ac935fad-2fa7-4afc-9db4-3cd30ec4aabd
+      card_name: Protocol Knight
+      type_line: Creature — Human Knight
+      layout: normal
+      oracle_text: When this creature enters, tap target creature an opponent controls. Put a stun counter on that
+        creature if you control another Knight. (If a permanent with a stun counter would become untapped, remove
+        one from it instead.)
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002968
+      external_construct: Tap
+      requirement_id: tap
+      evidence_path_id: forge:Tap->tap
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:0dcf6fb7284a09c1745ad85c89d53b2872ad1509cec5b15eda738f752bb976b6
+        components:
+          oracle_id: ac935fad-2fa7-4afc-9db4-3cd30ec4aabd
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002968
+          external_construct: Tap
+          requirement_id: tap
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Tap
+        ValidTgts:
+        - Creature.OppCtrl
+        SubAbility:
+        - DBCounter
+        TgtPrompt:
+        - Select target creature an opponent controls
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Tap | ValidTgts$ Creature.OppCtrl | SubAbility$ DBCounter | TgtPrompt$ Select target
+        creature an opponent controls
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  untap:
+    positive_examples:
+    - oracle_id: f87aaed9-7f78-4f8b-8af5-44d4be1d6f30
+      card_name: Nacre Talisman
+      type_line: Artifact
+      layout: normal
+      oracle_text: Whenever a player casts a white spell, you may pay {3}. If you do, untap target permanent.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017381
+      external_construct: Untap
+      requirement_id: untap
+      evidence_path_id: forge:Untap->untap
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:08871ed375bb38f7945ba38d5ff95f7a777662b06d4bc255f912fbb82cdeefce
+        components:
+          oracle_id: f87aaed9-7f78-4f8b-8af5-44d4be1d6f30
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017381
+          external_construct: Untap
+          requirement_id: untap
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        AB:
+        - Untap
+        Cost:
+        - '3'
+        ValidTgts:
+        - Permanent
+        TgtPrompt:
+        - Select target permanent
+      java_usage_classification: null
+      evidence_excerpt: :AB$Untap | Cost$ 3 | ValidTgts$ Permanent | TgtPrompt$ Select target permanent
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 8b239262-c392-4ec6-9ae1-8b4a076e4bf0
+      card_name: Dream's Grip
+      type_line: Instant
+      layout: normal
+      oracle_text: 'Choose one —
+
+        • Tap target permanent.
+
+        • Untap target permanent.
+
+        Entwine {1} (Choose both if you pay the entwine cost.)'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00013472
+      external_construct: Untap
+      requirement_id: untap
+      evidence_path_id: forge:Untap->untap
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:58a1b5c2c5edc9a90668a0f714ee89d443e1fde12cd0a275202dccf5e02be4f3
+        components:
+          oracle_id: 8b239262-c392-4ec6-9ae1-8b4a076e4bf0
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00013472
+          external_construct: Untap
+          requirement_id: untap
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - Untap
+        ValidTgts:
+        - Permanent
+        TgtPrompt:
+        - Select target permanent to untap
+        SpellDescription:
+        - Untap target permanent.
+      java_usage_classification: null
+      evidence_excerpt: :DB$ Untap | ValidTgts$ Permanent | TgtPrompt$ Select target permanent to untap | SpellDescription$
+        Untap target permanent.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: bb27bfdf-fe8d-45bd-ad62-8118dce06eda
+      card_name: Rewind
+      type_line: Instant
+      layout: normal
+      oracle_text: Counter target spell. Untap up to four lands.
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00014627
+      external_construct: UntapLandsEffect
+      requirement_id: untap
+      evidence_path_id: xmage:UntapLandsEffect->untap
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:2f3fee0e95bdd2e02bbe5a64587b4c5b57ff7a3b18e2169063145d34de7eca23
+        components:
+          oracle_id: bb27bfdf-fe8d-45bd-ad62-8118dce06eda
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00014627
+          external_construct: UntapLandsEffect
+          requirement_id: untap
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "import java.util.UUID;\nimport mage.abilities.effects.common.CounterTargetEffect;\nimport\
+        \ mage.abilities.effects.common.UntapLandsEffect;\nimport mage.cards.CardImpl;\nimport mage.cards.CardSetInfo;\n\
+        \        this.getSpellAbility().addTarget(new TargetSpell());\n        this.getSpellAbility().addEffect(new\
+        \ CounterTargetEffect());\n        this.getSpellAbility().addEffect(new UntapLandsEffect(4));\n    }\n \
+        \   private Rewind(final Rewind card) {"
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: f2f165b6-ef0a-42ad-9352-ba68be8248b0
+      card_name: Teferi, Hero of Dominaria
+      type_line: Legendary Planeswalker — Teferi
+      layout: normal
+      oracle_text: '+1: Draw a card. At the beginning of the next end step, untap up to two lands.
+
+        −3: Put target nonland permanent into its owner''s library third from the top.
+
+        −8: You get an emblem with "Whenever you draw a card, exile target permanent an opponent controls."'
+      faces: []
+      source: xmage
+      source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00015940
+      external_construct: UntapLandsEffect
+      requirement_id: untap
+      evidence_path_id: xmage:UntapLandsEffect->untap
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:1f557f983f82b30d1154ff5a140f7ae8e3da52ea0908e4adce9a8bfe8a811eb0
+        components:
+          oracle_id: f2f165b6-ef0a-42ad-9352-ba68be8248b0
+          source: xmage
+          source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00015940
+          external_construct: UntapLandsEffect
+          requirement_id: untap
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+      source_match_method: normalized_name
+      historical_validation_pattern_ids: []
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters: null
+      java_usage_classification: INSTANTIATED
+      evidence_excerpt: "        LoyaltyAbility ability = new LoyaltyAbility(new DrawCardSourceControllerEffect(1),\
+        \ 1);\n        DelayedTriggeredAbility delayedAbility = new AtTheBeginOfNextEndStepDelayedTriggeredAbility(\n\
+        \                new UntapLandsEffect(2)\n        );\n        ability.addEffect(new CreateDelayedTriggeredAbilityEffect(delayedAbility));"
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+  zone_transition:
+    positive_examples:
+    - oracle_id: 020c26ba-ed46-47c3-925c-b9f32500f503
+      card_name: Vraska's Scorn
+      type_line: Sorcery
+      layout: normal
+      oracle_text: Target opponent loses 4 life. You may search your library and/or graveyard for a card named Vraska,
+        Scheming Gorgon, reveal it, and put it into your hand. If you search your library this way, shuffle.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00023712
+      external_construct: ChangeZone
+      requirement_id: zone_transition
+      evidence_path_id: forge:ChangeZone->zone_transition
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:69b4df40c85128bf845dbf88595f86b5a49ffb92ab5f1278f8038074a3775ef4
+        components:
+          oracle_id: 020c26ba-ed46-47c3-925c-b9f32500f503
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00023712
+          external_construct: ChangeZone
+          requirement_id: zone_transition
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.change_zone.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - ChangeZone
+        Origin:
+        - Library
+        OriginAlternative:
+        - Graveyard
+        Destination:
+        - Hand
+        ChangeType:
+        - Card.YouOwn+namedVraska; Scheming Gorgon
+        Optional:
+        - 'True'
+        SpellDescription:
+        - You may search your library and/or graveyard for a card named Vraska, Scheming Gorgon, reveal it, and
+          put it into your hand. If you search your library this way, shuffle.
+      java_usage_classification: null
+      evidence_excerpt: :DB$ ChangeZone | Origin$ Library | OriginAlternative$ Graveyard | Destination$ Hand | ChangeType$
+        Card.YouOwn+namedVraska; Scheming Gorgon | Optional$ True | SpellDescription$ You may search your library
+        and/or graveyard for a card named Vraska, Scheming Gorgon, reveal it, and put it into your hand. If you
+        search your library this way, shuffle.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 3c692dd9-3986-46de-ac10-cc917b7c41b7
+      card_name: Leonin of the Lost Pride
+      type_line: Creature — Cat Warrior
+      layout: normal
+      oracle_text: When this creature dies, exile target card from an opponent's graveyard.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002451
+      external_construct: ChangeZone
+      requirement_id: zone_transition
+      evidence_path_id: forge:ChangeZone->zone_transition
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:a96425b45bb4ab87389b0d53ee7b7fe488706801a3f46cb4f1c2cf79c8145bff
+        components:
+          oracle_id: 3c692dd9-3986-46de-ac10-cc917b7c41b7
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002451
+          external_construct: ChangeZone
+          requirement_id: zone_transition
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.change_zone.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - ChangeZone
+        Origin:
+        - Graveyard
+        Destination:
+        - Exile
+        TgtPrompt:
+        - Choose target card in an opponent's graveyard
+        ValidTgts:
+        - Card.OppOwn
+      java_usage_classification: null
+      evidence_excerpt: :DB$ ChangeZone | Origin$ Graveyard | Destination$ Exile | TgtPrompt$ Choose target card
+        in an opponent's graveyard | ValidTgts$ Card.OppOwn
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: 13fe5e46-77a6-45d8-ac0b-c3d740eccf86
+      card_name: Splendid Reclamation
+      type_line: Sorcery
+      layout: normal
+      oracle_text: Return all land cards from your graveyard to the battlefield tapped.
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025086
+      external_construct: ChangeZoneAll
+      requirement_id: zone_transition
+      evidence_path_id: forge:ChangeZoneAll->zone_transition
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:8c6869ef9a9db6d776ac15df912f7b026cac065907428e1667eb191397d6e79a
+        components:
+          oracle_id: 13fe5e46-77a6-45d8-ac0b-c3d740eccf86
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025086
+          external_construct: ChangeZoneAll
+          requirement_id: zone_transition
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name_and_oracle_text
+      historical_validation_pattern_ids:
+      - forge.change_zone_all.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        SP:
+        - ChangeZoneAll
+        Cost:
+        - 3 G
+        ChangeType:
+        - Land.YouCtrl
+        Origin:
+        - Graveyard
+        Destination:
+        - Battlefield
+        Tapped:
+        - 'True'
+        SpellDescription:
+        - Return all land cards from your graveyard to the battlefield tapped.
+      java_usage_classification: null
+      evidence_excerpt: A:SP$ ChangeZoneAll | Cost$ 3 G | ChangeType$ Land.YouCtrl | Origin$ Graveyard | Destination$
+        Battlefield | Tapped$ True | SpellDescription$ Return all land cards from your graveyard to the battlefield
+        tapped.
+      join_warning: null
+      card_source_warnings: []
+    - oracle_id: ea904852-6322-4a24-9145-190acfce54ec
+      card_name: Arjun, the Shifting Flame
+      type_line: Legendary Creature — Sphinx Wizard
+      layout: normal
+      oracle_text: 'Flying
+
+        Whenever you cast a spell, put the cards in your hand on the bottom of your library in any order, then draw
+        that many cards.'
+      faces: []
+      source: forge
+      source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022168
+      external_construct: ChangeZoneAll
+      requirement_id: zone_transition
+      evidence_path_id: forge:ChangeZoneAll->zone_transition
+      occurrence_identity:
+        version: 1
+        id: evidence-occurrence:8b3a6e934da7bdf555d839f8a9b9bab29c8fbbc68cc1fd48f20faf661633506c
+        components:
+          oracle_id: ea904852-6322-4a24-9145-190acfce54ec
+          source: forge
+          source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022168
+          external_construct: ChangeZoneAll
+          requirement_id: zone_transition
+          occurrence_index: 0
+      extractor_version: 0.2.1
+      source_revision: cef86f363d7f7d5b3293248a75f550a7c3404066
+      source_match_method: normalized_name
+      historical_validation_pattern_ids:
+      - forge.change_zone_all.v1
+      occurrence_transfer:
+        status: TRANSFERRED_UNCHANGED
+        identity_proof_digest: 07335ad502e4512712de0af6e4d8cd7fb0322d0a49952fc9826c8cc66b20c36f
+        parent_extractor_version: 0.2.0
+      action_local_parameters:
+        DB:
+        - ChangeZoneAll
+        Origin:
+        - Hand
+        Destination:
+        - Library
+        ChangeType:
+        - Card.YouOwn
+        RememberChanged:
+        - 'True'
+        LibraryPosition:
+        - '-1'
+        SubAbility:
+        - DBDraw
+      java_usage_classification: null
+      evidence_excerpt: :DB$ ChangeZoneAll | Origin$ Hand | Destination$ Library | ChangeType$ Card.YouOwn | RememberChanged$
+        True | LibraryPosition$ -1 | SubAbility$ DBDraw
+      join_warning: null
+      card_source_warnings: []
+    excluded_or_boundary_examples: []
+    unresolved_questions:
+    - Normative rules interpretation is outside this phase.
+    observed_zone_pairs:
+    - origin: Battlefield
+      destination: Exile
+      occurrences: 669
+      examples:
+      - oracle_id: 0012bc78-e69d-4a67-a302-e5fe0dfd4407
+        card_name: Ravnica at War
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00011464
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:c963db4f93773031d8ce5a7a7e305d6b7adba8c6829bcb6b31990c3c1975ae94
+          components:
+            oracle_id: 0012bc78-e69d-4a67-a302-e5fe0dfd4407
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00011464
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          SP:
+          - ChangeZoneAll
+          Cost:
+          - 3 W
+          ChangeType:
+          - Permanent.MultiColor
+          Origin:
+          - Battlefield
+          Destination:
+          - Exile
+          SpellDescription:
+          - Exile all multicolored permanents.
+      - oracle_id: 00605b83-faf6-4779-be9d-6a2c8f0ea722
+        card_name: Trapjaw Tyrant
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018075
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:8f0b5bc549441a96a1db3ced241c188a5f5f6cb3f1d697d0c81b908a25a6effd
+          components:
+            oracle_id: 00605b83-faf6-4779-be9d-6a2c8f0ea722
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018075
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Battlefield
+          Destination:
+          - Exile
+          ValidTgts:
+          - Creature.OppCtrl
+          TgtPrompt:
+          - Select target creature an opponent controls
+          Duration:
+          - UntilHostLeavesPlay
+    - origin: Graveyard
+      destination: Hand
+      occurrences: 638
+      examples:
+      - oracle_id: 0007c283-5b7a-4c00-9ca1-b455c8dff8c3
+        card_name: Road of Return
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021612
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:e0152991fdfb792e39bbcc3cf767518f41f0cb487c2148e55dd542008a9ad6a8
+          components:
+            oracle_id: 0007c283-5b7a-4c00-9ca1-b455c8dff8c3
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021612
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Graveyard
+          Destination:
+          - Hand
+          ValidTgts:
+          - Permanent.YouCtrl
+          SpellDescription:
+          - Return target permanent card from your graveyard to your hand.
+      - oracle_id: 00771a33-7443-43f9-a61e-1737b62b1f81
+        card_name: Pharika's Mender
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009542
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:0452c77d2e4695399ec9211a17870a8cf73e6d9880615c580bdc73fc6c850dca
+          components:
+            oracle_id: 00771a33-7443-43f9-a61e-1737b62b1f81
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009542
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Graveyard
+          Destination:
+          - Hand
+          ValidTgts:
+          - Creature.YouCtrl,Enchantment.YouCtrl
+          TgtPrompt:
+          - Select target creature or enchantment card in your graveyard
+    - origin: Battlefield
+      destination: Hand
+      occurrences: 635
+      examples:
+      - oracle_id: 0023888e-7bec-43e0-8dee-d1a4eb94b372
+        card_name: Palinchron
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002849
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:adf1e4f2b74d4a1ce232f76bfdfb35b24b480dffa380a8942b2709a78a94eb48
+          components:
+            oracle_id: 0023888e-7bec-43e0-8dee-d1a4eb94b372
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002849
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          AB:
+          - ChangeZone
+          Cost:
+          - 2 U U
+          Origin:
+          - Battlefield
+          Destination:
+          - Hand
+          SpellDescription:
+          - Return CARDNAME to its owner's hand.
+      - oracle_id: 007c110d-4364-41e5-a8bc-6ac05ecbbd00
+        card_name: Thopter Assembly
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002028
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:d7a53eee0bc1a3342dee5c0f4934a153aed60a872cfb8cbe606ab4e8d09df9e9
+          components:
+            oracle_id: 007c110d-4364-41e5-a8bc-6ac05ecbbd00
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002028
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Battlefield
+          Destination:
+          - Hand
+          Defined:
+          - Self
+          SubAbility:
+          - DBToken
+    - origin: Graveyard
+      destination: Battlefield
+      occurrences: 615
+      examples:
+      - oracle_id: 00e0b103-892c-49b3-836d-867fff197bbd
+        card_name: Puppeteer Clique
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018431
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:46fea41799adf17b52f8c77dd7f806c2c6fa4d75d423dee869a8df56e82d9e04
+          components:
+            oracle_id: 00e0b103-892c-49b3-836d-867fff197bbd
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018431
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          ValidTgts:
+          - Creature.OppOwn
+          TgtPrompt:
+          - Select target creature from an opponent's graveyard
+          RememberChanged:
+          - 'True'
+          Origin:
+          - Graveyard
+          Destination:
+          - Battlefield
+          GainControl:
+          - 'True'
+          SubAbility:
+          - DBPump
+      - oracle_id: 0129ffe2-389f-4e05-8a04-96461bac39a5
+        card_name: Greasefang, Okiba Boss
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016521
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:db2db3a6ef4cac01abaec6de8bf80c38c1bedc49790c43e56b10705b14a885a1
+          components:
+            oracle_id: 0129ffe2-389f-4e05-8a04-96461bac39a5
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016521
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Graveyard
+          Destination:
+          - Battlefield
+          TgtPrompt:
+          - Select target Vehicle card in your graveyard
+          ValidTgts:
+          - Vehicle.YouOwn
+          SubAbility:
+          - Animate
+          RememberChanged:
+          - 'True'
+          AtEOT:
+          - Hand
+    - origin: Library
+      destination: Battlefield
+      occurrences: 395
+      examples:
+      - oracle_id: 0056fc91-4398-471c-b561-7ff99750ac8a
+        card_name: Escape Tunnel
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001742
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:c6946e11d510866553800626a3a0f8b9b87316b25601601a3dcb532fae2e8e5a
+          components:
+            oracle_id: 0056fc91-4398-471c-b561-7ff99750ac8a
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001742
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          AB:
+          - ChangeZone
+          Cost:
+          - T Sac<1/CARDNAME>
+          Origin:
+          - Library
+          Destination:
+          - Battlefield
+          Tapped:
+          - 'True'
+          ChangeType:
+          - Land.Basic
+          ChangeNum:
+          - '1'
+          SpellDescription:
+          - Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
+      - oracle_id: 006bbd8b-2007-419d-8b84-9ff73f2f95b7
+        card_name: Thunderherd Migration
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016465
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:ec4eff57249553b9f6750114ee2d2d51848541676d3c880ca20147f98113ab6b
+          components:
+            oracle_id: 006bbd8b-2007-419d-8b84-9ff73f2f95b7
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016465
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          SP:
+          - ChangeZone
+          Cost:
+          - 1 G
+          Origin:
+          - Library
+          Destination:
+          - Battlefield
+          ChangeType:
+          - Land.Basic
+          Tapped:
+          - 'True'
+          ChangeNum:
+          - '1'
+          StackDescription:
+          - Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
+          SpellDescription:
+          - Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.
+    - origin: Graveyard
+      destination: Exile
+      occurrences: 394
+      examples:
+      - oracle_id: 002a9cea-8cf7-48ba-83eb-e1c87a7024e5
+        card_name: Disposal Mummy
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000748
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:eebb7f6213aa763b7f652302bf4ab9ff352793e01a3e811fe1e2f0888ec59e5f
+          components:
+            oracle_id: 002a9cea-8cf7-48ba-83eb-e1c87a7024e5
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000748
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Graveyard
+          Destination:
+          - Exile
+          TgtPrompt:
+          - Choose target card in an opponent's graveyard
+          ValidTgts:
+          - Card.OppOwn
+      - oracle_id: 005c181a-05db-4c15-9893-65103cca338e
+        card_name: Toluz, Clever Conductor
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018804
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:823813594d6e1cf729bafc1518d458919b4c35c7060cfef2e64db34899b295f2
+          components:
+            oracle_id: 005c181a-05db-4c15-9893-65103cca338e
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018804
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZoneAll
+          Origin:
+          - Graveyard
+          Destination:
+          - Exile
+          ChangeType:
+          - Card.TriggeredCards
+    - origin: Library
+      destination: Hand
+      occurrences: 370
+      examples:
+      - oracle_id: 003c48d4-0303-4970-8637-47ae060385aa
+        card_name: Safewright Quest
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004887
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:f5286e4b109b69469737e21ad3611232632f7969ec7c23b46f924fd35a4fd4cd
+          components:
+            oracle_id: 003c48d4-0303-4970-8637-47ae060385aa
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004887
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          SP:
+          - ChangeZone
+          Cost:
+          - GW
+          Origin:
+          - Library
+          Destination:
+          - Hand
+          ChangeType:
+          - Forest,Plains
+          ChangeNum:
+          - '1'
+          SpellDescription:
+          - Search your library for a Forest or Plains card, reveal it, put it into your hand, then shuffle.
+      - oracle_id: 00ab9841-934f-4a66-a98d-68d01661b1c9
+        card_name: Squadron Hawk
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001815
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:6ef3c947f84f6f9767dca826902e074ec81a46f2159437d577a15fcdafa833fd
+          components:
+            oracle_id: 00ab9841-934f-4a66-a98d-68d01661b1c9
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001815
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Library
+          Destination:
+          - Hand
+          ChangeType:
+          - Card.namedSquadron Hawk
+          ChangeNum:
+          - '3'
+          ShuffleNonMandatory:
+          - 'True'
+    - origin: Exile
+      destination: Battlefield
+      occurrences: 203
+      examples:
+      - oracle_id: 008d5896-6fc9-4aaa-8c6f-a44c2feb98bb
+        card_name: Vizier of Deferment
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00020374
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:862f7d9ff73502f0a7277e7f62bf54e54b5c3aa349da2fe1a84f5a47640b3899
+          components:
+            oracle_id: 008d5896-6fc9-4aaa-8c6f-a44c2feb98bb
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00020374
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Exile
+          Destination:
+          - Battlefield
+          Defined:
+          - DelayTriggerRememberedLKI
+      - oracle_id: 02c60b8b-f665-4279-a00f-ae03991df4a6
+        card_name: Azusa's Many Journeys // Likeness of the Seeker
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009908
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:2fb3d4853e4610042012a9bbf6d76d572fa5ae5188a3ecacee03309cb03f245c
+          components:
+            oracle_id: 02c60b8b-f665-4279-a00f-ae03991df4a6
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009908
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - Remembered
+          Origin:
+          - Exile
+          Destination:
+          - Battlefield
+          Transformed:
+          - 'True'
+          GainControl:
+          - 'True'
+          SubAbility:
+          - DBCleanup
+    - origin: Command
+      destination: Exile
+      occurrences: 181
+      examples:
+      - oracle_id: 01c729d7-9b80-479d-8d30-ae47c76c2c50
+        card_name: Rhonas's Last Stand
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006537
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:2a6eb4bbb7d7b312063aa6fbb5a6af2aa02c0cecebab77a707d9ad32237518df
+          components:
+            oracle_id: 01c729d7-9b80-479d-8d30-ae47c76c2c50
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00006537
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - Self
+          Origin:
+          - Command
+          Destination:
+          - Exile
+      - oracle_id: 022dae2e-7fc3-486e-9168-59652d9ab21c
+        card_name: Prismatic Circle
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00012324
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:bf1bc0d89ea1826cbc29af72bb8aa192a3dfc4556c0b7941a8a459c25bf47d50
+          components:
+            oracle_id: 022dae2e-7fc3-486e-9168-59652d9ab21c
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00012324
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - Self
+          Origin:
+          - Command
+          Destination:
+          - Exile
+    - origin: Hand
+      destination: Battlefield
+      occurrences: 170
+      examples:
+      - oracle_id: 01076e04-3106-4968-8ef4-b26fc3786699
+        card_name: Planebound Accomplice
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00007817
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:e8fec85789a36b9cbf528da0d45ddfd95071a1866b2dfa4e93998eb7cf66c06e
+          components:
+            oracle_id: 01076e04-3106-4968-8ef4-b26fc3786699
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00007817
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          AB:
+          - ChangeZone
+          Cost:
+          - R
+          Origin:
+          - Hand
+          Destination:
+          - Battlefield
+          ChangeType:
+          - Planeswalker.YouOwn
+          Optional:
+          - 'True'
+          AtEOT:
+          - Sacrifice
+          AILogic:
+          - BeforeCombat
+          SpellDescription:
+          - You may put a planeswalker card from your hand onto the battlefield. Sacrifice it at the beginning of
+            the next end step.
+      - oracle_id: 04ea8ccf-e565-4f4e-b842-56e7fac5679f
+        card_name: Gitrog, Horror of Zhava
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00020847
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:45822a34ad7e90d2fafe8dc185c9e7f2f44c18fb8e322b963fa9c6151fd12743
+          components:
+            oracle_id: 04ea8ccf-e565-4f4e-b842-56e7fac5679f
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00020847
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Hand
+          Destination:
+          - Battlefield
+          Defined:
+          - Imprinted
+          Tapped:
+          - 'True'
+          SubAbility:
+          - DBCleanup
+    - origin: Graveyard
+      destination: Library
+      occurrences: 151
+      examples:
+      - oracle_id: 00284955-0a1b-4939-9567-a7d34cbcee51
+        card_name: Hua Tuo, Honored Physician
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024476
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:e0ec44ad37a6fe990e785c362ff3adb6b3c77755af33dd853479a6fbd253534d
+          components:
+            oracle_id: 00284955-0a1b-4939-9567-a7d34cbcee51
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00024476
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          AB:
+          - ChangeZone
+          Cost:
+          - T
+          TgtPrompt:
+          - Choose target creature card in your graveyard
+          ValidTgts:
+          - Creature.YouCtrl
+          Origin:
+          - Graveyard
+          Destination:
+          - Library
+          PlayerTurn:
+          - 'True'
+          ActivationPhases:
+          - Upkeep->BeginCombat
+          ActivationFirstCombat:
+          - 'True'
+          SpellDescription:
+          - Put target creature card from your graveyard on top of your library. Activate only during your turn,
+            before attackers are declared.
+      - oracle_id: 011ff7a5-6bce-4784-a19b-e74f7b49b8f1
+        card_name: Campfire
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017917
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:cbaa91289cdd03ebfa0ac6ed1f471f21d40bec3386d4df32212621af3ad183d1
+          components:
+            oracle_id: 011ff7a5-6bce-4784-a19b-e74f7b49b8f1
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017917
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZoneAll
+          ChangeType:
+          - Card.YouOwn
+          Origin:
+          - Graveyard
+          Destination:
+          - Library
+          Shuffle:
+          - 'True'
+    - origin: Battlefield
+      destination: Library
+      occurrences: 141
+      examples:
+      - oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+        card_name: Nature Demands an Offering
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+        external_construct: ChangeZone
+        occurrence_identity: &id007
+          version: 1
+          id: evidence-occurrence:0c8bc32485883c06df7701e06df05ec2c46f1cde339f6d02ed46dbb8c65a4e9d
+          components:
+            oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - ChosenCard
+          Origin:
+          - Battlefield
+          Destination:
+          - Library
+          Imprint:
+          - 'True'
+          Unimprint:
+          - 'True'
+          LibraryPosition:
+          - '0'
+          SubAbility:
+          - DBRemember1
+      - oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+        card_name: Nature Demands an Offering
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+        external_construct: ChangeZone
+        occurrence_identity: &id008
+          version: 1
+          id: evidence-occurrence:44da967a87a01d35d0ed8d209f22ce9aaa46c9bc1de1d14a3a28704987138427
+          components:
+            oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - ChosenCard
+          Origin:
+          - Battlefield
+          Destination:
+          - Library
+          Imprint:
+          - 'True'
+          Unimprint:
+          - 'True'
+          LibraryPosition:
+          - '0'
+          SubAbility:
+          - DBRemember2
+    - origin: Hand
+      destination: Exile
+      occurrences: 130
+      examples:
+      - oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+        card_name: Duplicity
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+        external_construct: ChangeZoneAll
+        occurrence_identity: &id005
+          version: 1
+          id: evidence-occurrence:78311d58787841ad4cae199dc1b48dcecdf98ba8a0920c32fec058238212b80b
+          components:
+            oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZoneAll
+          Origin:
+          - Hand
+          Destination:
+          - Exile
+          ExileFaceDown:
+          - 'True'
+          ChangeType:
+          - Card.YouCtrl
+          RememberChanged:
+          - 'True'
+          Imprint:
+          - 'True'
+          SubAbility:
+          - ChangeBack
+      - oracle_id: 037c49e4-39ca-4d72-8f5c-9adc5687601b
+        card_name: Moonring Mirror
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000625
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:a4a913e9773256595f7b6fd65793b66f981b778f80ca735b2ea32213da1168db
+          components:
+            oracle_id: 037c49e4-39ca-4d72-8f5c-9adc5687601b
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000625
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZoneAll
+          Origin:
+          - Hand
+          Destination:
+          - Exile
+          ExileFaceDown:
+          - 'True'
+          ChangeType:
+          - Card.YouCtrl
+          Imprint:
+          - 'True'
+          SubAbility:
+          - ChangeBack
+    - origin: Stack
+      destination: Exile
+      occurrences: 118
+      examples:
+      - oracle_id: 01f8db27-1191-488e-b0d5-172821613c15
+        card_name: Eye of the Storm
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001328
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:5dda574a468d91472ceca08ac31b98260ecb8c3cec0479914181ce1fcbbd5d03
+          components:
+            oracle_id: 01f8db27-1191-488e-b0d5-172821613c15
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001328
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - TriggeredCardLKICopy
+          Origin:
+          - Stack
+          Destination:
+          - Exile
+          Fizzle:
+          - 'True'
+          RememberChanged:
+          - 'True'
+          SubAbility:
+          - DBPlaySpell
+      - oracle_id: 02393093-e970-40a0-848b-9cd758450cbb
+        card_name: Flood of Recollection
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025954
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:69f317d4ffba000800121b95b6aca026c17e4dadb6198cedc0cf6bcf5d625e5d
+          components:
+            oracle_id: 02393093-e970-40a0-848b-9cd758450cbb
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025954
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Stack
+          Destination:
+          - Exile
+    - origin: Library
+      destination: Exile
+      occurrences: 91
+      examples:
+      - oracle_id: 071fc287-c492-469c-8146-0570565231f2
+        card_name: Unexpected Conversion
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015295
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:1cfcb56fcf0c4c59d7217c01a240a547e14ef501f3874919b8a60dfa58d54ecc
+          components:
+            oracle_id: 071fc287-c492-469c-8146-0570565231f2
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015295
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 2
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Library
+          Destination:
+          - Exile
+          DefinedPlayer:
+          - You
+          ChangeType:
+          - Remembered.sameName
+          ChangeNum:
+          - NumInLib
+          Chooser:
+          - You
+          Shuffle:
+          - 'True'
+          StackDescription:
+          - SpellDescription
+          SubAbility:
+          - DBSeek
+          SpellDescription:
+          - and library for any number of cards with the same name, exile them, then shuffle.
+      - oracle_id: 0eecdfb3-3b05-4051-a660-060ff6df80ef
+        card_name: Emergent Ultimatum
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021760
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:5362cd675de3bf9ace7995b63b477e17eece536f5b120e66533924ed2c1dbed6
+          components:
+            oracle_id: 0eecdfb3-3b05-4051-a660-060ff6df80ef
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00021760
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          SP:
+          - ChangeZone
+          Cost:
+          - B B G G G U U
+          Origin:
+          - Library
+          Hidden:
+          - 'True'
+          ChangeNum:
+          - '3'
+          ChangeType:
+          - Card.MonoColor
+          DifferentNames:
+          - 'True'
+          Destination:
+          - Exile
+          RememberChanged:
+          - 'True'
+          SubAbility:
+          - DBShuffle
+          Shuffle:
+          - 'False'
+          StackDescription:
+          - SpellDescription
+          SpellDescription:
+          - Search your library for up to three monocolored cards with different names and exile them. An opponent
+            chooses one of those cards. Shuffle that card into your library. You may cast the other cards without
+            paying their mana costs. Exile CARDNAME.
+    - origin: All
+      destination: Exile
+      occurrences: 60
+      examples:
+      - oracle_id: 0761a0e7-d443-4bab-bb15-307c83d4a6a1
+        card_name: Lunarch Veteran // Luminous Phantom
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000619
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:6ee74df73f8816abfbe0a0c6ba6366d45b8f87af68748debf9c1875626ad38d2
+          components:
+            oracle_id: 0761a0e7-d443-4bab-bb15-307c83d4a6a1
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000619
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Hidden:
+          - 'True'
+          Origin:
+          - All
+          Destination:
+          - Exile
+          Defined:
+          - ReplacedCard
+      - oracle_id: 087f9ad7-e74f-40e2-8102-1ed2925d0418
+        card_name: Rest in Peace
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00023670
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:26af019c33e4f4382c3c5d1f6a166a06480c30696bb38f64f962c98500e60baf
+          components:
+            oracle_id: 087f9ad7-e74f-40e2-8102-1ed2925d0418
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00023670
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Hidden:
+          - 'True'
+          Origin:
+          - All
+          Destination:
+          - Exile
+          Defined:
+          - ReplacedCard
+    - origin: Hand
+      destination: Library
+      occurrences: 60
+      examples:
+      - oracle_id: 00749bad-dded-4fec-bf34-ff14cf561c26
+        card_name: Errand-Rider of Gondor
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022326
+        external_construct: ChangeZone
+        occurrence_identity: &id003
+          version: 1
+          id: evidence-occurrence:66cd209f2e150b15569ed7fbf7bd4cfb00f6f8ed0777789873614c73411b8665
+          components:
+            oracle_id: 00749bad-dded-4fec-bf34-ff14cf561c26
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022326
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Hand
+          Destination:
+          - Library
+          ChangeNum:
+          - '1'
+          Mandatory:
+          - 'True'
+          LibraryPosition:
+          - '-1'
+          ConditionPresent:
+          - Creature.Legendary+YouCtrl
+          ConditionCompare:
+          - EQ0
+      - oracle_id: 0432a120-be1b-496b-b8cd-36f757e09425
+        card_name: Klement, Novice Acolyte
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008297
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:f26f83eb794df48c43de88339faaddc64f09c3b7219f5f21fc80947b88f25059
+          components:
+            oracle_id: 0432a120-be1b-496b-b8cd-36f757e09425
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008297
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - Hand
+          Destination:
+          - Library
+          Defined:
+          - Remembered
+          Shuffle:
+          - 'True'
+          SubAbility:
+          - DBCleanup
+    - origin: Exile
+      destination: Hand
+      occurrences: 57
+      examples:
+      - oracle_id: 005c181a-05db-4c15-9893-65103cca338e
+        card_name: Toluz, Clever Conductor
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018804
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:adf87cd5ae71504c51c34eedddecd527f2351d0b41a880964b32b12c3bfd63c8
+          components:
+            oracle_id: 005c181a-05db-4c15-9893-65103cca338e
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018804
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZoneAll
+          ChangeType:
+          - Card.ExiledWithSource
+          Origin:
+          - Exile
+          Destination:
+          - Hand
+      - oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+        card_name: Duplicity
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+        external_construct: ChangeZoneAll
+        occurrence_identity: &id006
+          version: 1
+          id: evidence-occurrence:00153f9b5da913f0579b7194c785cf15f6c5ef12b66b0aa38a8126369666a306
+          components:
+            oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZoneAll
+          ChangeType:
+          - Card.IsRemembered+IsNotImprinted
+          Origin:
+          - Exile
+          Destination:
+          - Hand
+          ForgetChanged:
+          - 'True'
+          SubAbility:
+          - DBCleanup
+    - origin: Library
+      destination: Graveyard
+      occurrences: 50
+      examples:
+      - oracle_id: 06549c83-0777-44c7-baca-b167b650b714
+        card_name: Dance, Pathetic Marionette
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009815
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:0b4b41e35d1e1efc0b7dca3035dc644a9e334f553ce988ea433ec92ca2ce1d59
+          components:
+            oracle_id: 06549c83-0777-44c7-baca-b167b650b714
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009815
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 0
+        action_local_parameters:
+          DB:
+          - ChangeZoneAll
+          ChangeType:
+          - Card.IsRemembered
+          Origin:
+          - Library
+          Destination:
+          - Graveyard
+          SubAbility:
+          - DBCleanup
+      - oracle_id: 0aa556a6-66aa-42f1-ba41-0001e10c20a4
+        card_name: Steam Augury
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018643
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:c909b360a0f464dfc260248a1aeb833b0bb85482ff8b9ef90872e6b590410230
+          components:
+            oracle_id: 0aa556a6-66aa-42f1-ba41-0001e10c20a4
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018643
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - Remembered
+          Origin:
+          - Library
+          Destination:
+          - Graveyard
+    - origin: All
+      destination: Battlefield
+      occurrences: 48
+      examples:
+      - oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+        card_name: Blur
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000474
+        external_construct: ChangeZone
+        occurrence_identity: &id004
+          version: 1
+          id: evidence-occurrence:3c19734ad63328dbceee5bbe23c04ed7c12e59507f13901662cd5b0b8d7aed1b
+          components:
+            oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000474
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Defined:
+          - Remembered
+          Origin:
+          - All
+          Destination:
+          - Battlefield
+          SubAbility:
+          - DBCleanup
+      - oracle_id: 01fc5bb3-ebd7-4ab4-8aef-2ece1e1d9b7c
+        card_name: Lotus Vale
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005881
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:4516ee23ea2c5f1eae9a2d3dfc4787d5d914b55ab1d7d0f4300fd05352c28dd6
+          components:
+            oracle_id: 01fc5bb3-ebd7-4ab4-8aef-2ece1e1d9b7c
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005881
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+        action_local_parameters:
+          DB:
+          - ChangeZone
+          Origin:
+          - All
+          Destination:
+          - Battlefield
+          Defined:
+          - ReplacedCard
+          ConditionCheckSVar:
+          - X
+          ConditionSVarCompare:
+          - GE2
+          SubAbility:
+          - DBCleanup
+relationship_examples:
+  draw_vs_zone_transition: &id010
+  - oracle_id: 00749bad-dded-4fec-bf34-ff14cf561c26
+    card_name: Errand-Rider of Gondor
+    oracle_text: When this creature enters, draw a card. Then if you don't control a legendary creature, put a card
+      from your hand on the bottom of your library.
+    requirements:
+    - requirement_id: draw
+      evidence:
+      - oracle_id: 00749bad-dded-4fec-bf34-ff14cf561c26
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022326
+        external_construct: Draw
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:c2989c35f3943890ac0f928bb629e0ede1b1f6f623550a07eb34fc1906a08634
+          components:
+            oracle_id: 00749bad-dded-4fec-bf34-ff14cf561c26
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022326
+            external_construct: Draw
+            requirement_id: draw
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 00749bad-dded-4fec-bf34-ff14cf561c26
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022326
+        external_construct: ChangeZone
+        occurrence_identity: *id003
+  - oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+    card_name: Blur
+    oracle_text: 'Exile target creature you control, then return that card to the battlefield under its owner''s
+      control.
+
+      Draw a card.'
+    requirements:
+    - requirement_id: draw
+      evidence:
+      - oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000474
+        external_construct: Draw
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:f226a363f72a6517dd6b0fd217f49cbae511a119527c989bb14da96805f1c6dd
+          components:
+            oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000474
+            external_construct: Draw
+            requirement_id: draw
+            occurrence_index: 0
+      - oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+        source: xmage
+        source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00001929
+        external_construct: DrawCardSourceControllerEffect
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:cb9c1b16d6c7584afb3e85603b80a432deeafbeb79e23746af6069ea8059800c
+          components:
+            oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+            source: xmage
+            source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00001929
+            external_construct: DrawCardSourceControllerEffect
+            requirement_id: draw
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000474
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:f28e3be43038191a73ff95c212191cd1a8219dad0eed4e9c24c4500005ae7154
+          components:
+            oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000474
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+      - oracle_id: 00b36996-43c6-42a5-892c-c7c8864cf973
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000474
+        external_construct: ChangeZone
+        occurrence_identity: *id004
+  - oracle_id: 00c0543c-2a1f-4425-8283-4062d74a1637
+    card_name: Solemn Simulacrum
+    oracle_text: 'When this creature enters, you may search your library for a basic land card, put that card onto
+      the battlefield tapped, then shuffle.
+
+      When this creature dies, you may draw a card.'
+    requirements:
+    - requirement_id: draw
+      evidence:
+      - oracle_id: 00c0543c-2a1f-4425-8283-4062d74a1637
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015614
+        external_construct: Draw
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:4c634b1d709582737eb5811bf5f06d4c1f8e9001f71a37e3e719307f4b4066da
+          components:
+            oracle_id: 00c0543c-2a1f-4425-8283-4062d74a1637
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015614
+            external_construct: Draw
+            requirement_id: draw
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 00c0543c-2a1f-4425-8283-4062d74a1637
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015614
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:11b4bda6f176e46d56c034a6d38f6f76c835eb7a54663fdd3ad308e9a04b87a0
+          components:
+            oracle_id: 00c0543c-2a1f-4425-8283-4062d74a1637
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015614
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+  discard_vs_zone_transition: &id011
+  - oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+    card_name: Duplicity
+    oracle_text: 'When this enchantment enters, exile the top five cards of your library face down.
+
+      At the beginning of your upkeep, you may exile all cards from your hand face down. If you do, put all other
+      cards you own exiled with this enchantment into your hand.
+
+      At the beginning of your end step, discard a card.
+
+      When you lose control of this enchantment, put all cards exiled with this enchantment into their owner''s
+      graveyard.'
+    requirements:
+    - requirement_id: discard
+      evidence:
+      - oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+        external_construct: Discard
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:81d938b6c3b874dbd0064f9e3c9e107072281653a0b2f5f0fca2a6b07bd8d954
+          components:
+            oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+            external_construct: Discard
+            requirement_id: discard
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+        external_construct: ChangeZoneAll
+        occurrence_identity: *id005
+      - oracle_id: 01072a45-ab1c-4d19-b493-76cf4aae351e
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00027065
+        external_construct: ChangeZoneAll
+        occurrence_identity: *id006
+  - oracle_id: 030b5408-f216-43e4-8593-f78d22821876
+    card_name: Wail of the Forgotten
+    oracle_text: 'Descend 8 — Choose one. If there are eight or more permanent cards in your graveyard as you cast
+      this spell, choose one or more instead.
+
+      • Return target nonland permanent to its owner''s hand.
+
+      • Target opponent discards a card.
+
+      • Look at the top three cards of your library. Put one of them into your hand and the rest into your graveyard.'
+    requirements:
+    - requirement_id: discard
+      evidence:
+      - oracle_id: 030b5408-f216-43e4-8593-f78d22821876
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005150
+        external_construct: Discard
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:0fc93de8ce632d4600dfe47ba4b13087d577dbc847d8aef69141e42c9e01eb18
+          components:
+            oracle_id: 030b5408-f216-43e4-8593-f78d22821876
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005150
+            external_construct: Discard
+            requirement_id: discard
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 030b5408-f216-43e4-8593-f78d22821876
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005150
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:059b026c5e8d0baa1c27da8881ebde224cc834ddc10429220506a7a1b7ff30ed
+          components:
+            oracle_id: 030b5408-f216-43e4-8593-f78d22821876
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00005150
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+  - oracle_id: 10c2428f-6e4a-4b92-9087-720242a5c25c
+    card_name: Queen Kayla bin-Kroog
+    oracle_text: '{4}, {T}: Discard all the cards in your hand, then draw that many cards. You may choose an artifact
+      or creature card with mana value 1 you discarded this way, then do the same for artifact or creature cards
+      with mana values 2 and 3. Return those cards to the battlefield. Activate only as a sorcery.'
+    requirements:
+    - requirement_id: discard
+      evidence:
+      - oracle_id: 10c2428f-6e4a-4b92-9087-720242a5c25c
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003095
+        external_construct: Discard
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:c96a8cd34efa6e7634c4bbc8c0e637a28bcc378dca547d536cb27ef4d5cdf145
+          components:
+            oracle_id: 10c2428f-6e4a-4b92-9087-720242a5c25c
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003095
+            external_construct: Discard
+            requirement_id: discard
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 10c2428f-6e4a-4b92-9087-720242a5c25c
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003095
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:0cb214f21a99f521d9ba57749b0f8d374b23f67028c830c9cf89e0afd8981bc0
+          components:
+            oracle_id: 10c2428f-6e4a-4b92-9087-720242a5c25c
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003095
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+  tap_vs_untap: &id014
+  - oracle_id: 010b22f5-ea2f-4de2-b8b9-0439347a61d0
+    card_name: Ethereal Grasp
+    oracle_text: 'Tap target creature. That creature perpetually gains "This creature doesn''t untap during your
+      untap step" and "{8}: Untap this creature."'
+    requirements:
+    - requirement_id: tap
+      evidence:
+      - oracle_id: 010b22f5-ea2f-4de2-b8b9-0439347a61d0
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015389
+        external_construct: Tap
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:9d516b3e9924de027479c37f81b64b4ccd78f25223739d20379627e3a685649e
+          components:
+            oracle_id: 010b22f5-ea2f-4de2-b8b9-0439347a61d0
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015389
+            external_construct: Tap
+            requirement_id: tap
+            occurrence_index: 0
+    - requirement_id: untap
+      evidence:
+      - oracle_id: 010b22f5-ea2f-4de2-b8b9-0439347a61d0
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015389
+        external_construct: Untap
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:571ea68692c13e0228bfd5baa0259c11e0704d019536b289b631eefcfa58133b
+          components:
+            oracle_id: 010b22f5-ea2f-4de2-b8b9-0439347a61d0
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015389
+            external_construct: Untap
+            requirement_id: untap
+            occurrence_index: 0
+  - oracle_id: 03d32ace-dd99-48c6-bcae-9b915d041aef
+    card_name: Freed from the Real
+    oracle_text: 'Enchant creature
+
+      {U}: Tap enchanted creature.
+
+      {U}: Untap enchanted creature.'
+    requirements:
+    - requirement_id: tap
+      evidence:
+      - oracle_id: 03d32ace-dd99-48c6-bcae-9b915d041aef
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00014878
+        external_construct: Tap
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:11d798ec0b1d828c5597d18515f6df4f00ad0c8ae0d66d6832be94a79a16587d
+          components:
+            oracle_id: 03d32ace-dd99-48c6-bcae-9b915d041aef
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00014878
+            external_construct: Tap
+            requirement_id: tap
+            occurrence_index: 0
+    - requirement_id: untap
+      evidence:
+      - oracle_id: 03d32ace-dd99-48c6-bcae-9b915d041aef
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00014878
+        external_construct: Untap
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:b5dc28b0b415d2f9364bde926ee32479c93336a64558683a20c44978e61ac10f
+          components:
+            oracle_id: 03d32ace-dd99-48c6-bcae-9b915d041aef
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00014878
+            external_construct: Untap
+            requirement_id: untap
+            occurrence_index: 0
+  - oracle_id: 1d8569c1-0b10-40a7-9a87-38571a782dd9
+    card_name: Second Wind
+    oracle_text: 'Enchant creature
+
+      {T}: Tap enchanted creature.
+
+      {T}: Untap enchanted creature.'
+    requirements:
+    - requirement_id: tap
+      evidence:
+      - oracle_id: 1d8569c1-0b10-40a7-9a87-38571a782dd9
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017560
+        external_construct: Tap
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:8f4ebc4f74af7bbd517847f41706a3a5b0e4b8102b44a0bc3430df45db9960b6
+          components:
+            oracle_id: 1d8569c1-0b10-40a7-9a87-38571a782dd9
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017560
+            external_construct: Tap
+            requirement_id: tap
+            occurrence_index: 0
+    - requirement_id: untap
+      evidence:
+      - oracle_id: 1d8569c1-0b10-40a7-9a87-38571a782dd9
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017560
+        external_construct: Untap
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:b4a7d4b85874a94394f428f7cc532d2677243cf0f58a5318e62521843e75799e
+          components:
+            oracle_id: 1d8569c1-0b10-40a7-9a87-38571a782dd9
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00017560
+            external_construct: Untap
+            requirement_id: untap
+            occurrence_index: 0
+  gain_vs_lose_life: &id013
+  - oracle_id: 03048844-32bb-45a2-a754-73f75eaa4566
+    card_name: Astarion, the Decadent
+    oracle_text: 'Deathtouch, lifelink
+
+      At the beginning of your end step, choose one —
+
+      • Feed — Target opponent loses life equal to the amount of life they lost this turn.
+
+      • Friends — You gain life equal to the amount of life you gained this turn.'
+    requirements:
+    - requirement_id: gain_life
+      evidence:
+      - oracle_id: 03048844-32bb-45a2-a754-73f75eaa4566
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008306
+        external_construct: GainLife
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:86a71e2f2cf848365cf1a12831596a7abb133dc8fb4bcd03e7c9981880f130a2
+          components:
+            oracle_id: 03048844-32bb-45a2-a754-73f75eaa4566
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008306
+            external_construct: GainLife
+            requirement_id: gain_life
+            occurrence_index: 0
+    - requirement_id: lose_life
+      evidence:
+      - oracle_id: 03048844-32bb-45a2-a754-73f75eaa4566
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008306
+        external_construct: LoseLife
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:4a1649263d6be7dc71d1d1f184d6245e870b1b89513650c61957a854cf696fe8
+          components:
+            oracle_id: 03048844-32bb-45a2-a754-73f75eaa4566
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008306
+            external_construct: LoseLife
+            requirement_id: lose_life
+            occurrence_index: 0
+  - oracle_id: 048925e1-3bd6-4caa-90b9-e75e890032a5
+    card_name: Specter of the Fens
+    oracle_text: 'Flying
+
+      {5}{B}: Target opponent loses 2 life and you gain 2 life.'
+    requirements:
+    - requirement_id: gain_life
+      evidence:
+      - oracle_id: 048925e1-3bd6-4caa-90b9-e75e890032a5
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009960
+        external_construct: GainLife
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:ebe4e4bf8b79e4dc14c51a2c241f712606cd5945549dc22c2f02d6fb18c30e1c
+          components:
+            oracle_id: 048925e1-3bd6-4caa-90b9-e75e890032a5
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009960
+            external_construct: GainLife
+            requirement_id: gain_life
+            occurrence_index: 0
+    - requirement_id: lose_life
+      evidence:
+      - oracle_id: 048925e1-3bd6-4caa-90b9-e75e890032a5
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009960
+        external_construct: LoseLife
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:814c1ccd75ccd9f551813984dac2df70b963cc26dcb5e813d909befffb3f82aa
+          components:
+            oracle_id: 048925e1-3bd6-4caa-90b9-e75e890032a5
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009960
+            external_construct: LoseLife
+            requirement_id: lose_life
+            occurrence_index: 0
+  - oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+    card_name: Absorb Vis
+    oracle_text: 'Target player loses 4 life and you gain 4 life.
+
+      Basic landcycling {1}{B} ({1}{B}, Discard this card: Search your library for a basic land card, reveal it,
+      put it into your hand, then shuffle.)'
+    requirements:
+    - requirement_id: gain_life
+      evidence:
+      - oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018577
+        external_construct: GainLife
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:a31099a9f84fa961888e93ab313b6b77f43756f9b16400f2f3e3cffbf8f8b981
+          components:
+            oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018577
+            external_construct: GainLife
+            requirement_id: gain_life
+            occurrence_index: 0
+      - oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+        source: xmage
+        source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00000045
+        external_construct: GainLifeEffect
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:39151be8a6831d72d984c5aa1e479479d797b27d900b31614f52bc53724468a3
+          components:
+            oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+            source: xmage
+            source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00000045
+            external_construct: GainLifeEffect
+            requirement_id: gain_life
+            occurrence_index: 0
+    - requirement_id: lose_life
+      evidence:
+      - oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018577
+        external_construct: LoseLife
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:9008498f91880f06b00433af209fd2455ab00c3317db441167eeafd3c1e794d5
+          components:
+            oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00018577
+            external_construct: LoseLife
+            requirement_id: lose_life
+            occurrence_index: 0
+      - oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+        source: xmage
+        source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00000045
+        external_construct: LoseLifeTargetEffect
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:c3ae448aea4f585e123b933f833da3b9774a144a64024cfa3a4f6045694b636d
+          components:
+            oracle_id: 04ea7e88-7ea5-4b4c-9a7c-2a6ac0bc0682
+            source: xmage
+            source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00000045
+            external_construct: LoseLifeTargetEffect
+            requirement_id: lose_life
+            occurrence_index: 0
+  shuffle_vs_same_zone: &id012
+  - oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+    card_name: Nature Demands an Offering
+    oracle_text: When you set this scheme in motion, target opponent chooses a creature you don't control and puts
+      it on top of its owner's library, then repeats this process for an artifact, an enchantment, and a land. Then
+      the owner of each permanent chosen this way shuffles.
+    requirements:
+    - requirement_id: shuffle
+      evidence:
+      - oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+        external_construct: Shuffle
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:69126a4ee9063b838f2cbb5ba474b87ab33d576d07d152b13e01e6698c5c5255
+          components:
+            oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+            external_construct: Shuffle
+            requirement_id: shuffle
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+        external_construct: ChangeZone
+        occurrence_identity: *id007
+      - oracle_id: 041edb3a-e7f3-4118-9974-99b622d18b09
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00001291
+        external_construct: ChangeZone
+        occurrence_identity: *id008
+  - oracle_id: 048bdc4a-4d26-420c-88ed-23a073c30fff
+    card_name: Unexpected Results
+    oracle_text: Shuffle your library, then reveal the top card. If it's a nonland card, you may cast it without
+      paying its mana cost. If it's a land card, you may put it onto the battlefield and return Unexpected Results
+      to its owner's hand.
+    requirements:
+    - requirement_id: shuffle
+      evidence:
+      - oracle_id: 048bdc4a-4d26-420c-88ed-23a073c30fff
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008774
+        external_construct: Shuffle
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:104fbba04436b811732cc267d89dd956011e52b203f1e353bbb7e729c9ab39a5
+          components:
+            oracle_id: 048bdc4a-4d26-420c-88ed-23a073c30fff
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008774
+            external_construct: Shuffle
+            requirement_id: shuffle
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 048bdc4a-4d26-420c-88ed-23a073c30fff
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008774
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:b02852b4654495040dba3f07407c831a252796c890617e08b7bc62d3c8513a16
+          components:
+            oracle_id: 048bdc4a-4d26-420c-88ed-23a073c30fff
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008774
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 0
+      - oracle_id: 048bdc4a-4d26-420c-88ed-23a073c30fff
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008774
+        external_construct: ChangeZone
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:8b56d43cdf595dd85166aa35ba2f44a0508030ebd3e46d7100f14263f95ae751
+          components:
+            oracle_id: 048bdc4a-4d26-420c-88ed-23a073c30fff
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00008774
+            external_construct: ChangeZone
+            requirement_id: zone_transition
+            occurrence_index: 1
+  - oracle_id: 07995092-af6c-43b8-b30b-17e020ead37c
+    card_name: Thunderous Debut
+    oracle_text: 'Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+
+      Look at the top twenty cards of your library. You may reveal up to two creature cards from among them. If
+      this spell was bargained, put the revealed cards onto the battlefield. Otherwise, put the revealed cards into
+      your hand. Then shuffle.'
+    requirements:
+    - requirement_id: shuffle
+      evidence:
+      - oracle_id: 07995092-af6c-43b8-b30b-17e020ead37c
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015997
+        external_construct: Shuffle
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:fcaf00269d80c5c98ad4e59b99508a43eccaa5a7aee1d6c9862e7ef388876da4
+          components:
+            oracle_id: 07995092-af6c-43b8-b30b-17e020ead37c
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015997
+            external_construct: Shuffle
+            requirement_id: shuffle
+            occurrence_index: 0
+    - requirement_id: zone_transition
+      evidence:
+      - oracle_id: 07995092-af6c-43b8-b30b-17e020ead37c
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015997
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:4cdcb2a3a86f94b5b3874567e25d9365d672491edb22efa08a191ab0bb291487
+          components:
+            oracle_id: 07995092-af6c-43b8-b30b-17e020ead37c
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015997
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 0
+      - oracle_id: 07995092-af6c-43b8-b30b-17e020ead37c
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015997
+        external_construct: ChangeZoneAll
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:ec6972270475aa148c1df5210ebd5b177e04762b4e18c9b6191e41998d04f04c
+          components:
+            oracle_id: 07995092-af6c-43b8-b30b-17e020ead37c
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015997
+            external_construct: ChangeZoneAll
+            requirement_id: zone_transition
+            occurrence_index: 1
+  counter_vs_counter_change: &id009
+  - oracle_id: 0f730bd9-2060-46b1-9208-0ac6562e8b2a
+    card_name: Essence Capture
+    oracle_text: Counter target creature spell. Put a +1/+1 counter on up to one target creature you control.
+    requirements:
+    - requirement_id: counter
+      evidence:
+      - oracle_id: 0f730bd9-2060-46b1-9208-0ac6562e8b2a
+        source: xmage
+        source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00004599
+        external_construct: CounterTargetEffect
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:23e65185a78300a3c67c94990edc97da6c6f8431cdcd480ad9fabb3ac67f2d04
+          components:
+            oracle_id: 0f730bd9-2060-46b1-9208-0ac6562e8b2a
+            source: xmage
+            source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00004599
+            external_construct: CounterTargetEffect
+            requirement_id: counter
+            occurrence_index: 0
+    - requirement_id: counter_change
+      evidence:
+      - oracle_id: 0f730bd9-2060-46b1-9208-0ac6562e8b2a
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000083
+        external_construct: PutCounter
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:18f76598d4d250e26694ffb36a2f714bd5237513898145984f6d7d082259a841
+          components:
+            oracle_id: 0f730bd9-2060-46b1-9208-0ac6562e8b2a
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00000083
+            external_construct: PutCounter
+            requirement_id: counter_change
+            occurrence_index: 0
+  - oracle_id: 920684d0-aef3-4408-a66b-a0c9394c58f4
+    card_name: Decree of Silence
+    oracle_text: 'Whenever an opponent casts a spell, counter that spell and put a depletion counter on this enchantment.
+      If there are three or more depletion counters on this enchantment, sacrifice it.
+
+      Cycling {4}{U}{U} ({4}{U}{U}, Discard this card: Draw a card.)
+
+      When you cycle this card, you may counter target spell.'
+    requirements:
+    - requirement_id: counter
+      evidence:
+      - oracle_id: 920684d0-aef3-4408-a66b-a0c9394c58f4
+        source: xmage
+        source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00003357
+        external_construct: CounterTargetEffect
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:90ca2e84694c01348f0b55518154898baa4dcccfc3e95de0fb017d32920ecd94
+          components:
+            oracle_id: 920684d0-aef3-4408-a66b-a0c9394c58f4
+            source: xmage
+            source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00003357
+            external_construct: CounterTargetEffect
+            requirement_id: counter
+            occurrence_index: 0
+    - requirement_id: counter_change
+      evidence:
+      - oracle_id: 920684d0-aef3-4408-a66b-a0c9394c58f4
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015801
+        external_construct: PutCounter
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:d15f491cfa6585e628c721db056bbb3f639f2e1338366a474219d970c0e077f9
+          components:
+            oracle_id: 920684d0-aef3-4408-a66b-a0c9394c58f4
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00015801
+            external_construct: PutCounter
+            requirement_id: counter_change
+            occurrence_index: 0
+      - oracle_id: 920684d0-aef3-4408-a66b-a0c9394c58f4
+        source: xmage
+        source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00003357
+        external_construct: AddCountersSourceEffect
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:80d93c075084fd66e82882b3d40454e5d0696192ea5f86fb68e5172bb181c935
+          components:
+            oracle_id: 920684d0-aef3-4408-a66b-a0c9394c58f4
+            source: xmage
+            source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00003357
+            external_construct: AddCountersSourceEffect
+            requirement_id: counter_change
+            occurrence_index: 0
+  - oracle_id: 9c0f7cdc-9095-40ae-bf83-75a5ffda72b9
+    card_name: Quandrix Command
+    oracle_text: 'Choose two —
+
+      • Return target creature or planeswalker to its owner''s hand.
+
+      • Counter target artifact or enchantment spell.
+
+      • Put two +1/+1 counters on target creature.
+
+      • Target player shuffles up to three target cards from their graveyard into their library.'
+    requirements:
+    - requirement_id: counter
+      evidence:
+      - oracle_id: 9c0f7cdc-9095-40ae-bf83-75a5ffda72b9
+        source: xmage
+        source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00013652
+        external_construct: CounterTargetEffect
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:340e0d3a9a2ad3c197a56ebfb2cf1fe1c8f54e7865f37697f263210fd9c8b1cd
+          components:
+            oracle_id: 9c0f7cdc-9095-40ae-bf83-75a5ffda72b9
+            source: xmage
+            source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00013652
+            external_construct: CounterTargetEffect
+            requirement_id: counter
+            occurrence_index: 0
+    - requirement_id: counter_change
+      evidence:
+      - oracle_id: 9c0f7cdc-9095-40ae-bf83-75a5ffda72b9
+        source: forge
+        source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00013925
+        external_construct: PutCounter
+        occurrence_identity:
+          version: 1
+          id: evidence-occurrence:56d8dc7af44fc450d66d796a5d50deb379f0c898bf6ad01c8e7a677ced84affa
+          components:
+            oracle_id: 9c0f7cdc-9095-40ae-bf83-75a5ffda72b9
+            source: forge
+            source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00013925
+            external_construct: PutCounter
+            requirement_id: counter_change
+            occurrence_index: 0
+historical_inactive_zone_same_zone_examples:
+- oracle_id: 7021aaad-549d-48be-996a-f3b439f5c10b
+  card_name: Calim, Djinn Emperor
+  source: forge
+  source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00013588
+  external_construct: ChangeZoneAll
+  requirement_id: zone_transition
+  differential_sample_id: differential:03c21b155adc6180b7b61dcc
+  status: HISTORICAL_REMOVAL_NOT_ACTIVE_EVIDENCE
+- oracle_id: d1421070-a3cc-4af3-bf91-0f97372f4161
+  card_name: Sunforger
+  source: forge
+  source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00022621
+  external_construct: ChangeZone
+  requirement_id: zone_transition
+  differential_sample_id: differential:04b1d4ad1b96f130c621e9f9
+  status: HISTORICAL_REMOVAL_NOT_ACTIVE_EVIDENCE
+- oracle_id: 7fd8a508-335c-4d5a-9916-23bf26dfff38
+  card_name: Svella, Ice Shaper
+  source: forge
+  source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026481
+  external_construct: ChangeZoneAll
+  requirement_id: zone_transition
+  differential_sample_id: differential:070b5cf5d0ae93eecd8e26dc
+  status: HISTORICAL_REMOVAL_NOT_ACTIVE_EVIDENCE
+- oracle_id: a171a01c-43f7-488a-870d-b1a9bcc501d1
+  card_name: Faerie Harbinger
+  source: forge
+  source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009508
+  external_construct: ChangeZone
+  requirement_id: zone_transition
+  differential_sample_id: differential:07869f9e69db5f7c3158b84b
+  status: HISTORICAL_REMOVAL_NOT_ACTIVE_EVIDENCE
+cross_requirement_boundaries:
+  counter_vs_counter_change:
+    finding: Observed counter-spell/ability evidence is distinct from counter placement evidence; names can be confused.
+    examples: *id009
+  draw_vs_zone_transition:
+    finding: Draw is mapped as its own operation; some cards also have separate zone movement evidence.
+    examples: *id010
+  discard_vs_zone_transition:
+    finding: Discard is separately represented; co-occurrence with movement does not imply interchangeability.
+    examples: *id011
+  shuffle_vs_same_zone:
+    finding: Shuffle is a distinct action, not an inferred Library-to-Library transition; same-zone repositioning
+      is excluded by the 0.2.1 guard.
+    examples: *id012
+  gain_vs_lose_life:
+    finding: Opposite direction operations have separate identifiers; a signed abstraction has no demonstrated analysis
+      benefit here.
+    examples: *id013
+  tap_vs_untap:
+    finding: Opposite state changes remain separate; observed symmetry alone does not justify merging.
+    examples: *id014
+potential_model_gaps:
+- gap_id: potential:forge:ChangesZone
+  source: forge
+  external_construct: ChangesZone
+  observed_unmapped_occurrences: 5144
+  example_oracle_ids:
+  - 00173df7-a584-410c-af1d-ada9c791056a
+  - 002100cd-1ab1-44da-93a0-1269d47a712a
+  - 0023888e-7bec-43e0-8dee-d1a4eb94b372
+  examples:
+  - oracle_id: 00173df7-a584-410c-af1d-ada9c791056a
+    card_name: Greta, Sweettooth Scourge
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00009610
+    external_construct: ChangesZone
+    occurrence_index: 0
+  - oracle_id: 002100cd-1ab1-44da-93a0-1269d47a712a
+    card_name: Waterknot
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00019685
+    external_construct: ChangesZone
+    occurrence_index: 0
+  - oracle_id: 0023888e-7bec-43e0-8dee-d1a4eb94b372
+    card_name: Palinchron
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00002849
+    external_construct: ChangesZone
+    occurrence_index: 0
+  description: Observed zone-change event/trigger vocabulary, distinct from an action that performs a zone transition.
+  reason_current_requirements_do_not_fit: No current mapping assigns this observed construct; no Requirement is
+    inferred in Phase 0.3.
+  normative_rules_review_required: true
+- gap_id: potential:forge:DamageDone
+  source: forge
+  external_construct: DamageDone
+  observed_unmapped_occurrences: 650
+  example_oracle_ids:
+  - 001c6369-df13-427d-89df-718d5c09f382
+  - 00e8b4c9-3a79-4864-a730-c0081d397c5b
+  - 01197456-62f1-4bc0-9f2f-127f97f9b05d
+  examples:
+  - oracle_id: 001c6369-df13-427d-89df-718d5c09f382
+    card_name: Vedalken Heretic
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00011849
+    external_construct: DamageDone
+    occurrence_index: 0
+  - oracle_id: 00e8b4c9-3a79-4864-a730-c0081d397c5b
+    card_name: Dazzling Sphinx
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00004177
+    external_construct: DamageDone
+    occurrence_index: 0
+  - oracle_id: 01197456-62f1-4bc0-9f2f-127f97f9b05d
+    card_name: Higure, the Still Wind
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00003497
+    external_construct: DamageDone
+    occurrence_index: 0
+  description: Observed damage-event vocabulary; relation to damage action evidence needs explicit modeling review.
+  reason_current_requirements_do_not_fit: No current mapping assigns this observed construct; no Requirement is
+    inferred in Phase 0.3.
+  normative_rules_review_required: true
+- gap_id: potential:forge:Pump
+  source: forge
+  external_construct: Pump
+  observed_unmapped_occurrences: 3979
+  example_oracle_ids:
+  - 000e5d65-96c3-498b-bd01-72b1a1991850
+  - 00185f3b-2777-4417-a8e0-4691f41c0ec1
+  - 002965be-a36f-4a09-9ce0-c6535bca1703
+  examples:
+  - oracle_id: 000e5d65-96c3-498b-bd01-72b1a1991850
+    card_name: Walking Sponge
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00026253
+    external_construct: Pump
+    occurrence_index: 0
+  - oracle_id: 00185f3b-2777-4417-a8e0-4691f41c0ec1
+    card_name: Wyluli Wolf
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00025820
+    external_construct: Pump
+    occurrence_index: 0
+  - oracle_id: 002965be-a36f-4a09-9ce0-c6535bca1703
+    card_name: Veil of Summer
+    source: forge
+    source_record_identity: forge@cef86f363d7f7d5b3293248a75f550a7c3404066:row:00016875
+    external_construct: Pump
+    occurrence_index: 0
+  description: Observed power/toughness modification vocabulary not represented by the current Requirement set.
+  reason_current_requirements_do_not_fit: No current mapping assigns this observed construct; no Requirement is
+    inferred in Phase 0.3.
+  normative_rules_review_required: true
+- gap_id: potential:xmage:BoostSourceEffect
+  source: xmage
+  external_construct: BoostSourceEffect
+  observed_unmapped_occurrences: 791
+  example_oracle_ids:
+  - 0036d062-10dc-4267-98b4-1d2f6b190a61
+  - 0049438b-e37e-4c57-820e-f2ddf3322170
+  - 0103b2f2-05dd-40af-954d-303c144edb04
+  examples:
+  - oracle_id: 0036d062-10dc-4267-98b4-1d2f6b190a61
+    card_name: Whispering Shade
+    source: xmage
+    source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00018220
+    external_construct: BoostSourceEffect
+    occurrence_index: 0
+  - oracle_id: 0049438b-e37e-4c57-820e-f2ddf3322170
+    card_name: High-Rise Sawjack
+    source: xmage
+    source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00007419
+    external_construct: BoostSourceEffect
+    occurrence_index: 0
+  - oracle_id: 0103b2f2-05dd-40af-954d-303c144edb04
+    card_name: Darkling Stalker
+    source: xmage
+    source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00003072
+    external_construct: BoostSourceEffect
+    occurrence_index: 0
+  description: Observed source power/toughness modification implementation class.
+  reason_current_requirements_do_not_fit: No current mapping assigns this observed construct; no Requirement is
+    inferred in Phase 0.3.
+  normative_rules_review_required: true
+- gap_id: potential:xmage:BoostTargetEffect
+  source: xmage
+  external_construct: BoostTargetEffect
+  observed_unmapped_occurrences: 808
+  example_oracle_ids:
+  - 00185f3b-2777-4417-a8e0-4691f41c0ec1
+  - 008ac258-763c-4379-bfcd-b9cc4d7296dd
+  - 00afc724-be09-4e92-a50c-88011bd10ccd
+  examples:
+  - oracle_id: 00185f3b-2777-4417-a8e0-4691f41c0ec1
+    card_name: Wyluli Wolf
+    source: xmage
+    source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00018701
+    external_construct: BoostTargetEffect
+    occurrence_index: 0
+  - oracle_id: 008ac258-763c-4379-bfcd-b9cc4d7296dd
+    card_name: Magma Sliver
+    source: xmage
+    source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00010529
+    external_construct: BoostTargetEffect
+    occurrence_index: 0
+  - oracle_id: 00afc724-be09-4e92-a50c-88011bd10ccd
+    card_name: Hunt the Hunter
+    source: xmage
+    source_record_identity: xmage@6212eb37907c1ce751d8a3fea8b3322056dc0264:row:00007757
+    external_construct: BoostTargetEffect
+    occurrence_index: 0
+  description: Observed target power/toughness modification implementation class.
+  reason_current_requirements_do_not_fit: No current mapping assigns this observed construct; no Requirement is
+    inferred in Phase 0.3.
+  normative_rules_review_required: true

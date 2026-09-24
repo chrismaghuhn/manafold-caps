@@ -1,0 +1,2120 @@
+review_version: 1
+scope:
+  extractor_version: 0.2.1
+  mapping_sha256: 3f087dd50b5d927e90ca7d979586d0aa358fb75b74c856fffcac79ab1389ca8a
+  source_set:
+    scryfall: 0ce026779dae1a9a6448ef7a85e606d662343f5e
+    forge: cef86f363d7f7d5b3293248a75f550a7c3404066
+    xmage: 6212eb37907c1ce751d8a3fea8b3322056dc0264
+requirements:
+  counter:
+    semantic_intent: An operation that counters a target spell or ability, as represented by the current XMage mapping.
+    parameters:
+    - name: countered_object
+      necessity: REQUIRED
+      description: Target spell or ability in observed cases
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      - Defined
+      observed_occurrence_count: 0
+      observed_values:
+        ValidTgts: []
+        ValidCards: []
+        Defined: []
+    - name: eligibility
+      necessity: OPTIONAL
+      description: Target restrictions
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      observed_occurrence_count: 0
+      observed_values:
+        ValidTgts: []
+        ValidCards: []
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  counter_change:
+    semantic_intent: An operation that places or changes counters on an existing object; mapped constructs currently
+      expose counter placement.
+    parameters:
+    - name: counter_type
+      necessity: REQUIRED
+      description: Type of counter
+      observed_source_fields:
+      - CounterType
+      observed_occurrence_count: 2033
+      observed_values:
+        CounterType:
+        - value: P1P1
+          count: 1266
+        - value: CHARGE
+          count: 83
+        - value: M1M1
+          count: 82
+        - value: ENERGY
+          count: 72
+        - value: TIME
+          count: 26
+        - value: LOYALTY
+          count: 25
+        - value: OIL
+          count: 23
+        - value: Stun
+          count: 21
+        - value: QUEST
+          count: 19
+        - value: STORAGE
+          count: 18
+        - value: SPORE
+          count: 18
+        - value: SHIELD
+          count: 12
+    - name: amount
+      necessity: REQUIRED
+      description: Count or expression
+      observed_source_fields:
+      - CounterNum
+      observed_occurrence_count: 1900
+      observed_values:
+        CounterNum:
+        - value: '1'
+          count: 1346
+        - value: '2'
+          count: 210
+        - value: X
+          count: 183
+        - value: '3'
+          count: 68
+        - value: '4'
+          count: 24
+        - value: Y
+          count: 16
+        - value: '5'
+          count: 8
+        - value: Result
+          count: 8
+        - value: '6'
+          count: 4
+        - value: PreventedDamage
+          count: 4
+        - value: '7'
+          count: 2
+        - value: WarElementalY
+          count: 1
+    - name: recipient
+      necessity: REQUIRED
+      description: Object receiving counters
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      - Defined
+      observed_occurrence_count: 1701
+      observed_values:
+        ValidTgts:
+        - value: Creature
+          count: 272
+        - value: Creature.YouCtrl
+          count: 138
+        - value: Creature.Other
+          count: 19
+        - value: Creature.Other+YouCtrl
+          count: 11
+        - value: Land.YouCtrl
+          count: 10
+        - value: Permanent
+          count: 5
+        - value: Creature.nonHuman+YouCtrl
+          count: 5
+        - value: Artifact
+          count: 5
+        - value: Creature.YouCtrl+Other
+          count: 4
+        - value: Creature.YouCtrl,Vehicle.YouCtrl
+          count: 4
+        - value: Creature.Chimera
+          count: 4
+        - value: Creature.attacking
+          count: 4
+        ValidCards:
+        - value: Self
+          count: 1
+        Defined:
+        - value: Self
+          count: 739
+        - value: You
+          count: 81
+        - value: Remembered
+          count: 51
+        - value: ReplacedCard
+          count: 47
+        - value: Targeted
+          count: 45
+        - value: TriggeredCardLKICopy
+          count: 25
+        - value: Enchanted
+          count: 21
+        - value: TriggeredAttackerLKICopy
+          count: 13
+        - value: Equipped
+          count: 12
+        - value: TriggeredSourceLKICopy
+          count: 12
+        - value: ChosenCard
+          count: 5
+        - value: DelayTriggerRememberedLKI
+          count: 5
+    - name: operation_direction
+      necessity: NOT_ESTABLISHED
+      description: Current mapped evidence primarily represents adding counters
+      observed_source_fields:
+      - PutCounter
+      - AddCountersSourceEffect
+      observed_occurrence_count: 0
+      observed_values:
+        PutCounter: []
+        AddCountersSourceEffect: []
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  create_token:
+    semantic_intent: Creation of one or more token objects with source-defined characteristics.
+    parameters:
+    - name: token_definition
+      necessity: REQUIRED
+      description: Token identity and characteristics
+      observed_source_fields:
+      - TokenScript
+      - TokenPower
+      - TokenToughness
+      - TokenColor
+      - TokenTypes
+      observed_occurrence_count: 2506
+      observed_values:
+        TokenScript:
+        - value: c_a_treasure_sac
+          count: 220
+        - value: b_2_2_zombie
+          count: 101
+        - value: g_1_1_saproling
+          count: 81
+        - value: c_a_food_sac
+          count: 76
+        - value: w_1_1_spirit_flying
+          count: 73
+        - value: w_1_1_soldier
+          count: 71
+        - value: r_1_1_goblin
+          count: 45
+        - value: g_2_2_wolf
+          count: 41
+        - value: c_1_1_a_thopter_flying
+          count: 38
+        - value: c_a_powerstone
+          count: 37
+        - value: g_1_1_elf_warrior
+          count: 31
+        - value: w_1_1_human
+          count: 28
+        TokenPower:
+        - value: X
+          count: 47
+        - value: Y
+          count: 4
+        - value: dX
+          count: 2
+        - value: Z
+          count: 2
+        - value: XLKI
+          count: 1
+        - value: MonstrosityX
+          count: 1
+        TokenToughness:
+        - value: X
+          count: 42
+        - value: Y
+          count: 8
+        - value: dY
+          count: 2
+        - value: Z
+          count: 2
+        - value: XLKI
+          count: 1
+        - value: MonstrosityX
+          count: 1
+        TokenColor: []
+        TokenTypes:
+        - value: ChosenType
+          count: 2
+    - name: quantity
+      necessity: OPTIONAL
+      description: Number created; some source operations default it
+      observed_source_fields:
+      - TokenAmount
+      observed_occurrence_count: 1862
+      observed_values:
+        TokenAmount:
+        - value: '1'
+          count: 1150
+        - value: '2'
+          count: 268
+        - value: X
+          count: 259
+        - value: '3'
+          count: 80
+        - value: Y
+          count: 36
+        - value: '4'
+          count: 23
+        - value: '5'
+          count: 10
+        - value: Z
+          count: 7
+        - value: '7'
+          count: 4
+        - value: '8'
+          count: 2
+        - value: '6'
+          count: 2
+        - value: OddResults
+          count: 2
+    - name: owner_or_controller
+      necessity: SOURCE_SPECIFIC
+      description: Creator, owner, or controller where represented
+      observed_source_fields:
+      - TokenOwner
+      - Defined
+      observed_occurrence_count: 1663
+      observed_values:
+        TokenOwner:
+        - value: You
+          count: 1495
+        - value: TriggeredCardController
+          count: 32
+        - value: RememberedController
+          count: 24
+        - value: Targeted
+          count: 20
+        - value: TargetedController
+          count: 12
+        - value: Player.IsRemembered
+          count: 11
+        - value: Player
+          count: 8
+        - value: ImprintedController
+          count: 8
+        - value: Opponent
+          count: 8
+        - value: TriggeredPlayer
+          count: 6
+        - value: Remembered
+          count: 5
+        - value: ThisTargetedPlayer
+          count: 4
+        Defined: []
+    - name: entry_modifiers
+      necessity: SOURCE_SPECIFIC
+      description: Tapped or other entry state
+      observed_source_fields:
+      - TokenTapped
+      - TokenScript
+      observed_occurrence_count: 2521
+      observed_values:
+        TokenTapped:
+        - value: 'True'
+          count: 130
+        TokenScript:
+        - value: c_a_treasure_sac
+          count: 220
+        - value: b_2_2_zombie
+          count: 101
+        - value: g_1_1_saproling
+          count: 81
+        - value: c_a_food_sac
+          count: 76
+        - value: w_1_1_spirit_flying
+          count: 73
+        - value: w_1_1_soldier
+          count: 71
+        - value: r_1_1_goblin
+          count: 45
+        - value: g_2_2_wolf
+          count: 41
+        - value: c_1_1_a_thopter_flying
+          count: 38
+        - value: c_a_powerstone
+          count: 37
+        - value: g_1_1_elf_warrior
+          count: 31
+        - value: w_1_1_human
+          count: 28
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  damage:
+    semantic_intent: Dealing a specified amount of damage to selected recipients.
+    parameters:
+    - name: amount
+      necessity: REQUIRED
+      description: Fixed or source-derived amount
+      observed_source_fields:
+      - NumDmg
+      observed_occurrence_count: 2629
+      observed_values:
+        NumDmg:
+        - value: X
+          count: 671
+        - value: '1'
+          count: 630
+        - value: '2'
+          count: 462
+        - value: '3'
+          count: 326
+        - value: '4'
+          count: 188
+        - value: '5'
+          count: 111
+        - value: Y
+          count: 58
+        - value: '6'
+          count: 38
+        - value: '7'
+          count: 29
+        - value: '10'
+          count: 18
+        - value: Z
+          count: 5
+        - value: '8'
+          count: 4
+    - name: recipient_selection
+      necessity: REQUIRED
+      description: Targets, filters, or defined recipients
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      - ValidPlayers
+      - Defined
+      observed_occurrence_count: 2739
+      observed_values:
+        ValidTgts:
+        - value: Any
+          count: 707
+        - value: Creature
+          count: 331
+        - value: Player,Planeswalker
+          count: 127
+        - value: Creature,Planeswalker
+          count: 93
+        - value: Creature.attacking,Creature.blocking
+          count: 53
+        - value: Opponent,Planeswalker
+          count: 37
+        - value: Creature.withFlying
+          count: 36
+        - value: Player
+          count: 31
+        - value: Creature.OppCtrl
+          count: 28
+        - value: Creature.YouDontCtrl
+          count: 23
+        - value: Opponent
+          count: 21
+        - value: Creature.attacking
+          count: 11
+        ValidCards:
+        - value: Creature
+          count: 100
+        - value: Creature.withoutFlying
+          count: 41
+        - value: Creature.withFlying
+          count: 30
+        - value: Creature.OppCtrl
+          count: 18
+        - value: Creature,Planeswalker
+          count: 14
+        - value: Creature.ControlledBy TargetedOrController
+          count: 10
+        - value: Creature.StrictlyOther
+          count: 6
+        - value: Creature.attacking
+          count: 6
+        - value: Creature.TargetedPlayerCtrl
+          count: 5
+        - value: Creature.OppCtrl,Planeswalker.OppCtrl
+          count: 4
+        - value: Creature.nonArtifact
+          count: 3
+        - value: Creature.IsRemembered
+          count: 3
+        ValidPlayers:
+        - value: Player
+          count: 80
+        - value: Player.Opponent
+          count: 24
+        - value: Opponent
+          count: 9
+        - value: Targeted
+          count: 5
+        - value: OppNonTriggeredTarget
+          count: 3
+        - value: You
+          count: 2
+        - value: Player.Opponent+wasDealtDamageThisGameBy Self
+          count: 1
+        - value: Remembered
+          count: 1
+        - value: Player.controlsCreature.White_GE1
+          count: 1
+        - value: FlippedTails
+          count: 1
+        - value: TargetedController
+          count: 1
+        Defined:
+        - value: You
+          count: 132
+        - value: Player.Opponent
+          count: 75
+        - value: TriggeredPlayer
+          count: 68
+        - value: TargetedController
+          count: 49
+        - value: Targeted
+          count: 36
+        - value: TriggeredCardController
+          count: 32
+        - value: Opponent
+          count: 31
+        - value: Remembered
+          count: 30
+        - value: TriggeredActivator
+          count: 20
+        - value: Self
+          count: 19
+        - value: Player
+          count: 14
+        - value: ChosenPlayer
+          count: 12
+    - name: cardinality_distribution
+      necessity: SOURCE_SPECIFIC
+      description: Single/all and divided allocation
+      observed_source_fields:
+      - TargetMin
+      - TargetMax
+      - DividedAsYouChoose
+      observed_occurrence_count: 290
+      observed_values:
+        TargetMin:
+        - value: '0'
+          count: 79
+        - value: '1'
+          count: 21
+        - value: X
+          count: 7
+        - value: '2'
+          count: 6
+        - value: Y
+          count: 1
+        - value: TargetsNum
+          count: 1
+        TargetMax:
+        - value: '2'
+          count: 23
+        - value: '1'
+          count: 21
+        - value: '3'
+          count: 19
+        - value: MaxTgts
+          count: 13
+        - value: X
+          count: 12
+        - value: '5'
+          count: 7
+        - value: '4'
+          count: 6
+        - value: '6'
+          count: 3
+        - value: MaxTargets
+          count: 2
+        - value: FirePower
+          count: 1
+        - value: Z
+          count: 1
+        - value: Y
+          count: 1
+        DividedAsYouChoose:
+        - value: X
+          count: 12
+        - value: '3'
+          count: 12
+        - value: '2'
+          count: 7
+        - value: '4'
+          count: 7
+        - value: '5'
+          count: 7
+        - value: '6'
+          count: 2
+        - value: Y
+          count: 2
+        - value: FirePower
+          count: 1
+        - value: Z
+          count: 1
+        - value: '8'
+          count: 1
+        - value: OrigPower
+          count: 1
+        - value: Count$CardPower
+          count: 1
+    - name: damage_source
+      necessity: OPTIONAL
+      description: Credited source when exposed
+      observed_source_fields:
+      - DamageSource
+      observed_occurrence_count: 139
+      observed_values:
+        DamageSource:
+        - value: ParentTarget
+          count: 49
+        - value: Targeted
+          count: 23
+        - value: TriggeredCard
+          count: 12
+        - value: EffectSource
+          count: 10
+        - value: Remembered
+          count: 9
+        - value: TriggeredSource
+          count: 5
+        - value: TriggeredAttacker
+          count: 5
+        - value: TriggeredAttackerLKICopy
+          count: 4
+        - value: Imprinted
+          count: 4
+        - value: Enchanted
+          count: 4
+        - value: OriginalHost
+          count: 4
+        - value: TriggeredTargetLKICopy
+          count: 2
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  destroy:
+    semantic_intent: Destroying selected objects that satisfy a source-defined selection.
+    parameters:
+    - name: object_selection
+      necessity: REQUIRED
+      description: Target/filter/defined object group
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      - Defined
+      observed_occurrence_count: 1598
+      observed_values:
+        ValidTgts:
+        - value: Creature
+          count: 124
+        - value: Artifact
+          count: 119
+        - value: Artifact,Enchantment
+          count: 99
+        - value: Land
+          count: 80
+        - value: Enchantment
+          count: 74
+        - value: Creature.nonBlack
+          count: 46
+        - value: Creature,Planeswalker
+          count: 25
+        - value: Permanent
+          count: 23
+        - value: Land.nonBasic
+          count: 19
+        - value: Creature.tapped
+          count: 17
+        - value: Creature.powerGE4
+          count: 17
+        - value: Creature.withFlying
+          count: 16
+        ValidCards:
+        - value: Creature
+          count: 39
+        - value: Enchantment
+          count: 17
+        - value: Permanent.nonLand
+          count: 13
+        - value: Land
+          count: 12
+        - value: Artifact
+          count: 9
+        - value: Artifact,Enchantment
+          count: 8
+        - value: Artifact,Creature,Enchantment
+          count: 5
+        - value: Creature.StrictlyOther
+          count: 5
+        - value: Creature.cmcLE3
+          count: 4
+        - value: Creature.powerGE3
+          count: 4
+        - value: Creature.nonChosenCard
+          count: 4
+        - value: Creature.tapped
+          count: 4
+        Defined:
+        - value: Self
+          count: 33
+        - value: TriggeredTargetLKICopy
+          count: 29
+        - value: DelayTriggerRememberedLKI
+          count: 24
+        - value: Targeted
+          count: 20
+        - value: Remembered
+          count: 15
+        - value: ChosenCard
+          count: 15
+        - value: TriggeredCardLKICopy
+          count: 13
+        - value: TriggeredBlockerLKICopy
+          count: 12
+        - value: TriggeredSourceLKICopy
+          count: 9
+        - value: Enchanted
+          count: 9
+        - value: TriggeredAttackerLKICopy
+          count: 5
+        - value: DelayTriggerRemembered
+          count: 5
+    - name: cardinality
+      necessity: REQUIRED
+      description: Single, many, or all matching objects
+      observed_source_fields:
+      - TargetMin
+      - TargetMax
+      - ValidCards
+      observed_occurrence_count: 476
+      observed_values:
+        TargetMin:
+        - value: '0'
+          count: 57
+        - value: X
+          count: 12
+        - value: '2'
+          count: 8
+        - value: Y
+          count: 1
+        - value: '6'
+          count: 1
+        - value: '1'
+          count: 1
+        - value: '3'
+          count: 1
+        - value: TargetNum
+          count: 1
+        TargetMax:
+        - value: '1'
+          count: 26
+        - value: X
+          count: 19
+        - value: '2'
+          count: 14
+        - value: '3'
+          count: 8
+        - value: OneEach
+          count: 5
+        - value: '6'
+          count: 2
+        - value: MaxTargets
+          count: 2
+        - value: Y
+          count: 1
+        - value: Maxtgt
+          count: 1
+        - value: TargetNum
+          count: 1
+        - value: Count$Valid Creature
+          count: 1
+        - value: MaxTgts
+          count: 1
+        ValidCards:
+        - value: Creature
+          count: 39
+        - value: Enchantment
+          count: 17
+        - value: Permanent.nonLand
+          count: 13
+        - value: Land
+          count: 12
+        - value: Artifact
+          count: 9
+        - value: Artifact,Enchantment
+          count: 8
+        - value: Artifact,Creature,Enchantment
+          count: 5
+        - value: Creature.StrictlyOther
+          count: 5
+        - value: Creature.cmcLE3
+          count: 4
+        - value: Creature.powerGE3
+          count: 4
+        - value: Creature.nonChosenCard
+          count: 4
+        - value: Creature.tapped
+          count: 4
+    - name: modifiers
+      necessity: SOURCE_SPECIFIC
+      description: Flags such as NoRegen or remembered LKI
+      observed_source_fields:
+      - NoRegen
+      - RememberLKI
+      - RememberDestroyed
+      observed_occurrence_count: 245
+      observed_values:
+        NoRegen:
+        - value: 'True'
+          count: 141
+        - value: 'False'
+          count: 1
+        RememberLKI:
+        - value: 'True'
+          count: 62
+        RememberDestroyed:
+        - value: 'True'
+          count: 41
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  discard:
+    semantic_intent: A player discarding selected cards from hand.
+    parameters:
+    - name: discarding_player
+      necessity: REQUIRED
+      description: Player who discards
+      observed_source_fields:
+      - ValidTgts
+      - ValidPlayers
+      - Defined
+      observed_occurrence_count: 743
+      observed_values:
+        ValidTgts:
+        - value: Player
+          count: 146
+        - value: Opponent
+          count: 88
+        - value: Player.Opponent
+          count: 1
+        ValidPlayers: []
+        Defined:
+        - value: You
+          count: 245
+        - value: TriggeredTarget
+          count: 48
+        - value: Player
+          count: 45
+        - value: Targeted
+          count: 35
+        - value: Player.Opponent
+          count: 29
+        - value: Opponent
+          count: 28
+        - value: Player.IsRemembered
+          count: 16
+        - value: TriggeredPlayer
+          count: 9
+        - value: TriggeredDefendingPlayer
+          count: 9
+        - value: ParentTarget
+          count: 5
+        - value: TargetedController
+          count: 4
+        - value: TriggeredActivator
+          count: 4
+    - name: card_selection
+      necessity: REQUIRED
+      description: Chosen or filtered cards
+      observed_source_fields:
+      - DiscardValid
+      - Mode
+      - Defined
+      observed_occurrence_count: 1423
+      observed_values:
+        DiscardValid:
+        - value: Card.nonLand
+          count: 24
+        - value: Creature
+          count: 5
+        - value: Card
+          count: 5
+        - value: Card.IsRemembered
+          count: 4
+        - value: Card.NamedCard
+          count: 3
+        - value: Card.nonCreature+nonLand
+          count: 3
+        - value: Land
+          count: 3
+        - value: Card.ChosenColor
+          count: 3
+        - value: Artifact,Creature
+          count: 2
+        - value: Card.nonLand+cmcEQX
+          count: 2
+        - value: Card.SharesColorWith Sacrificed
+          count: 1
+        - value: Creature,Enchantment,Planeswalker
+          count: 1
+        Mode:
+        - value: TgtChoose
+          count: 591
+        - value: Hand
+          count: 85
+        - value: RevealYouChoose
+          count: 63
+        - value: Random
+          count: 52
+        - value: Defined
+          count: 23
+        - value: RevealDiscardAll
+          count: 13
+        - value: LookYouChoose
+          count: 7
+        - value: NotRemembered
+          count: 2
+        - value: RevealTgtChoose
+          count: 1
+        - value: YouChoose
+          count: 1
+        Defined:
+        - value: You
+          count: 245
+        - value: TriggeredTarget
+          count: 48
+        - value: Player
+          count: 45
+        - value: Targeted
+          count: 35
+        - value: Player.Opponent
+          count: 29
+        - value: Opponent
+          count: 28
+        - value: Player.IsRemembered
+          count: 16
+        - value: TriggeredPlayer
+          count: 9
+        - value: TriggeredDefendingPlayer
+          count: 9
+        - value: ParentTarget
+          count: 5
+        - value: TargetedController
+          count: 4
+        - value: TriggeredActivator
+          count: 4
+    - name: quantity
+      necessity: REQUIRED
+      description: Number or all
+      observed_source_fields:
+      - NumCards
+      - Mode
+      observed_occurrence_count: 1446
+      observed_values:
+        NumCards:
+        - value: '1'
+          count: 415
+        - value: '2'
+          count: 115
+        - value: X
+          count: 37
+        - value: '3'
+          count: 23
+        - value: Y
+          count: 4
+        - value: '4'
+          count: 4
+        - value: '7'
+          count: 2
+        - value: C
+          count: 2
+        - value: IslandsYouControl
+          count: 1
+        - value: ChosenInitiation
+          count: 1
+        - value: WasKicked
+          count: 1
+        - value: NantukoX
+          count: 1
+        Mode:
+        - value: TgtChoose
+          count: 591
+        - value: Hand
+          count: 85
+        - value: RevealYouChoose
+          count: 63
+        - value: Random
+          count: 52
+        - value: Defined
+          count: 23
+        - value: RevealDiscardAll
+          count: 13
+        - value: LookYouChoose
+          count: 7
+        - value: NotRemembered
+          count: 2
+        - value: RevealTgtChoose
+          count: 1
+        - value: YouChoose
+          count: 1
+    - name: choice_and_reveal
+      necessity: SOURCE_SPECIFIC
+      description: Choice/reveal behavior
+      observed_source_fields:
+      - Mode
+      - RevealDiscardAll
+      observed_occurrence_count: 838
+      observed_values:
+        Mode:
+        - value: TgtChoose
+          count: 591
+        - value: Hand
+          count: 85
+        - value: RevealYouChoose
+          count: 63
+        - value: Random
+          count: 52
+        - value: Defined
+          count: 23
+        - value: RevealDiscardAll
+          count: 13
+        - value: LookYouChoose
+          count: 7
+        - value: NotRemembered
+          count: 2
+        - value: RevealTgtChoose
+          count: 1
+        - value: YouChoose
+          count: 1
+        RevealDiscardAll: []
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  draw:
+    semantic_intent: A player drawing one or more cards.
+    parameters:
+    - name: drawing_player
+      necessity: REQUIRED
+      description: Player receiving cards
+      observed_source_fields:
+      - Defined
+      - ValidTgts
+      - ValidPlayers
+      observed_occurrence_count: 1159
+      observed_values:
+        Defined:
+        - value: You
+          count: 809
+        - value: Player
+          count: 64
+        - value: TriggeredCardController
+          count: 37
+        - value: TriggeredPlayer
+          count: 23
+        - value: Player.IsRemembered
+          count: 15
+        - value: Targeted
+          count: 12
+        - value: Remembered
+          count: 10
+        - value: TargetedAndYou
+          count: 7
+        - value: TargetedController
+          count: 7
+        - value: ChosenPlayer
+          count: 5
+        - value: ReplacedPlayer
+          count: 5
+        - value: Opponent
+          count: 4
+        ValidTgts:
+        - value: Player
+          count: 74
+        - value: Opponent
+          count: 26
+        - value: Player.NotEnchantedBy
+          count: 1
+        ValidPlayers: []
+    - name: quantity
+      necessity: REQUIRED
+      description: Number of cards
+      observed_source_fields:
+      - NumCards
+      observed_occurrence_count: 2160
+      observed_values:
+        NumCards:
+        - value: '1'
+          count: 1317
+        - value: '2'
+          count: 279
+        - value: X
+          count: 256
+        - value: '3'
+          count: 139
+        - value: '7'
+          count: 47
+        - value: Y
+          count: 38
+        - value: '4'
+          count: 34
+        - value: XPower
+          count: 5
+        - value: '5'
+          count: 4
+        - value: Z
+          count: 4
+        - value: DrawX
+          count: 3
+        - value: Difference
+          count: 3
+    - name: conditionality
+      necessity: SOURCE_SPECIFIC
+      description: Conditions and optional choice
+      observed_source_fields:
+      - ConditionPresent
+      - OptionalDecider
+      observed_occurrence_count: 120
+      observed_values:
+        ConditionPresent:
+        - value: Card
+          count: 28
+        - value: Artifact.YouCtrl
+          count: 5
+        - value: Card.NamedCard
+          count: 4
+        - value: Wizard.YouCtrl
+          count: 3
+        - value: Creature
+          count: 3
+        - value: Card.YouCtrl
+          count: 2
+        - value: Creature.YouCtrl+powerGE4
+          count: 2
+        - value: Creature.YouCtrl
+          count: 2
+        - value: Card.spectacle
+          count: 2
+        - value: Creature.Blue+YouCtrl
+          count: 1
+        - value: Card.Creature
+          count: 1
+        - value: Card.Self+counters_GE7_PHYRESIS
+          count: 1
+        OptionalDecider:
+        - value: You
+          count: 14
+        - value: 'True'
+          count: 7
+        - value: Opponent
+          count: 3
+        - value: TriggeredCardController
+          count: 1
+        - value: TargetedController
+          count: 1
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  gain_life:
+    semantic_intent: Increasing a player's life total by a source-defined amount.
+    parameters:
+    - name: life_recipient
+      necessity: REQUIRED
+      description: Player whose life total changes
+      observed_source_fields:
+      - Defined
+      - ValidTgts
+      - ValidPlayers
+      observed_occurrence_count: 816
+      observed_values:
+        Defined:
+        - value: You
+          count: 702
+        - value: TriggeredCardController
+          count: 21
+        - value: RememberedController
+          count: 15
+        - value: Player
+          count: 6
+        - value: Player.Opponent
+          count: 4
+        - value: Targeted
+          count: 4
+        - value: TriggeredPlayer
+          count: 3
+        - value: Player.IsRemembered
+          count: 3
+        - value: TargetedOwner
+          count: 2
+        - value: ChosenPlayer
+          count: 2
+        - value: Remembered
+          count: 2
+        - value: TargetedController
+          count: 2
+        ValidTgts:
+        - value: Player
+          count: 34
+        - value: Opponent
+          count: 10
+        ValidPlayers: []
+    - name: amount
+      necessity: REQUIRED
+      description: Fixed or source-derived amount
+      observed_source_fields:
+      - LifeAmount
+      observed_occurrence_count: 1364
+      observed_values:
+        LifeAmount:
+        - value: X
+          count: 314
+        - value: '1'
+          count: 298
+        - value: '2'
+          count: 268
+        - value: '3'
+          count: 188
+        - value: '4'
+          count: 99
+        - value: '5'
+          count: 42
+        - value: Y
+          count: 30
+        - value: AFLifeLost
+          count: 19
+        - value: '6'
+          count: 13
+        - value: '7'
+          count: 13
+        - value: '10'
+          count: 10
+        - value: Z
+          count: 7
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  lose_life:
+    semantic_intent: Decreasing a player's life total by a source-defined amount.
+    parameters:
+    - name: life_recipient
+      necessity: REQUIRED
+      description: Player whose life total changes
+      observed_source_fields:
+      - Defined
+      - ValidTgts
+      - ValidPlayers
+      observed_occurrence_count: 747
+      observed_values:
+        Defined:
+        - value: Player.Opponent
+          count: 132
+        - value: You
+          count: 108
+        - value: Opponent
+          count: 45
+        - value: Targeted
+          count: 34
+        - value: Player.IsRemembered
+          count: 28
+        - value: TriggeredPlayer
+          count: 27
+        - value: Player
+          count: 26
+        - value: TriggeredCardController
+          count: 26
+        - value: Remembered
+          count: 23
+        - value: TargetedController
+          count: 16
+        - value: TriggeredDefendingPlayer
+          count: 15
+        - value: RememberedController
+          count: 13
+        ValidTgts:
+        - value: Player
+          count: 86
+        - value: Opponent
+          count: 71
+        - value: Player.wasDealtDamageThisTurnBySource
+          count: 1
+        - value: Player.Opponent
+          count: 1
+        - value: Player.LostLifeThisTurn
+          count: 1
+        ValidPlayers: []
+    - name: amount
+      necessity: REQUIRED
+      description: Fixed or source-derived amount
+      observed_source_fields:
+      - LifeAmount
+      observed_occurrence_count: 882
+      observed_values:
+        LifeAmount:
+        - value: '1'
+          count: 278
+        - value: '2'
+          count: 211
+        - value: X
+          count: 171
+        - value: '3'
+          count: 101
+        - value: '4'
+          count: 25
+        - value: '5'
+          count: 24
+        - value: Y
+          count: 23
+        - value: '10'
+          count: 7
+        - value: '6'
+          count: 4
+        - value: '7'
+          count: 3
+        - value: QuietusX
+          count: 2
+        - value: Result
+          count: 2
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  mana_production:
+    semantic_intent: Producing or adding mana with a source-defined kind, quantity, and restrictions.
+    parameters:
+    - name: mana_kind_or_choice
+      necessity: REQUIRED
+      description: Produced kind/color or choice
+      observed_source_fields:
+      - Produced
+      observed_occurrence_count: 1769
+      observed_values:
+        Produced:
+        - value: C
+          count: 451
+        - value: Any
+          count: 335
+        - value: G
+          count: 156
+        - value: R
+          count: 121
+        - value: B
+          count: 103
+        - value: U
+          count: 75
+        - value: W
+          count: 58
+        - value: Combo R G
+          count: 38
+        - value: Combo B R
+          count: 31
+        - value: Combo U B
+          count: 29
+        - value: Combo W U
+          count: 25
+        - value: Combo G W
+          count: 25
+    - name: quantity
+      necessity: REQUIRED
+      description: Units or source expression
+      observed_source_fields:
+      - Amount
+      - Produced
+      observed_occurrence_count: 2253
+      observed_values:
+        Amount:
+        - value: '2'
+          count: 137
+        - value: X
+          count: 132
+        - value: '1'
+          count: 117
+        - value: '3'
+          count: 57
+        - value: '4'
+          count: 9
+        - value: Y
+          count: 7
+        - value: '5'
+          count: 4
+        - value: UrzaAmount
+          count: 3
+        - value: '6'
+          count: 3
+        - value: Z
+          count: 2
+        - value: SakuraX
+          count: 2
+        - value: '7'
+          count: 2
+        Produced:
+        - value: C
+          count: 451
+        - value: Any
+          count: 335
+        - value: G
+          count: 156
+        - value: R
+          count: 121
+        - value: B
+          count: 103
+        - value: U
+          count: 75
+        - value: W
+          count: 58
+        - value: Combo R G
+          count: 38
+        - value: Combo B R
+          count: 31
+        - value: Combo U B
+          count: 29
+        - value: Combo W U
+          count: 25
+        - value: Combo G W
+          count: 25
+    - name: restriction_and_duration
+      necessity: SOURCE_SPECIFIC
+      description: Spending restrictions or persistence
+      observed_source_fields:
+      - RestrictValid
+      - PersistentMana
+      - TriggersWhenSpent
+      observed_occurrence_count: 135
+      observed_values:
+        RestrictValid:
+        - value: Spell.Creature
+          count: 9
+        - value: Spell.Instant,Spell.Sorcery
+          count: 6
+        - value: Spell.Artifact,Activated.Artifact+inZoneBattlefield
+          count: 6
+        - value: CumulativeUpkeep
+          count: 4
+        - value: Spell.Legendary
+          count: 4
+        - value: CantCastNonArtifactSpells
+          count: 4
+        - value: Activated
+          count: 3
+        - value: CostContainsX
+          count: 3
+        - value: Spell.Creature+ChosenType
+          count: 3
+        - value: Spell.Artifact,Activated.Artifact
+          count: 2
+        - value: Spell.wasCastFromYourGraveyard
+          count: 2
+        - value: Spell.Instant,Spell.Sorcery,Activated.ClassLevelUp
+          count: 2
+        PersistentMana:
+        - value: 'True'
+          count: 18
+        TriggersWhenSpent:
+        - value: TrigSpent
+          count: 7
+        - value: TrigCopy
+          count: 2
+        - value: TrigScry
+          count: 1
+        - value: TrigChange
+          count: 1
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  shuffle:
+    semantic_intent: Randomizing the order of a library or other source-defined card set.
+    parameters:
+    - name: shuffled_library_or_set
+      necessity: REQUIRED
+      description: Library or defined card set
+      observed_source_fields:
+      - Defined
+      - ValidTgts
+      - ValidCards
+      observed_occurrence_count: 36
+      observed_values:
+        Defined:
+        - value: You
+          count: 20
+        - value: ParentTarget
+          count: 3
+        - value: RememberedOwner
+          count: 2
+        - value: Player.IsRemembered
+          count: 2
+        - value: Remembered
+          count: 1
+        - value: Targeted
+          count: 1
+        - value: RememberedController
+          count: 1
+        - value: TargetedController
+          count: 1
+        - value: TriggeredDefendingPlayer
+          count: 1
+        - value: ParentTargetedController
+          count: 1
+        ValidTgts:
+        - value: Player
+          count: 3
+        ValidCards: []
+    - name: timing_or_choice
+      necessity: SOURCE_SPECIFIC
+      description: Ability/subability/optional context
+      observed_source_fields:
+      - Mode
+      - Optional
+      - SubAbility
+      observed_occurrence_count: 31
+      observed_values:
+        Mode: []
+        Optional:
+        - value: 'True'
+          count: 1
+        SubAbility:
+        - value: DBCleanup
+          count: 19
+        - value: DBExile
+          count: 3
+        - value: RevealCard
+          count: 1
+        - value: DBReveal
+          count: 1
+        - value: DBChoose
+          count: 1
+        - value: DBMassCleanup
+          count: 1
+        - value: DelTrigSlowtrip
+          count: 1
+        - value: DBEffect
+          count: 1
+        - value: DBDigUntil
+          count: 1
+        - value: DBCleanRemembered
+          count: 1
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: false
+  tap:
+    semantic_intent: Changing selected objects to tapped state.
+    parameters:
+    - name: object_selection
+      necessity: REQUIRED
+      description: Object or set being tapped
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      - Defined
+      observed_occurrence_count: 623
+      observed_values:
+        ValidTgts:
+        - value: Creature
+          count: 179
+        - value: Creature.OppCtrl
+          count: 58
+        - value: Permanent
+          count: 18
+        - value: Creature.YouDontCtrl
+          count: 11
+        - value: Land
+          count: 11
+        - value: Artifact,Creature
+          count: 8
+        - value: Artifact,Creature,Land
+          count: 8
+        - value: Creature.withoutFlying
+          count: 7
+        - value: Creature.ControlledBy TriggeredDefendingPlayer
+          count: 6
+        - value: Permanent.nonLand
+          count: 5
+        - value: Artifact
+          count: 5
+        - value: Creature.untapped
+          count: 4
+        ValidCards: []
+        Defined:
+        - value: Self
+          count: 142
+        - value: Enchanted
+          count: 41
+        - value: ReplacedCard
+          count: 26
+        - value: Targeted
+          count: 11
+        - value: TriggeredTarget
+          count: 11
+        - value: Remembered
+          count: 4
+        - value: ChosenCard
+          count: 3
+        - value: TriggeredAttackerLKICopy
+          count: 2
+        - value: DelayTriggerRememberedLKI
+          count: 2
+        - value: TriggeredBlockerLKICopy
+          count: 1
+        - value: DelayTriggerRemembered
+          count: 1
+        - value: Targeted.YouDontCtrl
+          count: 1
+    - name: cardinality
+      necessity: SOURCE_SPECIFIC
+      description: Target count or all/up-to selection
+      observed_source_fields:
+      - TargetMin
+      - TargetMax
+      - ChangeNum
+      observed_occurrence_count: 163
+      observed_values:
+        TargetMin:
+        - value: '0'
+          count: 60
+        - value: X
+          count: 13
+        - value: '2'
+          count: 5
+        - value: '1'
+          count: 2
+        - value: TgtNum
+          count: 1
+        TargetMax:
+        - value: '2'
+          count: 38
+        - value: X
+          count: 16
+        - value: '1'
+          count: 13
+        - value: '3'
+          count: 7
+        - value: '4'
+          count: 3
+        - value: OneEach
+          count: 2
+        - value: '5'
+          count: 1
+        - value: TgtNum
+          count: 1
+        - value: '8'
+          count: 1
+        ChangeNum: []
+    - name: cost_or_effect
+      necessity: SOURCE_SPECIFIC
+      description: Tap as cost versus effect
+      observed_source_fields:
+      - Cost
+      - DB
+      - SP
+      - AB
+      observed_occurrence_count: 854
+      observed_values:
+        Cost:
+        - value: T
+          count: 24
+        - value: W T
+          count: 20
+        - value: 1 T
+          count: 13
+        - value: U
+          count: 10
+        - value: 1 W
+          count: 10
+        - value: 2 U
+          count: 9
+        - value: 1 W T
+          count: 7
+        - value: 3 U
+          count: 7
+        - value: 2 T
+          count: 7
+        - value: 1 U
+          count: 7
+        - value: 3 T
+          count: 6
+        - value: 2 W T
+          count: 5
+        DB:
+        - value: Tap
+          count: 401
+        SP:
+        - value: Tap
+          count: 75
+        AB:
+        - value: Tap
+          count: 161
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  untap:
+    semantic_intent: Changing selected objects to untapped state.
+    parameters:
+    - name: object_selection
+      necessity: REQUIRED
+      description: Object or set being untapped
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      - Defined
+      observed_occurrence_count: 333
+      observed_values:
+        ValidTgts:
+        - value: Creature
+          count: 44
+        - value: Land
+          count: 20
+        - value: Permanent
+          count: 17
+        - value: Artifact
+          count: 7
+        - value: Land.YouCtrl
+          count: 5
+        - value: Permanent.Other
+          count: 5
+        - value: Creature.attacking
+          count: 4
+        - value: Creature.Other+YouCtrl
+          count: 3
+        - value: Creature,Land
+          count: 3
+        - value: Creature.YouCtrl
+          count: 3
+        - value: Elf
+          count: 2
+        - value: Artifact.Other
+          count: 2
+        ValidCards: []
+        Defined:
+        - value: Self
+          count: 87
+        - value: Targeted
+          count: 43
+        - value: Enchanted
+          count: 15
+        - value: Remembered
+          count: 8
+        - value: TriggeredAttackerLKICopy
+          count: 5
+        - value: ReplacedCard
+          count: 3
+        - value: TriggeredCard
+          count: 3
+        - value: TriggeredPlayer
+          count: 3
+        - value: ParentTarget
+          count: 2
+        - value: Equipped
+          count: 2
+        - value: Targeted.YouCtrl
+          count: 1
+        - value: TriggeredAttacker
+          count: 1
+    - name: cardinality
+      necessity: SOURCE_SPECIFIC
+      description: Target count or land-specific selection
+      observed_source_fields:
+      - ChangeNum
+      - ValidCards
+      - UntapLandsEffect
+      observed_occurrence_count: 0
+      observed_values:
+        ChangeNum: []
+        ValidCards: []
+        UntapLandsEffect: []
+    - name: timing_context
+      necessity: SOURCE_SPECIFIC
+      description: Ability and condition context
+      observed_source_fields:
+      - DB
+      - AB
+      - ConditionPresent
+      observed_occurrence_count: 370
+      observed_values:
+        DB:
+        - value: Untap
+          count: 208
+        AB:
+        - value: Untap
+          count: 153
+        ConditionPresent:
+        - value: Land.YouCtrl
+          count: 1
+        - value: Instant.YouOwn,Sorcery.YouOwn
+          count: 1
+        - value: Card.Creature
+          count: 1
+        - value: Creature
+          count: 1
+        - value: Wolf,Werewolf
+          count: 1
+        - value: Land.nonBasic
+          count: 1
+        - value: Card.Artifact
+          count: 1
+        - value: Card.Land
+          count: 1
+        - value: Card.IsRenowned
+          count: 1
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
+  zone_transition:
+    semantic_intent: Moving an existing object from one zone to a different zone.
+    parameters:
+    - name: origin
+      necessity: REQUIRED
+      description: Source zone
+      observed_source_fields:
+      - Origin
+      observed_occurrence_count: 5422
+      observed_values:
+        Origin:
+        - value: Graveyard
+          count: 1799
+        - value: Battlefield
+          count: 1449
+        - value: Library
+          count: 907
+        - value: Hand
+          count: 364
+        - value: Exile
+          count: 312
+        - value: Command
+          count: 187
+        - value: Stack
+          count: 164
+        - value: All
+          count: 131
+        - value: Hand,Graveyard
+          count: 27
+        - value: Graveyard,Exile
+          count: 22
+        - value: Sideboard
+          count: 17
+        - value: Battlefield,Stack
+          count: 8
+    - name: destination
+      necessity: REQUIRED
+      description: Different destination zone; 0.2.1 suppresses equal parsed zones
+      observed_source_fields:
+      - Destination
+      observed_occurrence_count: 5436
+      observed_values:
+        Destination:
+        - value: Hand
+          count: 1777
+        - value: Exile
+          count: 1666
+        - value: Battlefield
+          count: 1456
+        - value: Library
+          count: 440
+        - value: Graveyard
+          count: 90
+        - value: PlanarDeck
+          count: 3
+        - value: Command
+          count: 2
+        - value: Ante
+          count: 2
+        - value: Sideboard
+          count: 1
+    - name: object_selection
+      necessity: REQUIRED
+      description: Target/filter/defined object group
+      observed_source_fields:
+      - ValidTgts
+      - ValidCards
+      - ChangeType
+      - Defined
+      observed_occurrence_count: 5278
+      observed_values:
+        ValidTgts:
+        - value: Creature
+          count: 267
+        - value: Creature.YouCtrl
+          count: 159
+        - value: Card
+          count: 117
+        - value: Creature.YouOwn
+          count: 107
+        - value: Player
+          count: 86
+        - value: Permanent.nonLand
+          count: 76
+        - value: Permanent
+          count: 55
+        - value: Opponent
+          count: 54
+        - value: Creature.OppCtrl
+          count: 38
+        - value: Artifact.YouCtrl
+          count: 32
+        - value: Card.YouCtrl
+          count: 32
+        - value: Instant.YouCtrl,Sorcery.YouCtrl
+          count: 25
+        ValidCards: []
+        ChangeType:
+        - value: Card
+          count: 232
+        - value: Land.Basic
+          count: 180
+        - value: Creature
+          count: 86
+        - value: Card.IsRemembered
+          count: 70
+        - value: Land
+          count: 59
+        - value: Remembered.sameName
+          count: 45
+        - value: Creature.YouCtrl
+          count: 40
+        - value: Card.YouOwn
+          count: 37
+        - value: Card.NamedCard
+          count: 35
+        - value: Card.nonLand
+          count: 31
+        - value: Land.YouCtrl
+          count: 30
+        - value: Creature.YouOwn
+          count: 25
+        Defined:
+        - value: Self
+          count: 393
+        - value: Remembered
+          count: 262
+        - value: TriggeredNewCardLKICopy
+          count: 160
+        - value: ReplacedCard
+          count: 143
+        - value: DelayTriggerRememberedLKI
+          count: 111
+        - value: ChosenCard
+          count: 66
+        - value: Targeted
+          count: 43
+        - value: Parent
+          count: 34
+        - value: Imprinted
+          count: 31
+        - value: TriggeredCardLKICopy
+          count: 24
+        - value: TriggeredCard
+          count: 23
+        - value: TopOfLibrary
+          count: 16
+    - name: cardinality
+      necessity: REQUIRED
+      description: One/count/all/up-to
+      observed_source_fields:
+      - ChangeNum
+      - TargetMin
+      - TargetMax
+      observed_occurrence_count: 1940
+      observed_values:
+        ChangeNum:
+        - value: '1'
+          count: 869
+        - value: '2'
+          count: 94
+        - value: X
+          count: 75
+        - value: '3'
+          count: 31
+        - value: NumInHand
+          count: 29
+        - value: NumInLib
+          count: 29
+        - value: NumInYard
+          count: 14
+        - value: Y
+          count: 11
+        - value: XFetch
+          count: 8
+        - value: '4'
+          count: 5
+        - value: Z
+          count: 5
+        - value: '7'
+          count: 5
+        TargetMin:
+        - value: '0'
+          count: 305
+        - value: '2'
+          count: 29
+        - value: X
+          count: 26
+        - value: '1'
+          count: 9
+        - value: Y
+          count: 3
+        - value: '3'
+          count: 1
+        - value: '4'
+          count: 1
+        - value: OneEach
+          count: 1
+        - value: '5'
+          count: 1
+        - value: '6'
+          count: 1
+        TargetMax:
+        - value: '1'
+          count: 133
+        - value: '2'
+          count: 96
+        - value: X
+          count: 62
+        - value: '3'
+          count: 35
+        - value: OneEach
+          count: 16
+        - value: '4'
+          count: 10
+        - value: '5'
+          count: 7
+        - value: Y
+          count: 6
+        - value: MaxTgt
+          count: 1
+        - value: MaxTgts
+          count: 1
+        - value: NrBlackAtCasting
+          count: 1
+        - value: Yard
+          count: 1
+    - name: owner_controller_visibility
+      necessity: SOURCE_SPECIFIC
+      description: Ownership, chooser, visibility, reveal, memory
+      observed_source_fields:
+      - DefinedPlayer
+      - Chooser
+      - Hidden
+      - Reveal
+      - RememberChanged
+      observed_occurrence_count: 1488
+      observed_values:
+        DefinedPlayer:
+        - value: Targeted
+          count: 70
+        - value: TargetedController
+          count: 40
+        - value: You
+          count: 26
+        - value: Player
+          count: 17
+        - value: Player.IsRemembered
+          count: 14
+        - value: Remembered
+          count: 11
+        - value: TriggeredPlayer
+          count: 11
+        - value: RememberedController
+          count: 10
+        - value: TargetedPlayer
+          count: 10
+        - value: Player.Opponent
+          count: 8
+        - value: TriggeredTarget
+          count: 7
+        - value: TriggeredCardController
+          count: 5
+        Chooser:
+        - value: You
+          count: 132
+        - value: Targeted
+          count: 38
+        - value: Player.IsRemembered
+          count: 7
+        - value: Remembered
+          count: 5
+        - value: ChosenPlayer
+          count: 5
+        - value: Opponent
+          count: 4
+        - value: TriggeredPlayer
+          count: 4
+        - value: TriggeredTarget
+          count: 3
+        - value: ImprintedController
+          count: 2
+        - value: TargetedController
+          count: 2
+        - value: TriggeredCardController
+          count: 2
+        - value: TriggeredActivator
+          count: 1
+        Hidden:
+        - value: 'True'
+          count: 467
+        Reveal:
+        - value: 'True'
+          count: 25
+        - value: 'False'
+          count: 2
+        RememberChanged:
+        - value: 'True'
+          count: 529
+    - name: position_order
+      necessity: SOURCE_SPECIFIC
+      description: Library position or order
+      observed_source_fields:
+      - LibraryPosition
+      - RandomOrder
+      observed_occurrence_count: 242
+      observed_values:
+        LibraryPosition:
+        - value: '0'
+          count: 103
+        - value: '-1'
+          count: 95
+        - value: '2'
+          count: 10
+        - value: '1'
+          count: 9
+        - value: X
+          count: 4
+        - value: '4'
+          count: 1
+        - value: '3'
+          count: 1
+        - value: '6'
+          count: 1
+        RandomOrder:
+        - value: 'True'
+          count: 18
+    - name: timing_context
+      necessity: SOURCE_SPECIFIC
+      description: Trigger/activation timing
+      observed_source_fields:
+      - Mode
+      - TriggerZones
+      observed_occurrence_count: 0
+      observed_values:
+        Mode: []
+        TriggerZones: []
+    unknown_or_unmodeled:
+    - The projection currently preserves occurrence-local source parameters; no normalized Requirement parameter
+      contract is enforced.
+    semantic_loss_risk: true
