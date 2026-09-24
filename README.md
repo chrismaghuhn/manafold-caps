@@ -1,0 +1,31 @@
+# Manafold CAP miner
+
+This small exploratory repository measures whether public Scryfall, Forge, and XMage datasets can supply auditable evidence for a future capability/requirement census.
+
+It is not part of the Manafold engine, does not define the CAP ontology, and does not decide Magic rules. Forge and XMage are implementation witnesses and may contain errors; Oracle text is card-specific source input. This experiment does not yet load the Comprehensive Rules or official rulings.
+
+## Install and run
+
+Requires Python 3.12 or later.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\python.exe src\cap_miner.py all
+```
+
+The CLI also supports `download`, `inspect`, `mine`, and `report`. `all` downloads or reuses the Hugging Face cache, inventories schemas, mines evidence, and writes the report.
+
+## Data sources
+
+- `nishtahir/scryfall-oracle-cards`
+- `404NotF0und/MtG-json-to-ForgeScript`
+- `Frogski/xMageData`
+
+The datasets are third-party snapshots and can have stale text, malformed records, or implementation mistakes. Revisions and observed schemas are recorded in `REPORT.md` and `data/output/inventory.json`.
+
+## Outputs
+
+Generated files go under ignored `data/output/`: inventory, vocabulary CSVs, exact matching samples, unmatched and ambiguous rows, requirement candidates, statistics, and the report. Hugging Face cache files go under ignored `data/raw/`. Generated data is not committed.
+
+Requirement candidates separate extraction, implementation evidence, rules evidence, and review state. Agreement between Forge and XMage means corroboration only; it does not establish semantic correctness.

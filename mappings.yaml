@@ -1,0 +1,18 @@
+forge:
+  ChangeZone: zone_transition
+  Damage: damage
+  Destroy: destroy
+  Draw: draw
+  Discard: discard
+  Token: create_token
+  Tap: tap
+  Untap: untap
+  Shuffle: shuffle
+xmage:
+  DamageTargetEffect: damage
+  DestroyTargetEffect: destroy
+  CreateTokenEffect: create_token
+  DrawCardSourceControllerEffect: draw
+  CounterTargetEffect: counter
+  GainLifeEffect: gain_life
+  LoseLifeTargetEffect: lose_life
